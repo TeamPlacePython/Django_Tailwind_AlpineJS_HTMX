@@ -1,0 +1,19 @@
+{% extends 'layouts/blank.html' %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+
+    {% include "home/components/hero.html" %}
+
+    <content class="grid grid-cols-1 md:grid-cols-3 max-w-7xl mx-auto mt-6 px-4 md:px-0">
+        <main class="col-span-1 md:col-span-2 mx-4 md:mx-[10%] mb-6 md:mb-0">
+            <article class="card h-36">
+                <h2>Titre de l'article</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+            </article>
+        </main>
+        <aside class="col-span-1 mx-4 md:mr-[20%] bg-red-200">Sidebar</aside>
+    </content>
+
+{% endblock %}

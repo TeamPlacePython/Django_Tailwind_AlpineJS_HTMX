@@ -1,0 +1,7 @@
+{% load django_vite %}
+
+{% if request.user.profile.avatar %}
+    <img class="h-8 w-8 rounded-full object-cover" src="{{ request.user.profile.avatar }}" alt="Avatar" />
+{% else %}
+    <img class="h-8 w-8 rounded-full object-cover" src="{% vite_asset_url 'images/avatar.svg' %}" alt="Avatar" />
+{% endif %}

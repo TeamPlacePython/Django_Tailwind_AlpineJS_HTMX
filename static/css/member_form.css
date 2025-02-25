@@ -1,0 +1,66 @@
+.form-control {
+    @apply bg-navbar border-text_navbar text-text_navbar rounded-lg p-2 w-full;
+}
+
+label {
+    @apply text-text_navbar mb-1 block;
+}
+
+.invalid-feedback {
+    @apply text-red-500 text-sm mt-1;
+}
+
+/* Styles TomSelect */
+.ts-wrapper {
+    @apply bg-navbar border-text_navbar rounded-lg;
+}
+
+.ts-control {
+    @apply bg-navbar border-text_navbar text-text_navbar;
+}
+
+.ts-dropdown {
+    @apply bg-navbar border-text_navbar text-text_navbar;
+}
+
+/* Styles pour les TomSelect simples */
+.tomselect-single + .ts-wrapper {
+    @apply bg-navbar border-text_navbar rounded-lg relative;
+}
+
+.tomselect-single + .ts-wrapper .ts-control {
+    @apply bg-navbar border-text_navbar text-text_navbar pr-8;
+    cursor: pointer;
+}
+
+.tomselect-single + .ts-wrapper .ts-control::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid currentColor;
+    pointer-events: none;
+}
+
+.tomselect-single + .ts-wrapper.ts-open .ts-control::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.tomselect-single + .ts-wrapper .ts-dropdown {
+    @apply bg-navbar border-text_navbar text-text_navbar;
+    margin-top: 4px;
+    border-radius: 0.5rem;
+}
+
+.tomselect-single + .ts-wrapper .ts-dropdown .option {
+    @apply px-3 py-2 cursor-pointer hover:bg-text_navbar hover:text-navbar;
+}
+
+.tomselect-single + .ts-wrapper .ts-control input {
+    display: none !important;
+} 

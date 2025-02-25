@@ -1,0 +1,9 @@
+# Environnement
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+
+# Exclure le fichier exemple
+!.env.example 

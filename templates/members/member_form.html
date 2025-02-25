@@ -1,0 +1,74 @@
+{% extends "layouts/blank.html" %}
+{% load static %}
+{% load django_vite %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar border border-text_navbar">
+        <div class="p-6">
+            <h2 class="text-2xl font-title font-semibold mb-6 text-center">{{ title }}</h2>
+
+            <!-- Modification de la section photo -->
+            <div class="text-center flex flex-col items-center mb-6">
+                <img id="member-photo" 
+                     src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% else %}{% vite_asset_url 'images/avatar.svg' %}{% endif %}" 
+                     alt="Photo du membre"
+                     class="w-36 h-36 rounded-full object-cover my-4 border-2 border-text_navbar">
+
+                <!-- Le champ photo reste caché -->
+                <div class="hidden">
+                    {{ form.photo }}
+                </div>
+
+                <!-- Le champ photo visible pour l'interaction utilisateur -->
+                <input type="file" 
+                       id="id_photo" 
+                       class="hidden"
+                       accept="image/*"
+                       {% if form.instance.pk %}
+                       hx-post="{% url 'members:update-photo' form.instance.pk %}"
+                       hx-encoding="multipart/form-data"
+                       hx-trigger="change"
+                       hx-target="#member-photo"
+                       hx-swap="outerHTML"
+                       {% else %}
+                       hx-trigger="change"
+                       hx-target="#member-photo"
+                       hx-swap="outerHTML"
+                       {% endif %}>
+
+                <button type="button" 
+                        onclick="document.getElementById('id_photo').click()"
+                        class="mt-2 px-4 py-2 text-sm bg-navbar border border-text_navbar rounded-lg hover:bg-text_navbar hover:text-navbar transition-colors">
+                    <i class="fas fa-camera mr-2"></i>Changer la photo
+                </button>
+
+                <div class="text-center max-w-md mt-4">
+                    <h1 id="member-name" class="text-xl font-semibold">
+                        {{ form.instance.first_name }} {{ form.instance.last_name }}
+                    </h1>
+                    <div class="text-gray-400 mb-2 -mt-1">{{ form.instance.email|default:"" }}</div>
+                </div>
+            </div>
+
+            <div id="photo-feedback" class="text-sm mt-2 hidden">
+                Photo mise à jour avec succès
+            </div>
+
+            <form method="post" 
+                {% if form.instance.pk %}
+                hx-post="{% url 'members:member-update' form.instance.pk %}" 
+                hx-target="#editMemberModalBody"
+                {% endif %}>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

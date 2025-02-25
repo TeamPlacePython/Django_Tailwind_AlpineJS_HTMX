@@ -1,0 +1,62 @@
+{% load static %}
+{% load django_htmx %}
+{% load django_browser_reload %}
+{% load django_vite %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Site officiel de la salle d'escrime de Mandelieu-la-Napoule">
+    <meta name="keywords" content="Escrime, Fleuret, Epée, Sabre, Mandelieu, Côte d'Azur, PACA, Sport, Lame, Combat, Entrainement, Compétition">
+    <meta name="author" content="Laurent Jouron">
+
+    {% block seo_meta %}
+    <meta name="description" content="{% block meta_description %}{% endblock meta_description %}">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock meta_robots %}">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{% block og_title %}{% endblock og_title %}">
+    <meta property="og:description" content="{% block og_description %}{% endblock og_description %}">
+    <meta property="og:image" content="{{ SITE_URL }}{% block og_image %}{% endblock og_image %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{% endblock twitter_title %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{% endblock twitter_description %}">
+    <meta name="twitter:image" content="{{ SITE_URL }}{% block twitter_image %}{% endblock twitter_image %}">
+
+    <!-- Balise Keywords (optionnelle) -->
+    <meta name="keywords" content="{% block meta_keywords %}{% endblock meta_keywords %}">
+    {% endblock seo_meta %}
+
+    <!-- Title and logo in the navigation tab -->
+    <title>SEM - {% block title %}{% endblock title %}</title>
+    <link rel="icon" type="image/x-icon" href="{% vite_asset_url 'images/favicon.ico' %}">
+
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+    <link rel="stylesheet" type="text/css" href="{% vite_asset_url 'src/css/styles.css' %}">
+
+    {% django_htmx_script %}
+    {% django_browser_reload_script %}
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="{% block class %}{% endblock %}">
+	
+    {% include 'includes/messages.html' %}
+
+    {% include 'includes/header.html' %}
+
+    {% block layout %}{% endblock %}
+
+    {% block javascript %}{% endblock %}
+
+</body>
+</html>

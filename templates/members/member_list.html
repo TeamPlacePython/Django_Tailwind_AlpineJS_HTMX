@@ -1,0 +1,163 @@
+{% extends 'layouts/blank.html' %}
+{% load django_vite %}
+{% load custom_filters %}
+
+{% block title %}{{ title }}{% endblock title %}
+{% block meta_description %}{{ description }}{% endblock %}
+
+{% block content %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- En-tête avec recherche et filtres -->
+        <div class="mb-6">
+            <form class="grid grid-cols-1 md:grid-cols-3 gap-4" 
+                  hx-get="{% url 'members:member-list' %}"
+                  hx-trigger="change from:select, input from:input delay:300ms"
+                  hx-target="#members-list"
+                  hx-push-url="true"
+                  hx-select="#members-list">
+                <div class="col-span-1">
+                    <input type="text" 
+                           id="member-search"
+                           name="search" 
+                           placeholder="{{ search }}" 
+                           class="input input-bordered w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                           value="{{ request.GET.search }}"
+                           aria-label="{{ search }}">
+                </div>
+                {% if request.user.is_authenticated and request.user.is_staff %}
+                <div class="col-span-1">
+                    <select id="status-filter" 
+                            name="status" 
+                            class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                            aria-label="Filtrer par statut">
+                        <option value="">{{ all_status }}</option>
+                        {% for status in status_choices %}
+                            <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}{{ selected }}{% endif %}>
+                                {{ status.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                <div class="col-span-1">
+                    <select name="category" 
+                            class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]">
+                        <option value="">{{ all_categories }}</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}{{ selected }}{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Liste des membres -->
+        <div id="members-list">
+            <div class="htmx-indicator flex justify-center py-4" style="display: none;">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-text_navbar"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for member in members %}
+                    <div class="bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar border border-text_navbar p-6">
+                        <div class="flex flex-col items-center">
+                            {% if member.photo %}
+                                <img src="{{ member.photo.url }}" 
+                                     alt="{{ member.get_full_name }}" 
+                                     class="w-24 h-24 rounded-full mb-4 object-cover border-2 border-text_navbar">
+                            {% endif %}
+                            <span class="text-2xl font-title font-semibold mb-2">{{ member.get_full_name }}</span>
+                            {% if request.user.is_authenticated and request.user.is_staff %}
+                            <p class="text-gray-600 mb-1">{{ member.email }}</p>
+                            <span class="badge bg-{{ status_colors|get_item:member.status }}">
+                                {{ member.get_status_display }}
+                            </span>
+                            {% endif %}
+                            {% if member.sports_category %}
+                                <p class="text-sm mb-4">{{ member.sports_category.name }}</p>
+                            {% else %}
+                                {% if member.roles.all %}
+                                    <p class="text-sm mb-4">
+                                        {% for role in member.roles.all %}
+                                            {{ role.name }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+                            {% if request.user.is_authenticated and request.user.is_staff %}
+                            <div class="flex gap-2 mt-auto">
+                                <button type="button" 
+                                        class="btn btn-sm bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
+                                        hx-get="{% url 'members:member-detail' member.pk %}"
+                                        hx-target="#memberModalContent"
+                                        hx-trigger="click"
+                                        hx-swap="innerHTML">
+                                    {{ show_details }}
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-span-3 text-center py-8">
+                        <p class="text-gray-500">{{ not_found }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+                <div class="flex justify-center mt-8">
+                    <div class="btn-group">
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}" 
+                               class="btn"
+                               hx-get="?page={{ page_obj.previous_page_number }}"
+                               hx-target="#members-list"
+                               hx-select="#members-list"
+                               hx-push-url="true">«</a>
+                        {% endif %}
+                        <button class="btn">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</button>
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" 
+                               class="btn"
+                               hx-get="?page={{ page_obj.next_page_number }}"
+                               hx-target="#members-list"
+                               hx-select="#members-list"
+                               hx-push-url="true">»</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" 
+         id="memberModal" 
+         tabindex="-1" 
+         aria-labelledby="memberModalLabel" 
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-navbar" id="memberModalContent">
+                <!-- Le contenu sera chargé ici par HTMX -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour l'édition -->
+    <div class="modal fade" 
+         id="editMemberModal" 
+         tabindex="-1" 
+         aria-labelledby="editMemberModalLabel" 
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-navbar" id="editMemberModalBody">
+                <!-- Le contenu sera chargé ici par HTMX -->
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

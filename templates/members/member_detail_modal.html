@@ -1,0 +1,69 @@
+{% extends "layouts/modal.html" %}
+
+{% block content %}
+<div class="modal-header border-text_navbar">
+    <h5 class="modal-title text-3xl font-bold font-title" id="memberModalLabel">
+        {% if member.photo %}
+            <img src="{{ member.photo.url }}" 
+                 alt="Photo de {{ member.get_full_name }}" 
+                 class="w-12 h-12 rounded-full object-cover inline-block mr-2">
+        {% endif %}
+        {{ member.get_full_name }}
+    </h5>
+</div>
+<div class="modal-body border-text_navbar">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <h6 class="font-bold">Informations personnelles</h6>
+            <p><strong>Email : </strong><a class="contact-button" href="mailto:{{ member.email }}">{{ member.email }}</a>
+            <p><strong>Téléphone : </strong> <a href="tel:+33{{ member.phone_number|slice:'1:' }}">{{ member.phone_number }}</a></p>
+            <p><strong>Adresse : </strong> {{ member.address }}</p>
+            <p><strong>Code postal : </strong> {{ member.postal_code }}</p>
+            <p><strong>Ville : </strong> {{ member.city }}</p>
+            <p><strong>Statut : </strong> 
+                <span class="badge {% if member.status == 'ACT' %}badge-success{% elif member.status == 'INA' %}badge-danger{% else %}badge-warning{% endif %}">
+                    {{ member.get_status_display }}
+                </span>
+            </p>
+        </div>
+        <div>
+            <h6 class="font-bold">Informations sportives</h6>
+            {% if member.sports_category %}
+                <p><strong>Catégorie :</strong> {{ member.sports_category.name }}</p>
+            {% else %}
+                {% if member.roles.all %}
+                    <p><strong>Rôles :</strong>
+                        {% for role in member.roles.all %}
+                            {{ role.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% comment %} <!-- Modale pour l'édition du membre -->
+<div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" id="editMemberModalBody">
+                <!-- Le contenu sera chargé ici par HTMX -->
+            </div>
+        </div>
+    </div>
+</div> {% endcomment %}
+
+<div class="modal-footer border-text_navbar">
+    <a class="button button-gray ml-1" href="{{ request.META.HTTP_REFERER }}">Fermer</a>
+    <button type="button" 
+            class="btn bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
+            hx-get="{% url 'members:member-update' member.pk %}"
+            hx-target="#editMemberModalBody"
+            hx-trigger="click"
+            data-bs-toggle="modal" 
+            data-bs-target="#editMemberModal">
+        Modifier
+    </button>
+</div>
+{% endblock %}
