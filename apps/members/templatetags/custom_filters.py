@@ -10,5 +10,5 @@ def get_item(dictionary, key):
 
 @register.filter(name="add_class")
 def add_class(field, css_class):
-    """Ajoute une classe CSS à un champ de formulaire."""
+    """Adds a CSS class to a form field."""
     return field.as_widget(attrs={"class": css_class})

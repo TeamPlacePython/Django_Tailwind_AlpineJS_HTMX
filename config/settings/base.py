@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     "apps.home.apps.HomeConfig",
     "apps.users.apps.UsersConfig",
     "apps.members.apps.MembersConfig",
-    "apps.utils.apps.UtilsConfig",
+    "apps.messageboard.apps.MessageboardConfig",
     # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -73,7 +73,16 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.media",
+                # Home
+                "apps.home.context_processors.home_items",
+                "apps.home.context_processors.login_signup_items",
+                # Users
                 "apps.users.context_processors.allauth_login_context",
+                "apps.users.context_processors.profile_items",
+                # Members
+                "apps.members.context_processors.members_items",
+                # Messages
+                "apps.messageboard.context_processors.messageboard_items",
             ],
         },
     },

@@ -7,6 +7,7 @@ class MemberAdmin(admin.ModelAdmin):
     list_display = (
         "first_name",
         "last_name",
+        "birth_date",
         "email",
         "status",
         "sports_category",
@@ -22,6 +23,7 @@ class MemberAdmin(admin.ModelAdmin):
                 "fields": (
                     "first_name",
                     "last_name",
+                    "birth_date",
                     "email",
                     "phone_number",
                     "photo",
@@ -48,5 +50,11 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(SportsCategory)
 class SportsCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "description", "created_at")
+    list_display = (
+        "name",
+        "description",
+        "start_year",
+        "end_year",
+        "created_at",
+    )
     search_fields = ("name",)

@@ -3,12 +3,13 @@
 {% load custom_filters %}
 
 {% block title %}{{ title }}{% endblock title %}
-{% block meta_description %}{{ description }}{% endblock %}
+{% block meta_description %}{{ description }}{% endblock meta_description %}
 
 {% block content %}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="mb-8 font-title">{{ team }}</h1>
 
-        <!-- En-tête avec recherche et filtres -->
+        <!-- Header with search and filters -->
         <div class="mb-6">
             <form class="grid grid-cols-1 md:grid-cols-3 gap-4" 
                   hx-get="{% url 'members:member-list' %}"
@@ -54,7 +55,7 @@
             </form>
         </div>
 
-        <!-- Liste des membres -->
+        <!-- list of members -->
         <div id="members-list">
             <div class="htmx-indicator flex justify-center py-4" style="display: none;">
                 <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-text_navbar"></div>
@@ -142,12 +143,12 @@
          aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content bg-navbar" id="memberModalContent">
-                <!-- Le contenu sera chargé ici par HTMX -->
+                <!-- Content will be uploaded here by HTMX -->
             </div>
         </div>
     </div>
 
-    <!-- Modal pour l'édition -->
+    {% comment %} <!-- Modal for editing -->
     <div class="modal fade" 
          id="editMemberModal" 
          tabindex="-1" 
@@ -155,9 +156,9 @@
          aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content bg-navbar" id="editMemberModalBody">
-                <!-- Le contenu sera chargé ici par HTMX -->
+                <!-- Content will be uploaded here by HTMX -->
             </div>
         </div>
-    </div>
+    </div> {% endcomment %}
 
-{% endblock %}
+{% endblock content %}

@@ -1,19 +1,6 @@
 {% load django_vite %}
 
-<hero class="grid bg-gray-700 text-white text-center bg-cover bg-center" style="background-image: url('{% vite_asset_url 'images/hero.png' %}');">
-    <div class="col-start-1 row-start-1 bg-black/45 w-full h-full"></div>
-    <div class="col-start-1 row-start-1 py-12 md:py-24 px-4 md:px-10 relative z-10">
-        <div class="mt-20 md:mt-50"></div>  
-        <div class="font-title font-bold text-3xl md:text-6xl">
-            <span class="text-[#FFD700] relative top-[-5px] md:top-[-60px]">
-                {{ hero_title }}
-            </span>
-        </div>
-        <p class="text-xl md:text-3xl font-title mb-5 text-[#FFD700] relative top-[-5px] md:top-[-10px]">
-            {{ hero_slogan }}
-        </p>
-        {% if not request.user.is_authenticated %}
-        <a class="button" href="{% url 'account_login' %}">{{ connect }}</a>
-        {% endif %}
-    </div>
+<hero class="grid bg-cover -mt-30 bg-center -mt-12 lg:-mt-20 h-190" 
+    style="background-image: url('{% vite_asset_url 'images/hero.png' %}');">
+    <div class="col-start-1 row-start-1 h-150 md:py-24 px-4 md:px-10 relative z-10"></div>
 </hero>

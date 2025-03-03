@@ -1,6 +1,7 @@
 from django import forms
-from .models import Member
 from django.core.validators import RegexValidator
+import datetime
+from .models import Member
 
 
 class MemberForm(forms.ModelForm):
@@ -41,6 +42,7 @@ class MemberForm(forms.ModelForm):
         fields = [
             "first_name",
             "last_name",
+            "birth_date",
             "email",
             "phone_number",
             "address",
@@ -61,6 +63,16 @@ class MemberForm(forms.ModelForm):
                     "class": "form-control",
                     "placeholder": "Nom de famille",
                 }
+            ),
+            "birth_date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Date de naissance",
+                    "type": "date",
+                    "max": datetime.date.today().strftime("%Y-%m-%d"),
+                    "min": "1900-01-01",
+                },
+                format="%d/%m/%Y",
             ),
             "email": forms.EmailInput(
                 attrs={
@@ -92,24 +104,25 @@ class MemberForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
-        if email:
-            # Vérifie si l'email existe déjà, en excluant l'instance actuelle en cas de mise à jour
-            if (
-                Member.objects.filter(email=email)
-                .exclude(pk=self.instance.pk if self.instance else None)
-                .exists()
-            ):
-                raise forms.ValidationError(
-                    "Cette adresse email est déjà utilisée."
-                )
+        if (
+            email
+            and Member.objects.filter(email=email)
+            .exclude(pk=self.instance.pk if self.instance else None)
+            .exists()
+        ):
+            # Checks if the email already exists, excluding the current instance in case of update
+            raise forms.ValidationError(
+                "Cette adresse email est déjà utilisée."
+            )
         return email
 
     def clean_postal_code(self):
         postal_code = self.cleaned_data.get("postal_code")
-        if postal_code:
-            # Vérifie que le code postal contient exactement 5 chiffres
-            if not postal_code.isdigit() or len(postal_code) != 5:
-                raise forms.ValidationError(
-                    "Le code postal doit contenir exactement 5 chiffres."
-                )
+        if postal_code and (
+            not postal_code.isdigit() or len(postal_code) != 5
+        ):
+            # Verify that the postal code contains exactly 5 digits
+            raise forms.ValidationError(
+                "Le code postal doit contenir exactement 5 chiffres."
+            )
         return postal_code

@@ -1,0 +1,7 @@
+{% for login_signup in login_signup_items %}
+<li>
+    <a href="{% url login_signup.url %}">
+        {{ login_signup.name }}
+    </a>
+</li>
+{% endfor %}

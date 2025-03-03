@@ -10,13 +10,28 @@
     class="absolute top-20 left-0 right-0 bg-navbar border-b border-text_navbar md:hidden">
     <ul class="px-4 py-2">
         {% if request.user.is_authenticated %}
-        <!-- HOME START -->
-        <li class="py-2">
-            <a href="/" class="navitems-mobile block">
-                Home
-            </a>
+        <!-- MESSAGES -->
+        <li x-data="{ profileOpen: false }" class="py-2">
+            <div @click="profileOpen = !profileOpen" class="flex items-center justify-between cursor-pointer navitems-mobile">
+                <div class="flex items-center gap-2 flex-grow">
+                    <span>Message</span>
+                </div>
+                <img x-bind:class="profileOpen ? 'rotate-180' : 'rotate-0'" 
+                        class="w-4 transition-transform duration-300 ease-in-out" 
+                        src="https://img.icons8.com/small/32/text_navbar/expand-arrow.png" alt="Dropdown"/>
+            </div>
+
+            <ul x-show="profileOpen"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform translate-y-0"
+                x-transition:leave-end="opacity-0 transform -translate-y-2"
+                class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
+                {% include "includes/components/items/messages_items.html" %}
+            </ul>
         </li>
-        <!-- HOME END -->
 
         <!-- MEMBERS START -->
         <li x-data="{ membersOpen: false }" class="py-2">
@@ -35,7 +50,7 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2"
                 class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-                {% include "includes/components/members.html" %}
+                {% include "includes/components/items/members_items.html" %}
             </ul>
         </li>
         <!-- MEMBERS END -->
@@ -61,16 +76,17 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2"
                 class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-                {% include "includes/components/users.html" %}
+                {% include "includes/components/items/users_items.html" %}
             </ul>
         </li>
         <!-- PROFILE END -->
     {% else %}
-        <!-- LOGIN START -->
+
+        <!-- LOGIN -->
         <ul class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-            {% include "includes/components/login_signup.html" %}
+            {% include "includes/components/items/login_signup_items.html" %}
         </ul>
-        <!-- LOGIN END -->
+
     {% endif %}
     </ul>
 </nav>

@@ -54,9 +54,11 @@ class Profile(models.Model):
     @property
     def name(self):
         """Returns the display name or the username."""
-        if self.displayname:
-            return self.displayname.strip()
-        return self.user.username
+        return (
+            self.displayname.strip()
+            if self.displayname
+            else self.user.username
+        )
 
     @property
     def avatar(self):

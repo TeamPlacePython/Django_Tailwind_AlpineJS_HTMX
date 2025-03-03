@@ -95,6 +95,15 @@ input[type=file] {
 .textarea, textarea, input {
     @apply w-full rounded-lg py-4 px-5 bg-hover_navbar
 }
+#id_remember {
+    @apply align-middle;
+}
+label[for="id_remember"] {
+    @apply inline-flex items-center mr-1
+}
+input[name="remember"] {
+    @apply w-auto
+}
 .errorlist li {
     @apply p-1 pl-4 border-l-defilepsie_red border-l-4 border-solid mb-2 text-defilepsie_red
 }
@@ -111,3 +120,20 @@ input[type=file] {
 .green-dot { @apply rounded-full bg-green-700 p-1.5 }
 .gray-dot{ @apply rounded-full bg-gray-500 p-1.5 }
 .graylight-dot{ @apply rounded-full bg-gray-300 p-1.5 }
+
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  /* tr:nth-child(even) {
+    background-color: #dddddd;
+  } */

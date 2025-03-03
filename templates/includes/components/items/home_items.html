@@ -1,0 +1,7 @@
+{% for home in home_items %}
+<li>
+    <a href="{% url home.url %}">
+        {{ home.name }}
+    </a>
+</li>
+{% endfor %}

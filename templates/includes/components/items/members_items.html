@@ -1,0 +1,7 @@
+{% for member in members_items %}
+<li>
+    <a href="{% url member.url %}">
+        {{ member.name }}
+    </a>
+</li>
+{% endfor %}

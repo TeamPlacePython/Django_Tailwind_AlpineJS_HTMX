@@ -8,6 +8,10 @@ urlpatterns = [
     path("", include("apps.home.urls", namespace="home")),
     path("profile/", include("apps.users.urls", namespace="users")),
     path("members/", include("apps.members.urls", namespace="members")),
+    path(
+        "messageboard/",
+        include("apps.messageboard.urls", namespace="messageboard"),
+    ),
 ]
 
 if settings.DEBUG:

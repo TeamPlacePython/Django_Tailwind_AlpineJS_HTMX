@@ -1,0 +1,7 @@
+{% for messageboard in messageboard_items %}
+<li>
+    <a href="{% url messageboard.url %}">
+        {{ messageboard.name }}
+    </a>
+</li>
+{% endfor %}

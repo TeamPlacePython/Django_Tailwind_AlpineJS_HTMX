@@ -1,9 +1,12 @@
+
 {% block layout %}
 <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen p-4">
         <!-- Fond semi-transparent - réduction de l'opacité -->
-        <div class="fixed inset-0 bg-black/50 transition-opacity"></div>
-        
+        <a href="{{ request.META.HTTP_REFERER }}" class="cursor-default">
+            <div class="fixed inset-0 bg-black/50 transition-opacity"></div>
+        </a>
+
         <!-- Contenu de la modale -->
         <div class="relative bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar w-full max-w-3xl p-6 md:p-8 border border-text_navbar">
             {% block content %}{% endblock content %}

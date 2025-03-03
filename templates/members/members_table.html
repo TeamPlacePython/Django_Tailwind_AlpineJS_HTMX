@@ -1,0 +1,66 @@
+{% extends 'layouts/blank.html' %}
+{% load django_vite %}
+{% load custom_filters %}
+
+{% block title %}{{ title }}{% endblock title %}
+{% block meta_description %}{{ description }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="mb-8 font-title">{{ title }}</h1>
+</div>
+<div class="flex justify-center items-center mx-[3px]">
+    <div class="bg-navbar rounded-2xl shadow-md border border-text_navbar p-6 w-full max-w-4xl">
+        {% include "components/box_header.html" %} 
+        <div class="overflow-x-auto max-w-full">
+            <table class="bg-navbar shadow-md md:drop-shadow-2xl shadow-text_navbar w-full p-6 md:p-8 min-w-max">
+                <thead>
+                    <tr class="px-6 py-3 border-b-2 border-text_navbar text-left text-text_navbar bg-hover_navbar font-title text-2xl">
+                        <th>Prénom</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Date de naissance</th>
+                        <th>Catégories</th>
+                        <th>Status</th>
+                        <th>Rôles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                    <tr class="px-6 py-4 border-b text-text_navbar border-text_navbar hover:bg-hover_navbar hover:text-black cursor-pointer"
+                        hx-get="{% url 'members:member-detail' member.pk %}"
+                        hx-target="#memberModalContent"
+                        hx-trigger="dblclick"
+                        hx-swap="innerHTML"
+                        _="on dblclick remove .hidden from #memberModal">
+                        <td>{{ member.first_name }}</td>
+                        <td>{{ member.last_name }}</td>
+                        <td>{{ member.email }}</td>
+                        <td>{{ member.birth_date }}</td>
+                        <td>{{ member.sports_category.name }}</td>
+                        <td>{{ member.get_status_display }}</td>
+                        {% if member.roles.all %}
+                            {% for role in member.roles.all %}
+                            <td>{{ role.name }}{% if not forloop.last %}, {% endif %}</td>
+                            {% endfor %}
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">Aucun membre trouvé.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade hidden" id="memberModal" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content bg-navbar" id="memberModalContent"></div>
+  </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,7 @@
+{% for profile in profile_items %}
+<li>
+    <a href="{% url profile.url %}">
+        {{ profile.name }}
+    </a>
+</li>
+{% endfor %}

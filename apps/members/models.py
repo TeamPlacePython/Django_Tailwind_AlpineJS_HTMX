@@ -26,8 +26,10 @@ class Tag(models.Model):
 
 
 class SportsCategory(models.Model):
-    name = models.CharField(max_length=10, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
+    start_year = models.IntegerField(blank=True, null=True)
+    end_year = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -36,6 +38,12 @@ class SportsCategory(models.Model):
 
     def __str__(self):
         return self.name
+
+    def is_applicable(self, birth_year):
+        """Vérifie si la catégorie est applicable en fonction de l'année de naissance du membre."""
+        if self.start_year is not None and self.end_year is not None:
+            return self.start_year <= birth_year <= self.end_year
+        return False
 
 
 class Member(models.Model):
@@ -53,6 +61,9 @@ class Member(models.Model):
     # Informations personnelles
     first_name = models.CharField(max_length=100, verbose_name="First name")
     last_name = models.CharField(max_length=100, verbose_name="Last name")
+    birth_date = models.DateField(
+        verbose_name="Date de naissance", null=True, blank=True
+    )
     email = models.EmailField(unique=True)
     phone_number = models.CharField(
         validators=[phone_regex],
@@ -119,6 +130,13 @@ class Member(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     def get_photo_url(self):
-        if self.photo:
-            return self.photo.url
+        return self.photo.url if self.photo else None
+
+    def determine_sports_category(self):
+        """Détermine la catégorie sportive en fonction de l'année de naissance."""
+        for category in SportsCategory.objects.all():
+            if category.is_applicable(self.birth_year):
+                self.sports_category = category
+                self.save()
+                return category
         return None

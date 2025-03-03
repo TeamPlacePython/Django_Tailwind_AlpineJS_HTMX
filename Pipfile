@@ -25,6 +25,7 @@ flake8-html = "*"
 django-crispy-forms = "*"
 django-widget-tweaks = "*"
 django-allauth = "*"
+celery = "*"
 
 [dev-packages]
 
