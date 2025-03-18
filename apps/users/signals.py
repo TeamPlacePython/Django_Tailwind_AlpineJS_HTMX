@@ -5,26 +5,9 @@ from .models import Profile
 
 
 class UserSignals:
-    """
-    Class managing Django user-related signals.
-    This class contains callback methods for pre_save and post_save signals
-    of the User model.
-    """
 
     @classmethod
     def post_save(cls, sender, instance, created, **kwargs):
-        """
-        Signal executed after a user is saved.
-
-        Creates a user profile when a new user is created.
-        Also handles primary email synchronization with django-allauth.
-
-        Args:
-            sender: The model sending the signal (User)
-            instance: The user instance that was just saved
-            created (bool): True if the user was just created, False otherwise
-            **kwargs: Additional signal arguments
-        """
         user = instance
         if created:
             Profile.objects.create(
@@ -45,16 +28,6 @@ class UserSignals:
 
     @classmethod
     def pre_save(cls, sender, instance, **kwargs):
-        """
-        Signal executed before a user is saved.
-
-        Converts the username to lowercase before saving.
-
-        Args:
-            sender: The model sending the signal (User)
-            instance: The user instance about to be saved
-            **kwargs: Additional signal arguments
-        """
         if instance.username:
             instance.username = instance.username.lower()
 

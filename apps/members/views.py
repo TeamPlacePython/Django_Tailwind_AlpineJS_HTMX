@@ -1,5 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.views import View
 from django.views.generic import (
     ListView,
     DetailView,
@@ -8,37 +10,40 @@ from django.views.generic import (
     DeleteView,
 )
 from django.urls import reverse_lazy
-from django.contrib import messages
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from .models import Member, SportsCategory
 from .forms import MemberForm
+from .mixins import MemberQuerysetMixin, HTMXMixin
+from .constants import (
+    HANDENESS_CHOICES,
+    STATUS_CHOICES,
+    ROLES_CHOICES,
+    GENDER_CHOICES,
+    WEAPON_CHOICES,
+    STATUS_BADGES,
+)
+import random
+
+CONSTANT_CLOSE = "Fermer"
 
 
-class BaseMemberListView(LoginRequiredMixin, ListView):
-    """
-    Basic view for listing members, used by specific views (list and table).
-    """
-
+class BaseMemberListView(LoginRequiredMixin, MemberQuerysetMixin, ListView):
     model = Member
     context_object_name = "members"
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = (
-            super()
-            .get_queryset()
-            .select_related("sports_category")
-            .prefetch_related("roles", "tags")
-            .order_by("first_name", "last_name")
-        )
-
+        queryset = super().get_queryset().order_by("first_name", "last_name")
         search_query = self.request.GET.get("search")
         status_filter = self.request.GET.get("status")
         category_filter = self.request.GET.get("category")
+        roles_filter = self.request.GET.get("roles")
+        gender_filter = self.request.GET.get("gender")
+        weapon_filter = self.request.GET.get("weapon")
+        handeness_filter = self.request.GET.get("handeness")
 
         if search_query:
             queryset = queryset.filter(
@@ -53,68 +58,91 @@ class BaseMemberListView(LoginRequiredMixin, ListView):
         if category_filter:
             queryset = queryset.filter(sports_category_id=category_filter)
 
+        if roles_filter:
+            queryset = queryset.filter(roles=roles_filter)
+
+        if gender_filter:
+            queryset = queryset.filter(gender=gender_filter)
+
+        if weapon_filter:
+            queryset = queryset.filter(weapon=weapon_filter)
+
+        if handeness_filter:
+            queryset = queryset.filter(handeness=handeness_filter)
+
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
             {
+                "search": "Recherche par nom...",
+                "button_initialize": "Réinitialiser",
+                "all_status": "Tous les statuts",
+                "status_choices": STATUS_CHOICES,
+                "all_categories": "Toutes les catégories",
                 "categories": SportsCategory.objects.all(),
-                "status_choices": Member.STATUS_CHOICES,
-                "modify": "Modifier",
+                "all_roles": "Tous les rôles",
+                "roles_choices": ROLES_CHOICES,
+                "all_gender": "Tous les genres",
+                "gender_choices": GENDER_CHOICES,
+                "all_weapon": "Toutes les armes",
+                "weapon_choices": WEAPON_CHOICES,
+                "all_handeness": "Toutes les mains",
+                "handeness_choices": HANDENESS_CHOICES,
                 "not_found": "Aucun membre trouvé",
-                "status_colors": {
-                    "active": "actif",
-                    "inactive": "inactif",
-                    "pending": "attente",
-                },
+                "status_colors": STATUS_BADGES,
             }
         )
+
         return context
 
 
 class MemberListView(BaseMemberListView):
-    """Vue pour afficher les membres sous forme de cartes."""
-
     template_name = "members/member_list.html"
+    _context_defaults = {
+        "title": "Membres du club ...",
+        "description": "Liste des membres du club avec option de filtrage.",
+        "button_details": "Voir détails",
+    }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "title": "Membres",
-                "team": "Club team ...",
-                "search": "Rechercher un membre...",
-                "all_status": "Tous les statuts",
-                "all_categories": "Toutes les catégories",
-                "show_details": "Voir détails",
-                "description": (
-                    "Liste des membres de l'organisation avec options de filtrage et de recherche."
-                ),
-            }
-        )
+        context.update(self._context_defaults)
         return context
 
 
 class MemberTableView(BaseMemberListView):
-    """View to display members as a table."""
-
     template_name = "members/members_table.html"
+    _context_defaults = {
+        "title": "Table des Membres ...",
+        "description": "Table des membres de l'association.",
+        "avatars": "Avatars",
+        "first_name": "Prénom",
+        "last_name": "Nom",
+        "gender": "Genre",
+        "email": "Email",
+        "phone": "Téléphone",
+        "birth_date": "Date de naissance",
+        "categories": "Catégories",
+        "status": "Status",
+        "roles": "Rôles",
+        "weapon": "Arme",
+        "handeness": "Main",
+        "no_member": "Aucun membre trouvé.",
+    }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "title": "Table des Membres ...",
-                "description": ("Table des membres de l'association."),
-            }
-        )
+        context.update(self._context_defaults)
         return context
 
 
-class MemberDetailView(LoginRequiredMixin, DetailView):
+class MemberDetailView(
+    LoginRequiredMixin, HTMXMixin, MemberQuerysetMixin, DetailView
+):
     model = Member
-    template_name = "members/member_detail.html"
+    template_name = "members/member_detail_modal.html"
     context_object_name = "member"
 
     def get_queryset(self):
@@ -122,105 +150,108 @@ class MemberDetailView(LoginRequiredMixin, DetailView):
             super()
             .get_queryset()
             .select_related("sports_category")
-            .prefetch_related("roles", "tags")
+            .prefetch_related("tags")
         )
 
     def get_template_names(self):
-        if self.request.headers.get("HX-Request"):
-            return ["members/member_detail.html"]
-        return [self.template_name]
+        return self.get_htmx_template(self.template_name, self.template_name)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        member = self.get_object()
+        member = self.object
         context.update(
             {
-                "roles": member.roles.all(),
                 "tags": member.tags.all(),
-                # Adding data for status badges
-                "status_colors": {
-                    "active": "actif",
-                    "inactive": "inactif",
-                    "pending": "attente",
-                },
-                # Formatting dates if necessary
                 "date_joined_formatted": member.date_joined.strftime(
                     "%d/%m/%Y"
                 ),
                 "last_updated_formatted": member.last_updated.strftime(
                     "%d/%m/%Y %H:%M"
                 ),
+                "button_close": CONSTANT_CLOSE,
+                "personnal_information": "Informations personnelles",
+                "sports_information": "Informations sportives",
+                "modify": "Modifier",
             }
         )
-        if self.request.headers.get("HX-Request"):
+        if self.is_htmx_request():
             context["is_modal"] = True
         return context
 
+    def get_latest_membership_fee(self):
+        latest_fee = self.fees.filter(is_valid=True).first()
+        return latest_fee.amount if latest_fee else None
 
-class MemberCreateView(LoginRequiredMixin, CreateView):
+
+class MemberCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Member
     form_class = MemberForm
     template_name = "members/member_form.html"
+    _htmx_template = ["members/member_form.html"]
+    _regular_template = ["members/member_form.html"]
     success_url = reverse_lazy("members:member-list")
+    success_message = "The member has been successfully created."
+    _context_defaults = {
+        "title": "Créer un membre ...",
+        "photo": "Ajouter un avatar",
+        "button_close": CONSTANT_CLOSE,
+        "button_record": "Enregistrer",
+    }
+
+    def get_template_names(self):
+        return (
+            self._htmx_template
+            if self.request.headers.get("HX-Request")
+            else self._regular_template
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "title": "Ajouter un membre ...",
-                "button_text": "Ajouter",
-            }
-        )
+        context.update(self._context_defaults)
         return context
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        if photo := self.request.FILES.get("form_photo"):
-            self.object.photo = photo
-        self.object.save()
-        form.save_m2m()
-
-        messages.success(
-            self.request,
-            f"Le membre {self.object.get_full_name()} a été créé avec succès.",
-        )
+        response = super().form_valid(form)
 
         if self.request.headers.get("HX-Request"):
-            return HttpResponse(status=204)
+            response = HttpResponse()
+            response["HX-Redirect"] = self.success_url
 
-        return HttpResponseRedirect(self.get_success_url())
+        return response
 
 
 class MemberUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Member
-    template_name = "members/member_form.html"
     form_class = MemberForm
+    template_name = "members/member_form.html"
     success_url = reverse_lazy("members:member-list")
-    success_message = "Le membre a été mis à jour avec succès."
+    success_message = "The member has been successfully updated."
+    _context_defaults = {
+        "photo": "Changer l'avatar",
+        "button_record": "Mise à jour",
+        "button_close": CONSTANT_CLOSE,
+    }
 
     def get_template_names(self):
         if self.request.headers.get("HX-Request"):
-            return ["members/member_update_form_modal.html"]
+            return [self.template_name]
         return [self.template_name]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "title": "Modifier un membre ...",
-                "button_text": "Mettre à jour",
-            }
-        )
+        member_name = self.object.get_full_name()
+        context["title"] = f"Modification de {member_name}"
+        context.update(self._context_defaults)
         return context
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        if "photo" in self.request.FILES:
-            self.object.photo = self.request.FILES["photo"]
-        self.object.save()
+        response = super().form_valid(form)
+
         if self.request.headers.get("HX-Request"):
-            return HttpResponseRedirect(reverse_lazy("members:member-list"))
-        return super().form_valid(form)
+            response = HttpResponse()
+            response["HX-Redirect"] = self.success_url
+
+        return response
 
 
 class MemberDeleteView(LoginRequiredMixin, DeleteView):
@@ -232,19 +263,25 @@ class MemberDeleteView(LoginRequiredMixin, DeleteView):
         member = self.get_object()
         messages.success(
             self.request,
-            f"Le membre {member.get_full_name()} a été supprimé avec succès.",
+            f"The member {member.get_full_name()} has been successfully deleted.",
         )
         return super().delete(request, *args, **kwargs)
 
 
-@require_POST
-def update_photo(request, pk):
-    member = get_object_or_404(Member, pk=pk)
-    if photo := request.FILES.get("photo"):
-        member.photo = photo
+class UpdatePhotoView(View):
+    def post(self, request, pk):
+        member = get_object_or_404(Member, pk=pk)
+
+        # Checks if a photo is present in the files
+        if "photo" not in request.FILES:
+            return JsonResponse({"error": "Aucune photo envoyée."}, status=400)
+
+        # Updates the photo
+        member.photo = request.FILES["photo"]
         member.save()
-        # Renvoyer le HTML de la nouvelle image
-        return HttpResponse(
-            f'<img id="member-photo" src="{member.photo.url}" alt="Photo du membre" class="w-36 h-36 rounded-full object-cover my-4 border-2 border-text_navbar">'
-        )
-    return JsonResponse({"error": "Aucune photo téléchargée."}, status=400)
+
+        # Adds a "cache buster" to avoid browser caching
+        cache_buster = random.randint(1000, 9999)
+        photo_url = f"{member.photo.url}?v={cache_buster}"
+
+        return JsonResponse({"photo_url": photo_url})

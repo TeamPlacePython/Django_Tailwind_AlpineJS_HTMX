@@ -1,5 +1,8 @@
 def members_items(request):
+    # Default menu items that all users can see
     menu_items = [{"name": "Team", "url": "members:member-list"}]
+
+    # If the user is authenticated and is a staff member, add extra menu items
     if request.user.is_authenticated and request.user.is_staff:
         menu_items.extend(
             [
@@ -8,4 +11,5 @@ def members_items(request):
             ]
         )
 
+    # Return the context that will be available in templates
     return {"members_items": menu_items}

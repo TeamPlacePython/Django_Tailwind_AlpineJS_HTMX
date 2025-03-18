@@ -9,20 +9,27 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="mb-8 font-title">{{ title }}</h1>
 </div>
-<div class="flex justify-center items-center mx-[3px]">
-    <div class="bg-navbar rounded-2xl shadow-md border border-text_navbar p-6 w-full max-w-4xl">
-        {% include "components/box_header.html" %} 
-        <div class="overflow-x-auto max-w-full">
+
+<!-- Table -->
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+    <div class="bg-navbar rounded-2xl shadow-md border border-text_navbar p-6 w-full">
+        {% include "components/logo_title.html" %} 
+        <div class="overflow-x-auto w-full">
             <table class="bg-navbar shadow-md md:drop-shadow-2xl shadow-text_navbar w-full p-6 md:p-8 min-w-max">
                 <thead>
                     <tr class="px-6 py-3 border-b-2 border-text_navbar text-left text-text_navbar bg-hover_navbar font-title text-2xl">
-                        <th>Prénom</th>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Date de naissance</th>
-                        <th>Catégories</th>
-                        <th>Status</th>
-                        <th>Rôles</th>
+                        <th>{{ avatars }}</th>
+                        <th>{{ first_name }}</th>
+                        <th>{{ last_name }}</th>
+                        <th>{{ gender }}</th>
+                        <th>{{ email }}</th>
+                        <th>{{ phone }}</th>
+                        <th>{{ birth_date }}</th>
+                        <th>{{ categories }}</th>
+                        <th>{{ status }}</th>
+                        <th>{{ roles }}</th>
+                        <th>{{ weapon }}</th>
+                        <th>{{ handeness }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,21 +40,31 @@
                         hx-trigger="dblclick"
                         hx-swap="innerHTML"
                         _="on dblclick remove .hidden from #memberModal">
+                        {% if member.photo %}
+                        <td class="flex justify-center items-center">
+                            <img src="{{ member.photo.url }}" alt="Photo de {{ member.get_full_name }}"
+                                 class="w-12 h-12 rounded-full object-cover">
+                        </td>
+                        {% endif %}
                         <td>{{ member.first_name }}</td>
                         <td>{{ member.last_name }}</td>
+                        <td>{{ member.get_gender_display }}</td>
                         <td>{{ member.email }}</td>
+                        <td>{{ member.phone_number }}</td>
                         <td>{{ member.birth_date }}</td>
                         <td>{{ member.sports_category.name }}</td>
-                        <td>{{ member.get_status_display }}</td>
-                        {% if member.roles.all %}
-                            {% for role in member.roles.all %}
-                            <td>{{ role.name }}{% if not forloop.last %}, {% endif %}</td>
-                            {% endfor %}
+                        <td class="badge {{ status_colors|get_item:member.status }}">
+                            {{ member.get_status_display }}
+                        </td>
+                        {% if member.roles %}
+                        <td>{{ member.get_roles_display }}</td>
                         {% endif %}
+                        <td>{{ member.get_weapon_display|default:"" }}</td>
+                        <td>{{ member.get_handeness_display|default:"" }}</td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-4">Aucun membre trouvé.</td>
+                        <td colspan="6" class="text-center py-4">{{ no_member }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

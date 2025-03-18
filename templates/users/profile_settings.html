@@ -3,11 +3,11 @@
 {% block title %}{% if user.profile.displayname %}{{ title }} {{ user.profile.displayname }}{% else %}{{ title }}{% endif %}{% endblock title %}
 
 {% block content %}
-<h1 class="mb-8">{{ title }}</h1>
-<table class="w-full text-sm text-left text-gray-500">
+<h1 class="mb-8 text-text_navbar">{{ title }}</h1>
+<table class="w-full text-sm text-left text-text_navbar">
     <tbody>
         <tr>
-            <th scope="row" class="pt-4 pb-1 text-base font-bold text-gray-900">
+            <th scope="row" class="pt-4 pb-1 text-base font-bold text-text_navbar">
                 {{ email_address }}
             </th>
             <td id="email-address" class="pt-4 pb-1 pl-4">

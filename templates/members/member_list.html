@@ -6,159 +6,217 @@
 {% block meta_description %}{{ description }}{% endblock meta_description %}
 
 {% block content %}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 class="mb-8 font-title">{{ team }}</h1>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="mb-8 font-title">{{ title }}</h1>
 
-        <!-- Header with search and filters -->
-        <div class="mb-6">
-            <form class="grid grid-cols-1 md:grid-cols-3 gap-4" 
-                  hx-get="{% url 'members:member-list' %}"
-                  hx-trigger="change from:select, input from:input delay:300ms"
-                  hx-target="#members-list"
-                  hx-push-url="true"
-                  hx-select="#members-list">
-                <div class="col-span-1">
-                    <input type="text" 
-                           id="member-search"
-                           name="search" 
-                           placeholder="{{ search }}" 
-                           class="input input-bordered w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
-                           value="{{ request.GET.search }}"
-                           aria-label="{{ search }}">
-                </div>
+    <!-- Header with search and filters -->
+    <div class="mb-6">
+        <form class="w-full"
+              hx-get="{% url 'members:member-list' %}"
+              hx-trigger="change from:select, input from:input delay:300ms"
+              hx-target="#members-list"
+              hx-push-url="true"
+              hx-select="#members-list">
+
+            <!-- Full width search bar -->
+            <div class="w-full mb-4 flex items-center">
+                <input type="text"
+                       id="member-search"
+                       name="search"
+                       placeholder="{{ search }}"
+                       class="input input-bordered w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                       value="{{ request.GET.search }}"
+                       aria-label="{{ search }}">
+
+                <!-- Filter reset button -->
+                <button type="button"
+                        class="ml-2 btn btn-secondary"
+                        id="reset-filters"
+                        onclick="resetFilters()">{{ button_initialize }}
+                </button>
+            </div>
+
+            <!-- Container filter -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Status filter -->
                 {% if request.user.is_authenticated and request.user.is_staff %}
-                <div class="col-span-1">
-                    <select id="status-filter" 
-                            name="status" 
-                            class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
-                            aria-label="Filtrer par statut">
-                        <option value="">{{ all_status }}</option>
-                        {% for status in status_choices %}
-                            <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}{{ selected }}{% endif %}>
-                                {{ status.1 }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
+                <select id="status-filter"
+                        name="status"
+                        class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                        aria-label="Filter by status">
+                    <option value="">{{ all_status }}</option>
+                    {% for status in status_choices %}
+                    <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
+                    {% endfor %}
+                </select>
                 {% endif %}
-                <div class="col-span-1">
-                    <select name="category" 
-                            class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]">
-                        <option value="">{{ all_categories }}</option>
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}{{ selected }}{% endif %}>
-                                {{ category.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </form>
-        </div>
 
-        <!-- list of members -->
-        <div id="members-list">
-            <div class="htmx-indicator flex justify-center py-4" style="display: none;">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-text_navbar"></div>
+                <!-- Category filter -->
+                <select id="category-filter"
+                        name="category"
+                        class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]">
+                    <option value="">{{ all_categories }}</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Roles filter -->
+                <select id="roles-filter"
+                        name="roles"
+                        class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                        aria-label="Filter by roles">
+                    <option value="">{{ all_roles }}</option>
+                    {% for role in roles_choices %}
+                        <option value="{{ role.0 }}" {% if request.GET.roles == role.0 %}selected{% endif %}>{{ role.1 }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Gender filter -->
+                <select id="gender-filter"
+                        name="gender"
+                        class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                        aria-label="Filter by gender">
+                    <option value="">{{ all_gender }}</option>
+                    {% for gender in gender_choices %}
+                        <option value="{{ gender.0 }}" {% if request.GET.gender == gender.0 %}selected{% endif %}>{{ gender.1 }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Weapon filter -->
+                <select id="weapon-filter"
+                        name="weapon"
+                        class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                        aria-label="Filter by weapon">
+                    <option value="">{{ all_weapon }}</option>
+                    {% for weapon in weapon_choices %}
+                        <option value="{{ weapon.0 }}" {% if request.GET.weapon == weapon.0 %}selected{% endif %}>{{ weapon.1 }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Handeness filter -->
+                <select id="handeness-filter"
+                        name="handeness"
+                        class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                        aria-label="Filter by handeness">
+                    <option value="">{{ all_handeness }}</option>
+                    {% for handeness in handeness_choices %}
+                        <option value="{{ handeness.0 }}" {% if request.GET.handeness == handeness.0 %}selected{% endif %}>{{ handeness.1 }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {% for member in members %}
-                    <div class="bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar border border-text_navbar p-6">
-                        <div class="flex flex-col items-center">
-                            {% if member.photo %}
-                                <img src="{{ member.photo.url }}" 
-                                     alt="{{ member.get_full_name }}" 
-                                     class="w-24 h-24 rounded-full mb-4 object-cover border-2 border-text_navbar">
-                            {% endif %}
-                            <span class="text-2xl font-title font-semibold mb-2">{{ member.get_full_name }}</span>
-                            {% if request.user.is_authenticated and request.user.is_staff %}
-                            <p class="text-gray-600 mb-1">{{ member.email }}</p>
-                            <span class="badge bg-{{ status_colors|get_item:member.status }}">
-                                {{ member.get_status_display }}
-                            </span>
-                            {% endif %}
-                            {% if member.sports_category %}
-                                <p class="text-sm mb-4">{{ member.sports_category.name }}</p>
-                            {% else %}
-                                {% if member.roles.all %}
-                                    <p class="text-sm mb-4">
-                                        {% for role in member.roles.all %}
-                                            {{ role.name }}{% if not forloop.last %}, {% endif %}
-                                        {% endfor %}
-                                    </p>
+        </form>
+    </div>
+    
+
+    <!-- List of members -->
+    <div id="members-list">
+        <div class="htmx-indicator flex justify-center py-4" style="display: none;">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-text_navbar"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for member in members %}
+                <div class="bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar border border-text_navbar p-6">
+                    <div class="flex flex-col items-center">
+                        {% if member.photo %}
+                            <img src="{{ member.photo.url }}" 
+                                 alt="{{ member.get_full_name }}" 
+                                 class="w-24 h-24 rounded-full mb-4 object-cover border-2 border-text_navbar">
+                        {% endif %}
+                        <span class="text-2xl font-title font-semibold mb-2">{{ member.get_full_name }}</span>
+                        {% if request.user.is_authenticated and request.user.is_staff %}
+                        <p class="text-gray-600 mb-1">{{ member.email }}</p>
+                        <span class="badge {{ status_colors|get_item:member.status }}">
+                            {{ member.get_status_display }}
+                        </span>
+                        {% endif %}
+                        {% if member.sports_category %}
+                            <p class="text-sm mb-4">{{ member.sports_category.name }}</p>
+                        {% else %}
+                            <p class="text-sm mb-4">
+                                {% if member.roles %}
+                                {{ member.get_roles_display }}
                                 {% endif %}
-                            {% endif %}
-                            {% if request.user.is_authenticated and request.user.is_staff %}
-                            <div class="flex gap-2 mt-auto">
-                                <button type="button" 
-                                        class="btn btn-sm bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
-                                        hx-get="{% url 'members:member-detail' member.pk %}"
-                                        hx-target="#memberModalContent"
-                                        hx-trigger="click"
-                                        hx-swap="innerHTML">
-                                    {{ show_details }}
-                                </button>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% empty %}
-                    <div class="col-span-3 text-center py-8">
-                        <p class="text-gray-500">{{ not_found }}</p>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <!-- Pagination -->
-            {% if is_paginated %}
-                <div class="flex justify-center mt-8">
-                    <div class="btn-group">
-                        {% if page_obj.has_previous %}
-                            <a href="?page={{ page_obj.previous_page_number }}" 
-                               class="btn"
-                               hx-get="?page={{ page_obj.previous_page_number }}"
-                               hx-target="#members-list"
-                               hx-select="#members-list"
-                               hx-push-url="true">«</a>
+                            </p>
                         {% endif %}
-                        <button class="btn">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</button>
-                        {% if page_obj.has_next %}
-                            <a href="?page={{ page_obj.next_page_number }}" 
-                               class="btn"
-                               hx-get="?page={{ page_obj.next_page_number }}"
-                               hx-target="#members-list"
-                               hx-select="#members-list"
-                               hx-push-url="true">»</a>
+                        {% if request.user.is_authenticated and request.user.is_staff %}
+                        <div class="flex gap-2 mt-auto">
+                            <button type="button" 
+                                    class="btn btn-sm bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
+                                    hx-get="{% url 'members:member-detail' member.pk %}"
+                                    hx-target="#memberModalContent"
+                                    hx-trigger="click"
+                                    hx-swap="innerHTML">
+                                {{ button_details }}
+                            </button>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
-            {% endif %}
+            {% empty %}
+                <div class="col-span-3 text-center py-8">
+                    <p class="text-gray-500">{{ not_found }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <div class="flex justify-center mt-8">
+                <div class="btn-group">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" 
+                           class="btn"
+                           hx-get="?page={{ page_obj.previous_page_number }}"
+                           hx-target="#members-list"
+                           hx-select="#members-list"
+                           hx-push-url="true"
+                           hx-trigger="click">«</a>
+                    {% endif %}
+                    <button class="btn">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</button>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" 
+                           class="btn"
+                           hx-get="?page={{ page_obj.next_page_number }}"
+                           hx-target="#members-list"
+                           hx-select="#members-list"
+                           hx-push-url="true"
+                           hx-trigger="click">»</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" 
+     id="memberModal" 
+     tabindex="-1" 
+     aria-labelledby="memberModalLabel" 
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-navbar" id="memberModalContent">
+            <!-- Content will be loaded here by HTMX -->
         </div>
     </div>
+</div>
 
-    <!-- Modal -->
-    <div class="modal fade" 
-         id="memberModal" 
-         tabindex="-1" 
-         aria-labelledby="memberModalLabel" 
-         aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content bg-navbar" id="memberModalContent">
-                <!-- Content will be uploaded here by HTMX -->
-            </div>
-        </div>
-    </div>
+<!-- Script to reset filters -->
+<script>
+    function resetFilters() {
+        // Reset the selectors
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            select.selectedIndex = 0;
+        });
 
-    {% comment %} <!-- Modal for editing -->
-    <div class="modal fade" 
-         id="editMemberModal" 
-         tabindex="-1" 
-         aria-labelledby="editMemberModalLabel" 
-         aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content bg-navbar" id="editMemberModalBody">
-                <!-- Content will be uploaded here by HTMX -->
-            </div>
-        </div>
-    </div> {% endcomment %}
+        // Reset the search box
+        document.getElementById('member-search').value = '';
+
+        // Submit form to apply changes
+        document.querySelector('form').submit();
+    }
+</script>
 
 {% endblock content %}

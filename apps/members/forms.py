@@ -1,20 +1,57 @@
+import datetime
 from django import forms
 from django.core.validators import RegexValidator
-import datetime
-from .models import Member
+
+from .models import Member, SportsCategory
+from .constants import (
+    GENDER_CHOICES,
+    WEAPON_CHOICES,
+    HANDENESS_CHOICES,
+    ROLES_CHOICES,
+)
+
+ROLES_CHOICES_WITH_PLACEHOLDER = [
+    ("", "Selectionnez un rôle...")
+] + ROLES_CHOICES
+
+GENDER_CHOICES_WITH_PLACEHOLDER = [
+    ("", "Selectionnez un genre...")
+] + GENDER_CHOICES
+
+WEAPON_CHOICES_WITH_PLACEHOLDER = [
+    ("", "Selectionnez une arme...")
+] + WEAPON_CHOICES
+
+HANDENESS_CHOICES_WITH_PLACEHOLDER = [
+    ("", "Selectionnez la dominance manuelle...")
+] + HANDENESS_CHOICES
 
 
 class MemberForm(forms.ModelForm):
-    # Validateur pour le numéro de téléphone
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    gender = forms.ChoiceField(
+        choices=GENDER_CHOICES_WITH_PLACEHOLDER,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control bg-navbar text-text_navbar_secondary"
+            }
+        ),
+        required=False,
+    )
+
+    # Phone number validator
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{10,15}$",
         message=(
-            "Le numéro de téléphone doit être au format : '9999999999'. "
-            "Maximum 15 chiffres autorisés."
+            "Phone number must be in format: '9999999999'. "
+            "Maximum 15 digits allowed."
         ),
     )
 
-    # Personnalisation des champs
+    # Custom form fields
     phone_number = forms.CharField(
         validators=[phone_regex],
         max_length=17,
@@ -37,72 +74,141 @@ class MemberForm(forms.ModelForm):
         ),
     )
 
+    sports_category = forms.ModelChoiceField(
+        queryset=SportsCategory.objects.all(),
+        widget=forms.Select(
+            attrs={
+                "class": "form-control bg-navbar text-text_navbar_secondary"
+            }
+        ),
+        required=False,
+        empty_label="Selectionnez une catégorie...",
+    )
+
+    roles = forms.ChoiceField(
+        choices=ROLES_CHOICES_WITH_PLACEHOLDER,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control bg-navbar text-text_navbar_secondary"
+            }
+        ),
+        required=False,
+    )
+
+    weapon = forms.ChoiceField(
+        choices=WEAPON_CHOICES_WITH_PLACEHOLDER,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control bg-navbar text-text_navbar_secondary"
+            }
+        ),
+        required=False,
+    )
+
+    handeness = forms.ChoiceField(
+        choices=HANDENESS_CHOICES_WITH_PLACEHOLDER,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control bg-navbar text-text_navbar_secondary"
+            }
+        ),
+        required=False,
+    )
+
     class Meta:
         model = Member
         fields = [
+            "gender",
             "first_name",
             "last_name",
             "birth_date",
             "email",
             "phone_number",
             "address",
+            "address_complement",
             "postal_code",
             "city",
             "sports_category",
+            "weapon",
+            "handeness",
+            "roles",
             "status",
         ]
         widgets = {
-            "first_name": forms.TextInput(
+            "gender": forms.Select(
                 attrs={
-                    "class": "form-control",
-                    "placeholder": "Prénom",
+                    "class": "form-control bg-navbar text-text_navbar_secondary"
                 }
             ),
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "First name"}
+            ),
             "last_name": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "Nom de famille",
-                }
+                attrs={"class": "form-control", "placeholder": "Last name"}
             ),
             "birth_date": forms.DateInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Date de naissance",
                     "type": "date",
                     "max": datetime.date.today().strftime("%Y-%m-%d"),
                     "min": "1900-01-01",
                 },
-                format="%d/%m/%Y",
+                format="%Y-%m-%d",
             ),
             "email": forms.EmailInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "email@exemple.com",
+                    "placeholder": "email@example.com",
                 }
             ),
             "address": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Rue",
+                    "placeholder": "Adresse",
+                }
+            ),
+            "address_complement": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Complement d'adresse",
                 }
             ),
             "postal_code": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "Ex: 06210",
-                }
+                attrs={"class": "form-control", "placeholder": "Ex: 06210"}
             ),
             "city": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "City"}
+            ),
+            "sports_category": forms.Select(
                 attrs={
-                    "class": "form-control",
-                    "placeholder": "Ville",
+                    "class": "form-control bg-navbar text-text_navbar_secondary"
                 }
             ),
-            "sports_category": forms.Select(attrs={"class": "form-control"}),
-            "status": forms.Select(attrs={"class": "form-control mb-7"}),
+            "weapon": forms.Select(
+                attrs={
+                    "class": "form-control bg-navbar text-text_navbar_secondary"
+                }
+            ),
+            "handeness": forms.Select(
+                attrs={"class": "form-control bg-navbar"}
+            ),
+            "roles": forms.Select(
+                attrs={
+                    "class": "form-control bg-navbar text-text_navbar_secondary"
+                }
+            ),
+            "status": forms.Select(
+                attrs={
+                    "class": "form-control bg-navbar text-text_navbar_secondary"
+                }
+            ),
         }
 
     def clean_email(self):
+        """Validate that the email is unique.
+
+        Excludes the current instance when updating.
+        """
         email = self.cleaned_data.get("email")
         if (
             email
@@ -110,19 +216,22 @@ class MemberForm(forms.ModelForm):
             .exclude(pk=self.instance.pk if self.instance else None)
             .exists()
         ):
-            # Checks if the email already exists, excluding the current instance in case of update
-            raise forms.ValidationError(
-                "Cette adresse email est déjà utilisée."
-            )
+            raise forms.ValidationError("This email is already in use.")
         return email
 
     def clean_postal_code(self):
+        """Ensure that the postal code contains exactly 5 digits."""
         postal_code = self.cleaned_data.get("postal_code")
         if postal_code and (
             not postal_code.isdigit() or len(postal_code) != 5
         ):
-            # Verify that the postal code contains exactly 5 digits
             raise forms.ValidationError(
-                "Le code postal doit contenir exactement 5 chiffres."
+                "Postal code must contain exactly 5 digits."
             )
         return postal_code
+
+    def clean_birth_date(self):
+        """Ensure that the birth date is not in the future."""
+        birth_date = self.cleaned_data.get("birth_date")
+        if birth_date and birth_date > datetime.date.today():
+            raise forms.ValidationError("Birth date cannot be in the future.")

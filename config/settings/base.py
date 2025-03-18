@@ -182,7 +182,7 @@ STATIC_ROOT = Path(
 )
 
 # https://docs.djangoproject.com/fr/5.1/ref/settings/#static-url
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 # https://docs.djangoproject.com/fr/5.1/ref/settings/#staticfiles-dirs
 STATICFILES_DIRS = [BASE_DIR / "static"]

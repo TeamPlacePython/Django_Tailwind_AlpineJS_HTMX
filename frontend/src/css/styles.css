@@ -111,11 +111,19 @@ input[name="remember"] {
 .form-control {
     @apply w-full h-13 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
 }
+.form-group {
+    margin-bottom: 10px;
+}
 
 .alert-info { @apply bg-sky-600 }
 .alert-success { @apply bg-emerald-600 }
 .alert-warning { @apply bg-orange-600 }
 .alert-danger { @apply bg-defilepsie_red_secondary }
+
+.text-info { @apply text-sky-600 }
+.text-success { @apply text-emerald-600 }
+.text-warning { @apply text-orange-600 }
+.text-danger { @apply text-defilepsie_red_secondary }
 
 .green-dot { @apply rounded-full bg-green-700 p-1.5 }
 .gray-dot{ @apply rounded-full bg-gray-500 p-1.5 }

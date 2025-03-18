@@ -1,0 +1,12 @@
+{% if value %}
+    <div class="member-info form-group">
+        <strong>{{ label }} :</strong>
+        {% if status_class %}
+            <span class="badge {{ status_class }}">{{ value }}</span>
+        {% elif prefix %}
+            <a href="{{ prefix }}{{ value }}">{{ value }}</a>
+        {% else %}
+            {{ value }}
+        {% endif %}
+    </div>
+{% endif %}

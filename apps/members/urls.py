@@ -6,7 +6,7 @@ from .views import (
     MemberCreateView,
     MemberUpdateView,
     MemberDeleteView,
-    update_photo,
+    UpdatePhotoView,
 )
 
 app_name = "members"
@@ -26,5 +26,9 @@ urlpatterns = [
         MemberDeleteView.as_view(),
         name="member-delete",
     ),
-    path("member/<int:pk>/update-photo/", update_photo, name="update-photo"),
+    path(
+        "member/<int:pk>/photo/update/",
+        UpdatePhotoView.as_view(),
+        name="update-photo",
+    ),
 ]

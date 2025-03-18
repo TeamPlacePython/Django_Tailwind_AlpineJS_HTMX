@@ -1,20 +1,21 @@
-from django.db import models
+from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
-
-
-class Role(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
+from django.db import models
+from datetime import date
+from .constants import (
+    ROLES_CHOICES,
+    STATUS_CHOICES,
+    WEAPON_CHOICES,
+    GENDER_CHOICES,
+    HANDENESS_CHOICES,
+    STATUS_BADGES,
+)
 
 
 class Tag(models.Model):
+    """Flexible tags assigned to members (e.g., Fencer, Volunteer)."""
+
     name = models.CharField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -26,6 +27,8 @@ class Tag(models.Model):
 
 
 class SportsCategory(models.Model):
+    """Age category for fencing practice."""
+
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
     start_year = models.IntegerField(blank=True, null=True)
@@ -40,29 +43,24 @@ class SportsCategory(models.Model):
         return self.name
 
     def is_applicable(self, birth_year):
-        """Vérifie si la catégorie est applicable en fonction de l'année de naissance du membre."""
-        if self.start_year is not None and self.end_year is not None:
+        """Checks if this category applies based on the member's birth year."""
+        if self.start_year and self.end_year:
             return self.start_year <= birth_year <= self.end_year
         return False
 
 
 class Member(models.Model):
-    STATUS_CHOICES = [
-        ("active", "Actif"),
-        ("inactive", "Inactif"),
-        ("pending", "En attente"),
-    ]
+    """Represents a fencing association member."""
 
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{9,15}$",
-        message="The phone number must be formatted: '+999999999'",
+        message="Phone number must be in format: '+999999999'.",
     )
-
-    # Informations personnelles
-    first_name = models.CharField(max_length=100, verbose_name="First name")
-    last_name = models.CharField(max_length=100, verbose_name="Last name")
+    # Personal Information
+    first_name = models.CharField(max_length=100, verbose_name="First Name")
+    last_name = models.CharField(max_length=100, verbose_name="Last Name")
     birth_date = models.DateField(
-        verbose_name="Date de naissance", null=True, blank=True
+        verbose_name="Birth Date", null=True, blank=True
     )
     email = models.EmailField(unique=True)
     phone_number = models.CharField(
@@ -70,58 +68,85 @@ class Member(models.Model):
         max_length=17,
         blank=True,
         null=True,
-        verbose_name="Phone number",
+        verbose_name="Phone Number",
     )
 
-    # Adresse
+    # Address
     address = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="Adresse"
+        max_length=255, blank=True, null=True, verbose_name="Address"
     )
-    city = models.CharField(
-        max_length=100, blank=True, null=True, verbose_name="Ville"
+    address_complement = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Address complement",
     )
     postal_code = models.CharField(
-        max_length=10, blank=True, null=True, verbose_name="Code postal"
+        max_length=10, blank=True, null=True, verbose_name="Postal Code"
+    )
+    city = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name="City"
     )
 
-    # Relations et catégorisation
-    roles = models.ManyToManyField(
-        Role, related_name="members", default="Membres"
+    # Relationships & Categorization
+    roles = models.CharField(
+        max_length=20,
+        choices=ROLES_CHOICES,
+        default="visitor",
+        blank=True,
+        verbose_name="Role",
     )
     tags = models.ManyToManyField(
-        Tag, related_name="members", blank=True, default="Escrimeur"
+        Tag, related_name="members", blank=True, verbose_name="tag"
     )
     sports_category = models.ForeignKey(
         SportsCategory,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="Sports category",
+        verbose_name="Sports Category",
     )
-
-    # Statut et dates
+    # Status & Dates
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
         default="pending",
-        verbose_name="Statut",
+        verbose_name="Status",
+    )
+    weapon = models.CharField(
+        max_length=10,
+        choices=WEAPON_CHOICES,
+        verbose_name="weapon",
+        blank=True,
+        null=True,
+    )
+    gender = models.CharField(
+        max_length=10,
+        choices=GENDER_CHOICES,
+        verbose_name="gender",
+    )
+    handeness = models.CharField(
+        max_length=15,
+        choices=HANDENESS_CHOICES,
+        verbose_name="handeness",
+        blank=True,
+        null=True,
     )
     date_joined = models.DateField(
-        auto_now_add=True, verbose_name="Date of registration"
+        auto_now_add=True, verbose_name="Date Joined"
     )
     last_updated = models.DateTimeField(
-        auto_now=True, verbose_name="Last update"
+        auto_now=True, verbose_name="Last Updated"
     )
-
-    # Média
+    # Media
     photo = models.ImageField(
         upload_to="member_photos/", blank=True, null=True, verbose_name="Photo"
     )
 
     class Meta:
         ordering = ["last_name", "first_name"]
-        verbose_name = "Membre"
-        verbose_name_plural = "Membres"
+        verbose_name = "Member"
+        verbose_name_plural = "Members"
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -130,13 +155,80 @@ class Member(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     def get_photo_url(self):
+        """Returns the member's photo URL if available."""
         return self.photo.url if self.photo else None
 
-    def determine_sports_category(self):
-        """Détermine la catégorie sportive en fonction de l'année de naissance."""
-        for category in SportsCategory.objects.all():
-            if category.is_applicable(self.birth_year):
+    def get_age(self):
+        """Returns the age of the member based on birth_date."""
+        if not self.birth_date:
+            return None
+        today = date.today()
+        return (
+            today.year
+            - self.birth_date.year
+            - (
+                (today.month, today.day)
+                < (self.birth_date.month, self.birth_date.day)
+            )
+        )
+
+    def get_status_badge(self):
+        """Returns the CSS class for the status badge."""
+        return STATUS_BADGES.get(self.status, "badge-secondary")
+
+    def assign_sports_category(self):
+        """Automatically assigns the correct sports category based on the member's age."""
+        if not self.birth_date:
+            return None
+
+        birth_year = self.birth_date.year
+        categories = cache.get("sports_categories")
+
+        if not categories:
+            categories = list(SportsCategory.objects.all())
+            cache.set(
+                "sports_categories", categories, 3600
+            )  # Cache for 1 hour
+
+        for category in categories:
+            if category.is_applicable(birth_year):
                 self.sports_category = category
-                self.save()
+                self.save(update_fields=["sports_category"])
                 return category
         return None
+
+    def clean(self):
+        """Validation centralisée."""
+        # 1. Date de naissance future
+        if self.birth_date and self.birth_date > date.today():
+            raise ValidationError(
+                "La date de naissance ne peut pas être dans le futur."
+            )
+
+    def save(self, *args, **kwargs):
+        if kwargs.get("update_fields") is None:
+            self.full_clean()
+        if not self.roles:
+            self.roles = "visitor"
+        super().save(*args, **kwargs)
+
+
+class MembershipFee(models.Model):
+    """Tracks membership fee payments for members."""
+
+    member = models.ForeignKey(
+        Member, on_delete=models.CASCADE, related_name="fees"
+    )
+    amount = models.DecimalField(
+        max_digits=6, decimal_places=2, verbose_name="Amount (€)"
+    )
+    payment_date = models.DateField(
+        auto_now_add=True, verbose_name="Payment Date"
+    )
+    is_valid = models.BooleanField(default=True, verbose_name="Valid Payment")
+
+    class Meta:
+        ordering = ["-payment_date"]
+
+    def __str__(self):
+        return f"{self.member} - {self.amount}€ ({'Valid' if self.is_valid else 'Unpaid'})"

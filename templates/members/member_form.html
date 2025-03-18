@@ -2,7 +2,6 @@
 {% load static %}
 {% load django_vite %}
 {% load crispy_forms_tags %}
-{% load widget_tweaks %}
 
 {% block title %}{{ title }}{% endblock title %}
 
@@ -10,67 +9,96 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="font-title">{{ title }}</h1>
 </div>
+
 <div class="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8 py-8">
     <div class="bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar border border-text_navbar">
         <div class="p-6">
 
-            <!-- Modification de la section photo -->
+            <!-- Section : Avatar avec prévisualisation -->
             <div class="text-center flex flex-col items-center mb-6">
-                <img id="member-photo" 
-                     src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% else %}{% vite_asset_url 'images/avatar.svg' %}{% endif %}" 
-                     alt="Photo du membre"
-                     class="w-36 h-36 rounded-full object-cover my-4 border-2 border-text_navbar">
+                <!-- Prévisualisation de l'avatar -->
+                <img id="member-photo"
+                    src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% else %}{% vite_asset_url 'images/avatar.svg' %}{% endif %}"
+                    alt="{{ form.instance.pk|default:'New Member' }}"
+                    class="w-32 h-32 rounded-full object-cover mb-4">
 
-                <!-- Le champ photo reste caché -->
-                <div class="hidden">
-                    {{ form.photo }}
-                </div>
+                <!-- Champ caché pour l'upload -->
+                <input type="file" name="photo" id="id_photo" class="hidden" accept="image/*">
 
-                <!-- Le champ photo visible pour l'interaction utilisateur -->
-                <input type="file" 
-                       id="id_photo" 
-                       class="hidden"
-                       accept="image/*"
-                       {% if form.instance.pk %}
-                       hx-post="{% url 'members:update-photo' form.instance.pk %}"
-                       hx-encoding="multipart/form-data"
-                       hx-trigger="change"
-                       hx-target="#member-photo"
-                       hx-swap="outerHTML"
-                       {% else %}
-                       hx-trigger="change"
-                       hx-target="#member-photo"
-                       hx-swap="outerHTML"
-                       {% endif %}>
-
-                <button type="button" 
-                        onclick="document.getElementById('id_photo').click()"
-                        class="mt-2 px-4 py-2 text-sm bg-navbar border border-text_navbar rounded-lg hover:bg-text_navbar hover:text-navbar transition-colors">
-                    <i class="fas fa-camera mr-2"></i>Changer la photo
+                <!-- Bouton pour déclencher la sélection de fichier -->
+                <button type="button"
+                    class="text-text_navbar hover:text-white border border-text_navbar hover:bg-text_navbar focus:ring-4 focus:outline-none focus:ring-text_navbar font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    onclick="document.getElementById('id_photo').click()">
+                    {{ photo }}
                 </button>
-
-                <div class="text-center max-w-md mt-4">
-                    <h1 id="member-name" class="text-xl font-semibold">
-                        {{ form.instance.first_name }} {{ form.instance.last_name }}
-                    </h1>
-                    <div class="text-gray-400 mb-2 -mt-1">{{ form.instance.email|default:"" }}</div>
-                </div>
             </div>
 
-            <div id="photo-feedback" class="text-sm mt-2 hidden">
-                Photo mise à jour avec succès
-            </div>
+            <!-- Formulaire de création/modification -->
+            <form hx-post="{% if form.instance.pk %}{% url 'members:member-update' form.instance.pk %}{% else %}{% url 'members:member-create' %}{% endif %}"
+                  enctype="multipart/form-data">
 
-            <form method="post" 
-                {% if form.instance.pk %}
-                hx-post="{% url 'members:member-update' form.instance.pk %}" 
-                hx-target="#editMemberModalBody"
-                {% endif %}>
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Enregistrer</button>
+
+                <div class="mt-6 flex justify-end flex">
+                    <a class="button button-gray mr-1" href="{{ request.META.HTTP_REFERER }}">{{ button_close }}</a>
+                    <button type="submit" class="button btn-primary">{{ button_record }}</button>
+                </div>
             </form>
+
         </div>
     </div>
 </div>
-{% endblock %}
+
+<script>
+    document.getElementById('id_photo').addEventListener('change', function (e) {
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            // Prévisualisation locale de l'image avant l'envoi
+            reader.onload = function (e) {
+                document.getElementById('member-photo').setAttribute('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+
+            // Création de l'objet FormData pour envoyer le fichier
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            // Détermine l'URL dynamiquement : création ou modification
+            const isUpdate = "{{ form.instance.pk|default:'0' }}" !== "0";
+            const memberId = "{{ form.instance.pk|default:'0' }}";
+
+            const url = isUpdate
+                ? `/member/${memberId}/photo/update/`  // Modification
+                : "/member/photo/create/";             // Création
+
+            // Envoi de la requête avec fetch()
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Erreur lors de l\'upload de l\'image');
+            })
+            .then(data => {
+                if (data.photo_url) {
+                    document.getElementById('member-photo').setAttribute('src', data.photo_url);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Erreur lors du téléchargement de la photo.');
+            });
+        }
+    });
+</script>
+
+{% endblock content %}

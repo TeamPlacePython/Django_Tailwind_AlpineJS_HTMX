@@ -5,7 +5,7 @@
 <wrapper class="block h-[calc(100vh-80px)] pt-8 pb-4 px-4 max-w-7xl mx-auto">
     <h1 class="mb-8 font-title">Messages</h1>
 
-    <div id="messageboard" class="grid md:grid-cols-3 lg:grid-cols-4 h-5/6 bg-white md:shadow-2xl md:rounded-2xl relative border border-text_navbar shadow-text_navbar p-6">
+    <div id="messageboard" class="grid md:grid-cols-3 lg:grid-cols-4 h-5/6 bg-navbar md:shadow-2xl md:rounded-2xl relative border border-text_navbar shadow-text_navbar p-6">
         <div id="messages" class="flex flex-col md:col-span-2 lg:col-span-3 relative overflow-y-auto h-full">
             <div class="flex flex-col gap-6 px-4 pt-8 md:px-10 grow">
                 {% for message in messageboard.messages.all reversed %}
@@ -13,7 +13,7 @@
                     <a class="contents" href="{% url 'users:profile' message.author.username %}">
                         <img class="w-10 h-10 md:w-14 md:h-14 object-cover rounded-full" src="{{ message.author.profile.avatar }}">
                     </a>
-                    <div class="bg-white p-4 w-full rounded-xl border-2 border-hover_navbar">
+                    <div class="bg-navbar p-4 w-full rounded-xl border-2 border-hover_navbar">
                         <div class="flex flex-col md:flex-row justify-between text-xs pb-3 text-text_navbar">
                             <div>
                                 <span class="font-bold text-base text-text_navbar mr-1">{{ message.author.profile.name }}</span>@{{ message.author.username }}
@@ -26,7 +26,7 @@
                 {% endfor %}
             </div>
 
-            <div class="sticky bottom-0 z-10 p-4 md:p-10 flex flex-col bg-white rounded-2xl">
+            <div class="sticky bottom-0 z-10 p-4 md:p-10 flex flex-col bg-navbar rounded-2xl">
                 <div class="flex gap-4 md:gap-6">
                     <div class="contents">
                         <img class="w-10 h-10 md:w-14 md:h-14 object-cover rounded-full" src="{{ user.profile.avatar }}">
@@ -65,7 +65,7 @@
                 {% endif %}
             </div>
 
-            <div class="rounded-2xl border-2 border-gray-200 p-4">
+            <div class="rounded-2xl border border-text_navbar p-4">
                 <h2>{{ messageboard.subscribers.count }} subscriber{{ messageboard.subscribers.count|pluralize }}</h2> 
                 <ul class="grid grid-cols-3">
 

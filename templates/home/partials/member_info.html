@@ -1,0 +1,10 @@
+{% if value %}
+    <p>
+        <strong>{{ label }} :</strong>
+        {% if href %}
+            <a href="{{ href }}">{{ value }}</a>
+        {% else %}
+            {{ value }}
+        {% endif %}
+    </p>
+{% endif %}

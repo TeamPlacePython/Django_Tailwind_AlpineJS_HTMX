@@ -70,13 +70,16 @@ class ProfileEditView(LoginRequiredMixin, View):
         context["cancel"] = "Annuler"
         return context
 
+    def _render_form(self, request, form):
+        """Factorize form rendering logic for GET and invalid POST requests."""
+        onboarding = request.path == reverse("users:profile-onboarding")
+        context = self.get_context_data(form=form, onboarding=onboarding)
+        return render(request, self.template_name, context)
+
     def get(self, request):
         """Display the profile edit form."""
         form = self.form_class(instance=request.user.profile)
-        onboarding = request.path == reverse("users:profile-onboarding")
-
-        context = self.get_context_data(form=form, onboarding=onboarding)
-        return render(request, self.template_name, context=context)
+        return self._render_form(request, form)
 
     def post(self, request):
         """Handle profile edit form submission."""
@@ -86,10 +89,7 @@ class ProfileEditView(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             return redirect("users:profile")
-
-        onboarding = request.path == reverse("users:profile-onboarding")
-        context = self.get_context_data(form=form, onboarding=onboarding)
-        return render(request, self.template_name, context=context)
+        return self._render_form(request, form)
 
 
 class ProfileSettingsView(LoginRequiredMixin, View):

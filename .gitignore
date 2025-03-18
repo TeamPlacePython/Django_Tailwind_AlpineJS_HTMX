@@ -1,3 +1,7 @@
 # Environnement
 .env
 .env.production
+.qodo
+.venv
+.vscode
+media
