@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import FormView
 from django.core.mail import EmailMessage
-import threading
+
 from .tasks import send_email_task
 from .models import MessageBoard
 from .forms import MessageCreateForm
@@ -15,10 +15,25 @@ class MessageBoardView(LoginRequiredMixin, FormView):
     template_name = "messageboard/index.html"
     form_class = MessageCreateForm
     success_url = reverse_lazy("messageboard:messageboard")
+    _context_defaults = {
+        "title": "Messages ...",
+        "description": "Liste des membres du club avec option de filtrage.",
+    }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["messageboard"] = get_object_or_404(MessageBoard, id=1)
+        context["are_subscribe"] = "Vous êtes inscrit!"
+        context["subscribe"] = "S'inscrire"
+        context["unsubscribe"] = "Se désinscrire"
+        context["subscriber"] = "Abonné"
+        context["informations"] = (
+            "Inscrivez-vous pour recevoir les informations et les résultats du club."
+        )
+        context["not_informations"] = (
+            "Vous recevrez des informations et des résultats du club."
+        )
+        context.update(self._context_defaults)
         return context
 
     def form_valid(self, form):
@@ -77,8 +92,24 @@ class EmailService:
 class NewsletterView(UserPassesTestMixin, View):
     template_name = "messageboard/newsletter.html"
 
-    def test_func(self):
-        return self.request.user.is_staff
+    def get_context_data(self, **kwargs):
+        return {
+            "newsletter_title": "Newsletter...",
+            "newsletter_description": "Description des résultats et des projets du club",
+            "greeting_hello": "Bonjour",
+            "newsletter_welcome_message": "Bienvenue dans notre bulletin mensuel!",
+            "club_updates_notice": "Soyez attentif aux informations fournies par le club.",
+            "website_link_text": "Accès au site",
+            "news_title_escrime": "Actu Escrime Mandelieu",
+            "message_appreciation": "Merci, vous êtes géniaux! 😎",
+            "gratitude_message": "Merci pour vos propositions, vos accompagnements, vos commentaires et votre soutien! 🥰",
+            "club_support_title": "Soutenez le club ⚔️",
+            "support_message": "✨ Rejoignez-nous sur les réseaux sociaux, partagez vos idées💡 et/ou images📸 avec nous. ✨",
+        }
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        context = self.get_context_data(**kwargs)
+        return render(request, self.template_name, context)
+
+    def test_func(self):
+        return self.request.user.is_staff

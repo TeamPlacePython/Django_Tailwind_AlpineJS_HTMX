@@ -2,12 +2,12 @@
 {% load django_vite %}
 {% load custom_filters %}
 
-{% block title %}{{ title }}{% endblock title %}
-{% block meta_description %}{{ description }}{% endblock %}
+{% block title %}{{ member_table_title }}{% endblock title %}
+{% block meta_description %}{{ member_table_description }}{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="mb-8 font-title">{{ title }}</h1>
+    <h1 class="mb-8 font-title">{{ member_table_title }}</h1>
 </div>
 
 <!-- Table -->
@@ -18,18 +18,18 @@
             <table class="bg-navbar shadow-md md:drop-shadow-2xl shadow-text_navbar w-full p-6 md:p-8 min-w-max">
                 <thead>
                     <tr class="px-6 py-3 border-b-2 border-text_navbar text-left text-text_navbar bg-hover_navbar font-title text-2xl">
-                        <th>{{ avatars }}</th>
-                        <th>{{ first_name }}</th>
-                        <th>{{ last_name }}</th>
-                        <th>{{ gender }}</th>
-                        <th>{{ email }}</th>
-                        <th>{{ phone }}</th>
-                        <th>{{ birth_date }}</th>
-                        <th>{{ categories }}</th>
-                        <th>{{ status }}</th>
-                        <th>{{ roles }}</th>
-                        <th>{{ weapon }}</th>
-                        <th>{{ handeness }}</th>
+                        <th>{{ member_avatars_label }}</th>
+                        <th>{{ member_first_name_label }}</th>
+                        <th>{{ member_last_name_label }}</th>
+                        <th>{{ member_gender_label }}</th>
+                        <th>{{ member_email_label }}</th>
+                        <th>{{ member_phone_label }}</th>
+                        <th>{{ member_birth_date_label }}</th>
+                        <th>{{ member_category_label }}</th>
+                        <th>{{ member_status_label }}</th>
+                        <th>{{ member_role_label }}</th>
+                        <th>{{ member_weapon_label }}</th>
+                        <th>{{ member_handedness_label }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,7 +53,7 @@
                         <td>{{ member.phone_number }}</td>
                         <td>{{ member.birth_date }}</td>
                         <td>{{ member.sports_category.name }}</td>
-                        <td class="badge {{ status_colors|get_item:member.status }}">
+                        <td class="badge {{ status_badge_colors|get_item:member.status }}">
                             {{ member.get_status_display }}
                         </td>
                         {% if member.roles %}
@@ -64,7 +64,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-4">{{ no_member }}</td>
+                        <td colspan="6" class="text-center py-4">{{ member_not_found_message }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

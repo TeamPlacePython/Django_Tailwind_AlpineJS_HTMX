@@ -16,7 +16,7 @@
 
 <div class="modal-body border-text_navbar grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
-        <h6 class="font-bold">{{ personnal_information }}</h6>
+        <h6 class="font-bold">{{ member_personal_information_label }}</h6>
         {% member_info "Genre" member.get_gender_display %}
         {% member_info "Email" member.email "mailto:"|add:member.email %}
         {% member_info "Téléphone" member.phone_number "tel:"|add:member.phone_number %}
@@ -30,7 +30,7 @@
     </div>
     
     <div>
-        <h6 class="font-bold">{{ sports_information }} </h6>
+        <h6 class="font-bold">{{ member_sports_information_label }} </h6>
         {% member_info "Catégorie" member.sports_category.name %}
         {% member_info "Arme" member.get_weapon_display %}
         {% member_info "Main" member.get_handeness_display %}
@@ -45,9 +45,15 @@
     </div>
 </div>
 
-<div class="modal-footer border-text_navbar">
-    <a class="button button-gray ml-1" href="{{ request.META.HTTP_REFERER }}">{{ button_close }}</a>
-    <a class="button bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
-       href="{% url 'members:member-update' member.pk %}">{{ modify }}</a>
+<div class="modal-footer border-text_navbar flex justify-between">
+    <div>
+        <a class="button button-gray ml-1" href="{{ request.META.HTTP_REFERER }}">{{ button_close_label }}</a>
+        <a class="button bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
+           href="{% url 'members:member-update' member.pk %}">{{ button_modify_label }}</a>
+    </div>
+    <div>
+        <a class="button button-red bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
+           href="{% url 'members:member-delete' member.pk %}">delete</a>
+    </div>
 </div>
 {% endblock modal_content %}

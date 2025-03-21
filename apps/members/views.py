@@ -76,22 +76,22 @@ class BaseMemberListView(LoginRequiredMixin, MemberQuerysetMixin, ListView):
         context = super().get_context_data(**kwargs)
         context.update(
             {
-                "search": "Recherche par nom...",
-                "button_initialize": "Réinitialiser",
-                "all_status": "Tous les statuts",
+                "search_placeholder": "Recherche par nom...",
+                "button_reset_label": "Réinitialiser",
+                "status_all_label": "Tous les statuts",
                 "status_choices": STATUS_CHOICES,
-                "all_categories": "Toutes les catégories",
-                "categories": SportsCategory.objects.all(),
-                "all_roles": "Tous les rôles",
+                "category_all_label": "Toutes les catégories",
+                "category_choices": SportsCategory.objects.all(),
+                "role_all_label": "Tous les rôles",
                 "roles_choices": ROLES_CHOICES,
-                "all_gender": "Tous les genres",
+                "gender_all_label": "Tous les genres",
                 "gender_choices": GENDER_CHOICES,
-                "all_weapon": "Toutes les armes",
+                "weapon_all_label": "Toutes les armes",
                 "weapon_choices": WEAPON_CHOICES,
-                "all_handeness": "Toutes les mains",
+                "handedness_all_label": "Toutes les mains",
                 "handeness_choices": HANDENESS_CHOICES,
-                "not_found": "Aucun membre trouvé",
-                "status_colors": STATUS_BADGES,
+                "member_not_found_message": "Aucun membre trouvé",
+                "status_badge_colors": STATUS_BADGES,
             }
         )
 
@@ -101,9 +101,9 @@ class BaseMemberListView(LoginRequiredMixin, MemberQuerysetMixin, ListView):
 class MemberListView(BaseMemberListView):
     template_name = "members/member_list.html"
     _context_defaults = {
-        "title": "Membres du club ...",
-        "description": "Liste des membres du club avec option de filtrage.",
-        "button_details": "Voir détails",
+        "message_section_title": "Liste des membres ...",
+        "message_section_description": "Liste des membres du club avec option de filtrage.",
+        "button_details_label": "Voir détails",
     }
 
     def get_context_data(self, **kwargs):
@@ -115,21 +115,21 @@ class MemberListView(BaseMemberListView):
 class MemberTableView(BaseMemberListView):
     template_name = "members/members_table.html"
     _context_defaults = {
-        "title": "Table des Membres ...",
-        "description": "Table des membres de l'association.",
-        "avatars": "Avatars",
-        "first_name": "Prénom",
-        "last_name": "Nom",
-        "gender": "Genre",
-        "email": "Email",
-        "phone": "Téléphone",
-        "birth_date": "Date de naissance",
-        "categories": "Catégories",
-        "status": "Status",
-        "roles": "Rôles",
-        "weapon": "Arme",
-        "handeness": "Main",
-        "no_member": "Aucun membre trouvé.",
+        "member_table_title": "Table des Membres ...",
+        "member_table_description": "Table des membres de l'association.",
+        "member_avatars_label": "Avatars",
+        "member_first_name_label": "Prénom",
+        "member_last_name_label": "Nom",
+        "member_gender_label": "Genre",
+        "member_email_label": "Email",
+        "member_phone_label": "Téléphone",
+        "member_birth_date_label": "Date de naissance",
+        "member_category_label": "Catégories",
+        "member_status_label": "Status",
+        "member_role_label": "Rôles",
+        "member_weapon_label": "Arme",
+        "member_handedness_label": "Main",
+        "member_not_found_message": "Aucun membre trouvé.",
     }
 
     def get_context_data(self, **kwargs):
@@ -161,17 +161,16 @@ class MemberDetailView(
         member = self.object
         context.update(
             {
-                "tags": member.tags.all(),
                 "date_joined_formatted": member.date_joined.strftime(
                     "%d/%m/%Y"
                 ),
                 "last_updated_formatted": member.last_updated.strftime(
                     "%d/%m/%Y %H:%M"
                 ),
-                "button_close": CONSTANT_CLOSE,
-                "personnal_information": "Informations personnelles",
-                "sports_information": "Informations sportives",
-                "modify": "Modifier",
+                "button_close_label": CONSTANT_CLOSE,
+                "member_personal_information_label": "Informations personnelles",
+                "member_sports_information_label": "Informations sportives",
+                "button_modify_label": "Modifier",
             }
         )
         if self.is_htmx_request():
@@ -192,10 +191,10 @@ class MemberCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_url = reverse_lazy("members:member-list")
     success_message = "The member has been successfully created."
     _context_defaults = {
-        "title": "Créer un membre ...",
-        "photo": "Ajouter un avatar",
-        "button_close": CONSTANT_CLOSE,
-        "button_record": "Enregistrer",
+        "member_title": "Créer un membre ...",
+        "member_avatar_label": "Ajouter un avatar",
+        "button_close_label": CONSTANT_CLOSE,
+        "button_save_label": "Enregistrer",
     }
 
     def get_template_names(self):
@@ -227,9 +226,9 @@ class MemberUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy("members:member-list")
     success_message = "The member has been successfully updated."
     _context_defaults = {
-        "photo": "Changer l'avatar",
-        "button_record": "Mise à jour",
-        "button_close": CONSTANT_CLOSE,
+        "member_avatar_label": "Changer l'avatar",
+        "button_save_label": "Mise à jour",
+        "button_close_label": CONSTANT_CLOSE,
     }
 
     def get_template_names(self):
@@ -240,7 +239,7 @@ class MemberUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         member_name = self.object.get_full_name()
-        context["title"] = f"Modification de {member_name}"
+        context["member_title"] = f"Modification de {member_name}"
         context.update(self._context_defaults)
         return context
 
@@ -250,7 +249,6 @@ class MemberUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         if self.request.headers.get("HX-Request"):
             response = HttpResponse()
             response["HX-Redirect"] = self.success_url
-
         return response
 
 
@@ -266,6 +264,12 @@ class MemberDeleteView(LoginRequiredMixin, DeleteView):
             f"The member {member.get_full_name()} has been successfully deleted.",
         )
         return super().delete(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        member_name = self.object.get_full_name()
+        context["member_title"] = f"Suppression de {member_name}"
+        return context
 
 
 class UpdatePhotoView(View):

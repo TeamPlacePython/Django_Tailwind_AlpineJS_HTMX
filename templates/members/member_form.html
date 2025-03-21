@@ -3,11 +3,11 @@
 {% load django_vite %}
 {% load crispy_forms_tags %}
 
-{% block title %}{{ title }}{% endblock title %}
+{% block title %}{{ member_title }}{% endblock title %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="font-title">{{ title }}</h1>
+    <h1 class="mb-8 font-title">{{ member_title }}</h1>
 </div>
 
 <div class="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8 py-8">
@@ -29,7 +29,7 @@
                 <button type="button"
                     class="text-text_navbar hover:text-white border border-text_navbar hover:bg-text_navbar focus:ring-4 focus:outline-none focus:ring-text_navbar font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                     onclick="document.getElementById('id_photo').click()">
-                    {{ photo }}
+                    {{ member_avatar_label }}
                 </button>
             </div>
 
@@ -41,8 +41,8 @@
                 {{ form.as_p }}
 
                 <div class="mt-6 flex justify-end flex">
-                    <a class="button button-gray mr-1" href="{{ request.META.HTTP_REFERER }}">{{ button_close }}</a>
-                    <button type="submit" class="button btn-primary">{{ button_record }}</button>
+                    <a class="button button-gray mr-1" href="{{ request.META.HTTP_REFERER }}">{{ button_close_label }}</a>
+                    <button type="submit" class="button btn-primary">{{ button_save_label }}</button>
                 </div>
             </form>
 

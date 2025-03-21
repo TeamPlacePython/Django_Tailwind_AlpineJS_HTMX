@@ -10,7 +10,7 @@ class MessageCreateForm(ModelForm):
         widgets = {
             "body": forms.TextInput(
                 attrs={
-                    "placeholder": "Post a message ...",
+                    "placeholder": "Saisissez un message...",
                     "class": "p-4 text-black",
                     "maxlength": "2000",
                 }
