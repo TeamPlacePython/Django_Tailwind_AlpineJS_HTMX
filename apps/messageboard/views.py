@@ -22,18 +22,24 @@ class MessageBoardView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["messageboard"] = get_object_or_404(MessageBoard, id=1)
-        context["are_subscribe"] = "Vous êtes inscrit!"
-        context["subscribe"] = "S'inscrire"
-        context["unsubscribe"] = "Se désinscrire"
-        context["subscriber"] = "Abonné"
-        context["informations"] = (
-            "Inscrivez-vous pour recevoir les informations et les résultats du club."
-        )
-        context["not_informations"] = (
-            "Vous recevrez des informations et des résultats du club."
-        )
+
+        # Dictionnaire des messages constants
+        context_data = {
+            "messageboard": get_object_or_404(MessageBoard, id=1),
+            "are_subscribe": "Vous êtes inscrit!",
+            "subscribe": "S'inscrire",
+            "unsubscribe": "Se désinscrire",
+            "subscriber": "Abonné",
+            "informations": "Inscrivez-vous pour recevoir les informations et les résultats du club.",
+            "not_informations": "Vous recevrez des informations et des résultats du club.",
+        }
+
+        # Mise à jour du contexte avec les données du dictionnaire
+        context.update(context_data)
+
+        # Mise à jour du contexte avec les valeurs par défaut
         context.update(self._context_defaults)
+
         return context
 
     def form_valid(self, form):

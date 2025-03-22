@@ -28,9 +28,29 @@ HANDENESS_CHOICES_WITH_PLACEHOLDER = [
 
 
 class MemberForm(forms.ModelForm):
+    birth_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control",
+                "type": "date",
+                "max": datetime.date.today().strftime("%Y-%m-%d"),
+                "min": "1900-01-01",
+            }
+        ),
+        input_formats=["%Y-%m-%d"],
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Ensure birth_date is properly initialized
+        if self.instance and self.instance.birth_date:
+            self.initial["birth_date"] = self.instance.birth_date.strftime(
+                "%Y-%m-%d"
+            )
+
+    def clean_birth_date(self):
+        return self.cleaned_data.get("birth_date")
 
     gender = forms.ChoiceField(
         choices=GENDER_CHOICES_WITH_PLACEHOLDER,
@@ -146,15 +166,6 @@ class MemberForm(forms.ModelForm):
             "last_name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Last name"}
             ),
-            "birth_date": forms.DateInput(
-                attrs={
-                    "class": "form-control",
-                    "type": "date",
-                    "max": datetime.date.today().strftime("%Y-%m-%d"),
-                    "min": "1900-01-01",
-                },
-                format="%Y-%m-%d",
-            ),
             "email": forms.EmailInput(
                 attrs={
                     "class": "form-control",
@@ -229,9 +240,3 @@ class MemberForm(forms.ModelForm):
                 "Postal code must contain exactly 5 digits."
             )
         return postal_code
-
-    def clean_birth_date(self):
-        """Ensure that the birth date is not in the future."""
-        birth_date = self.cleaned_data.get("birth_date")
-        if birth_date and birth_date > datetime.date.today():
-            raise forms.ValidationError("Birth date cannot be in the future.")

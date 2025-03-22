@@ -7,6 +7,7 @@
     --color-text_navbar: oklch(37.91% 0 0);
     --color-text_navbar_secondary: oklch(45% 0 0);
     --color-hover_navbar: oklch(83.28% 0 0);
+    --color-arrow_paginator: oklch(73.15% 0 0);
     --color-defilepsie_red: oklch(51.98% 0.1931 23.14);
     --color-defilepsie_red_secondary: oklch(45% 0.1931 23.14);
     --color-defilepsie_blue: oklch(50.67% 0.137 248.91);
@@ -51,7 +52,7 @@ p {
     @apply !bg-defilepsie_red hover:!bg-defilepsie_red_secondary
 }
 .button-gray {
-    @apply !bg-text_navbar_secondary hover:!bg-text_navbar
+    @apply !bg-text_navbar_secondary hover:!bg-text_navbar text-center
 }
 .navitems>li>a {
     @apply flex items-center gap-2 h-12 px-4 hover:underline hover:bg-hover_navbar rounded-lg transition-all duration-200 ease-in-out hover:scale-105;

@@ -59,12 +59,6 @@ class MemberAdmin(admin.ModelAdmin):
     def display_photo(self, obj):
         """
         Displays a small preview of the member's photo in the admin panel.
-
-        Args:
-            obj (Member): The member instance.
-
-        Returns:
-            str: HTML image element or 'No Photo' if no photo exists.
         """
         if obj.photo:
             return format_html(
@@ -93,6 +87,7 @@ class SportsCategoryAdmin(admin.ModelAdmin):
         "description",
         "start_year",
         "end_year",
+        "fee_amount",
         "created_at",
     )
     search_fields = ("name",)
@@ -102,7 +97,7 @@ class SportsCategoryAdmin(admin.ModelAdmin):
 class MembershipFeeAdmin(admin.ModelAdmin):
     """Admin panel for tracking membership fees and payments."""
 
-    list_display = ("member", "amount", "payment_date", "is_valid")
-    list_filter = ("is_valid", "payment_date")
+    list_display = ("member", "is_valid")
+    list_filter = ("is_valid",)
     search_fields = ("member__first_name", "member__last_name")
-    ordering = ("-payment_date",)
+    ordering = ("member",)

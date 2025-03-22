@@ -48,12 +48,12 @@
 <div class="modal-footer border-text_navbar flex justify-between">
     <div>
         <a class="button button-gray ml-1" href="{{ request.META.HTTP_REFERER }}">{{ button_close_label }}</a>
-        <a class="button bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
+        <a class="button"
            href="{% url 'members:member-update' member.pk %}">{{ button_modify_label }}</a>
     </div>
     <div>
-        <a class="button button-red bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
-           href="{% url 'members:member-delete' member.pk %}">delete</a>
+        <a class="button button-red"
+           href="{% url 'members:member-delete' member.pk %}">{{ button_delete_label }}</a>
     </div>
 </div>
 {% endblock modal_content %}

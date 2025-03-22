@@ -3,40 +3,53 @@
 {% load django_vite %}
 {% load crispy_forms_tags %}
 
-{% block title %}{{ member_title }}{% endblock title %}
+{% block title %}{{ member_create_update_title }}{% endblock title %}
+{% block meta_description %}{{ member_create_update_description }}{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="mb-8 font-title">{{ member_title }}</h1>
+    <h1 class="mb-8 font-title">{{ member_create_update_title }}</h1>
 </div>
 
-<div class="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
     <div class="bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar border border-text_navbar">
         <div class="p-6">
-
-            <!-- Section : Avatar avec prévisualisation -->
-            <div class="text-center flex flex-col items-center mb-6">
-                <!-- Prévisualisation de l'avatar -->
-                <img id="member-photo"
-                    src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% else %}{% vite_asset_url 'images/avatar.svg' %}{% endif %}"
-                    alt="{{ form.instance.pk|default:'New Member' }}"
-                    class="w-32 h-32 rounded-full object-cover mb-4">
-
-                <!-- Champ caché pour l'upload -->
-                <input type="file" name="photo" id="id_photo" class="hidden" accept="image/*">
-
-                <!-- Bouton pour déclencher la sélection de fichier -->
-                <button type="button"
-                    class="text-text_navbar hover:text-white border border-text_navbar hover:bg-text_navbar focus:ring-4 focus:outline-none focus:ring-text_navbar font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                    onclick="document.getElementById('id_photo').click()">
-                    {{ member_avatar_label }}
-                </button>
-            </div>
-
             <!-- Formulaire de création/modification -->
-            <form hx-post="{% if form.instance.pk %}{% url 'members:member-update' form.instance.pk %}{% else %}{% url 'members:member-create' %}{% endif %}"
-                  enctype="multipart/form-data">
+            <form method="post" 
+                  hx-post="{% if form.instance.pk %}{% url 'members:member-update' form.instance.pk %}{% else %}{% url 'members:member-create' %}{% endif %}"
+                  hx-encoding="multipart/form-data"
+                  hx-swap="outerHTML"
+                  hx-trigger="submit"
+                  id="memberForm">
 
+                {% csrf_token %}
+
+                <!-- Section : Avatar avec prévisualisation -->
+                <div class="text-center flex flex-col items-center mb-6">
+                    <!-- Prévisualisation de l'avatar -->
+                    <img id="member-photo"
+                        src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% else %}{% vite_asset_url 'images/avatar.svg' %}{% endif %}"
+                        alt="{{ form.instance.pk|default:'New Member' }}"
+                        class="w-32 h-32 rounded-full object-cover mb-4">
+
+                    <!-- Champ caché pour l'upload -->
+                    <input type="file" 
+                           name="photo" 
+                           id="id_photo" 
+                           class="hidden" 
+                           accept="image/*"
+                           hx-post="{% if form.instance.pk %}{% url 'members:update-photo' form.instance.pk %}{% endif %}"
+                           hx-encoding="multipart/form-data"
+                           hx-trigger="change"
+                           hx-swap="none">
+
+                    <!-- Bouton pour déclencher la sélection de fichier -->
+                    <button type="button"
+                        class="text-text_navbar hover:text-white border border-text_navbar hover:bg-text_navbar focus:ring-4 focus:outline-none focus:ring-text_navbar font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                        onclick="document.getElementById('id_photo').click()">
+                        {{ button_avatar_label }}
+                    </button>
+                </div>
                 {% csrf_token %}
                 {{ form.as_p }}
 
@@ -61,42 +74,15 @@
                 document.getElementById('member-photo').setAttribute('src', e.target.result);
             };
             reader.readAsDataURL(file);
+        }
+    });
 
-            // Création de l'objet FormData pour envoyer le fichier
-            const formData = new FormData();
-            formData.append('photo', file);
-
-            // Détermine l'URL dynamiquement : création ou modification
-            const isUpdate = "{{ form.instance.pk|default:'0' }}" !== "0";
-            const memberId = "{{ form.instance.pk|default:'0' }}";
-
-            const url = isUpdate
-                ? `/member/${memberId}/photo/update/`  // Modification
-                : "/member/photo/create/";             // Création
-
-            // Envoi de la requête avec fetch()
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                },
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Erreur lors de l\'upload de l\'image');
-            })
-            .then(data => {
-                if (data.photo_url) {
-                    document.getElementById('member-photo').setAttribute('src', data.photo_url);
-                }
-            })
-            .catch(error => {
-                console.error('Erreur :', error);
-                alert('Erreur lors du téléchargement de la photo.');
-            });
+    // Add form submit handler to log form data
+    document.getElementById('memberForm').addEventListener('submit', function(e) {
+        const formData = new FormData(this);
+        console.log('Form data being submitted:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
         }
     });
 </script>

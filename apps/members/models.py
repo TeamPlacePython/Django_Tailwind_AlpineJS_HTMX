@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from datetime import date
+from django.utils.timezone import now
 from .constants import (
     ROLES_CHOICES,
     STATUS_CHOICES,
@@ -33,6 +34,14 @@ class SportsCategory(models.Model):
     description = models.TextField(blank=True, null=True)
     start_year = models.IntegerField(blank=True, null=True)
     end_year = models.IntegerField(blank=True, null=True)
+    fee_amount = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Membership Fee (€)",
+        help_text="Montant de la cotisation pour cette catégorie",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -40,7 +49,7 @@ class SportsCategory(models.Model):
         ordering = ["name"]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.fee_amount}€"
 
     def is_applicable(self, birth_year):
         """Checks if this category applies based on the member's birth year."""
@@ -124,6 +133,8 @@ class Member(models.Model):
         max_length=10,
         choices=GENDER_CHOICES,
         verbose_name="gender",
+        blank=True,
+        null=True,
     )
     handeness = models.CharField(
         max_length=15,
@@ -212,6 +223,18 @@ class Member(models.Model):
             self.roles = "visitor"
         super().save(*args, **kwargs)
 
+    def create_payment(self):
+        """Crée un paiement basé sur la catégorie sportive."""
+        if not self.sports_category:
+            raise ValidationError("Le membre n'a pas de catégorie assignée.")
+        MembershipFee.objects.create(
+            member=self,
+            sports_category=self.sports_category,
+            amount=self.sports_category.fee_amount,
+            payment_date=now().date(),
+            is_valid=True,
+        )
+
 
 class MembershipFee(models.Model):
     """Tracks membership fee payments for members."""
@@ -219,16 +242,19 @@ class MembershipFee(models.Model):
     member = models.ForeignKey(
         Member, on_delete=models.CASCADE, related_name="fees"
     )
-    amount = models.DecimalField(
-        max_digits=6, decimal_places=2, verbose_name="Amount (€)"
+    sports_category = models.ForeignKey(
+        SportsCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Category",
+        help_text="Catégorie associée à ce paiement",
     )
-    payment_date = models.DateField(
-        auto_now_add=True, verbose_name="Payment Date"
-    )
-    is_valid = models.BooleanField(default=True, verbose_name="Valid Payment")
+    is_valid = models.BooleanField(default=False, verbose_name="Valid Payment")
 
     class Meta:
-        ordering = ["-payment_date"]
+        ordering = ["member"]
 
     def __str__(self):
-        return f"{self.member} - {self.amount}€ ({'Valid' if self.is_valid else 'Unpaid'})"
+        status = "Valid" if self.is_valid else "Unpaid"
+        return f"{self.member} - {status} €"

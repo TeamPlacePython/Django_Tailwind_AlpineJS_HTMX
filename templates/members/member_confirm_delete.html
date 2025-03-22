@@ -1,17 +1,19 @@
 {% extends 'layouts/box.html' %}
 
-{% block title %}{{ member_title }}{% endblock title %}
-
+{% block title %}{{ member_confirmation_delete }}{% endblock title %}
 
 {% block content %}
 
-<h1>Delete Account</h1>
-<p>Are you sure you want to delete your account?</p>
+<div class="flex flex-col sm:flex-row items-center sm:space-x-4 mt-10 mb-5 text-center sm:text-left">
+    <h1 class="font-title text-lg sm:text-xl">{{ member_confirmation_delete }}</h1>
+    <img src="{{ member.photo.url }}" alt="Photo de {{ member.get_full_name }}" 
+         class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mt-4 sm:mt-0">
+</div>
 
-<form method='POST'>
+<form method="POST" class="flex flex-col sm:flex-row gap-3 mt-6">
     {% csrf_token %}
-    <button type="submit" class="button-red mt-6">Yes, I want to delete my account</button>
-    <a class="button button-gray ml-1" href="{{ request.META.HTTP_REFERER }}">Cancel</a>
+    <button type="submit" class="button-red">{{ button_confirmation_label }}</button>
+    <a class="button button-gray" href="{{ request.META.HTTP_REFERER }}">{{ button_close_label }}</a>
 </form>
 
 {% endblock %}

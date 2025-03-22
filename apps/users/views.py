@@ -9,6 +9,12 @@ from django.views import View
 from django.utils.translation import gettext_lazy as _
 from allauth.account.utils import send_email_confirmation
 from .forms import ProfileForm, EmailForm, UsernameForm
+from apps.constant import (
+    CONSTANT_CANCEL,
+    CONSTANT_MODIFY,
+    CONSTANT_SAVE,
+    CONSTANT_DISMISS,
+)
 
 
 class ProfileView(View):
@@ -64,10 +70,10 @@ class ProfileEditView(LoginRequiredMixin, View):
         context = kwargs
         context["title"] = "Edit"
         context["complete"] = "Complétez votre profil"
-        context["modify"] = "Modification"
-        context["submit"] = "Valider"
-        context["skip"] = "Ignorer"
-        context["cancel"] = "Annuler"
+        context["modify"] = CONSTANT_MODIFY
+        context["submit"] = CONSTANT_SAVE
+        context["skip"] = CONSTANT_DISMISS
+        context["cancel"] = CONSTANT_CANCEL
         return context
 
     def _render_form(self, request, form):
