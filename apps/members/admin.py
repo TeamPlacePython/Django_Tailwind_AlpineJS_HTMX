@@ -91,6 +91,7 @@ class SportsCategoryAdmin(admin.ModelAdmin):
         "created_at",
     )
     search_fields = ("name",)
+    ordering = ("-start_year",)
 
 
 @admin.register(MembershipFee)

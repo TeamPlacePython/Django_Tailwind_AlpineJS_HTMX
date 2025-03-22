@@ -319,3 +319,21 @@ class UpdatePhotoView(View):
         photo_url = f"{member.photo.url}?v={cache_buster}"
 
         return JsonResponse({"photo_url": photo_url})
+
+
+class SportsCategoryListView(ListView):
+    model = SportsCategory
+    context_object_name = "sport_category"
+    template_name = "members/sport_category_prices_table.html"
+    _context_defaults = {
+        "sport_category_price_title": "Liste des prix ...",
+        "sport_category_price_description": "Liste des membres du club avec option de filtrage.",
+    }
+
+    def get_queryset(self):
+        return super().get_queryset().order_by("-start_year")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self._context_defaults)
+        return context
