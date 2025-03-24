@@ -14,7 +14,9 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from .models import Member, SportsCategory
+
+from apps.sport.models import SportsCategory
+from .models import Member
 from .forms import MemberForm
 from .mixins import MemberQuerysetMixin, HTMXMixin
 from .constants import (
@@ -36,7 +38,7 @@ from apps.constant import (
 import random
 
 
-class BaseMemberListView(LoginRequiredMixin, MemberQuerysetMixin, ListView):
+class BaseMemberListView(MemberQuerysetMixin, ListView):
     model = Member
     context_object_name = "members"
 
@@ -122,7 +124,7 @@ class MemberListView(BaseMemberListView):
         return context
 
 
-class MemberTableView(BaseMemberListView):
+class MemberTableView(LoginRequiredMixin, BaseMemberListView):
     template_name = "members/members_table.html"
     _context_defaults = {
         "member_table_title": "Table des Membres ...",
@@ -319,21 +321,3 @@ class UpdatePhotoView(View):
         photo_url = f"{member.photo.url}?v={cache_buster}"
 
         return JsonResponse({"photo_url": photo_url})
-
-
-class SportsCategoryListView(ListView):
-    model = SportsCategory
-    context_object_name = "sport_category"
-    template_name = "members/sport_category_prices_table.html"
-    _context_defaults = {
-        "sport_category_price_title": "Liste des prix ...",
-        "sport_category_price_description": "Liste des membres du club avec option de filtrage.",
-    }
-
-    def get_queryset(self):
-        return super().get_queryset().order_by("-start_year")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(self._context_defaults)
-        return context

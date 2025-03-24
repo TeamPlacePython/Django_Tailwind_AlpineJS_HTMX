@@ -1,0 +1,17 @@
+{% load django_vite %}
+
+<footer class="bg-navbar text-text_navbar border-t border-text_navbar mt-15">
+    <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <img id="imgCopy" src="{% vite_asset_url 'images/ikigai.png' %}" alt="Web-Master logo"
+                class="w-8 h-8 rounded-full object-cover">
+            <span class="text-sm text-text_navbar">
+                &copy; 2025
+                <a href="https://www.laurentjouron.dev/" class="text-text_navbar hover:underline hover:text-defilepsie_blue" target="_blank" rel="noopener noreferrer">
+                    <strong>Laurent Jouron.</strong>
+                </a>
+                Tous droits réservés.
+            </span>
+        </div>
+    </div>
+</footer>

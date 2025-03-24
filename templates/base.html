@@ -50,15 +50,15 @@
     {% django_htmx_script %}
     {% django_browser_reload_script %}
 </head>
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="{% block class %}{% endblock %}">
-	
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="flex flex-col min-h-screen {% block class %}{% endblock %}">
+    
     {% include 'includes/messages.html' %}
-
     {% include 'includes/header.html' %}
-
-    {% block layout %}{% endblock %}
+    
+    <main class="flex-grow">{% block layout %}{% endblock %}</main>
+    
+    {% include 'includes/footer.html' %}
 
     {% block javascript %}{% endblock %}
-
 </body>
 </html>

@@ -2,7 +2,8 @@ import datetime
 from django import forms
 from django.core.validators import RegexValidator
 
-from .models import Member, SportsCategory
+from apps.sport.models import SportsCategory
+from .models import Member
 from .constants import (
     GENDER_CHOICES,
     WEAPON_CHOICES,

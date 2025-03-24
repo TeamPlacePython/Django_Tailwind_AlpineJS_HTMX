@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "apps.users.apps.UsersConfig",
     "apps.members.apps.MembersConfig",
     "apps.messageboard.apps.MessageboardConfig",
+    "apps.sport.apps.SportConfig",
     # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -81,6 +82,8 @@ TEMPLATES = [
                 "apps.users.context_processors.profile_items",
                 # Members
                 "apps.members.context_processors.members_items",
+                # Sport
+                "apps.sport.context_processors.sport_items",
                 # Messages
                 "apps.messageboard.context_processors.messageboard_items",
             ],

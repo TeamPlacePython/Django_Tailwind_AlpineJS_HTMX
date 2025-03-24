@@ -1,5 +1,5 @@
 ROLES_CHOICES = [
-    ("coach", "Entraineur"),
+    ("coach", "Maître d'armes"),
     ("member", "Membre"),
     ("president", "Président"),
     ("treasurer", "Trésorier"),

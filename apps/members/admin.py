@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Member, Tag, SportsCategory, MembershipFee
+from .models import Member, Tag, MembershipFee
 
 
 @admin.register(Member)
@@ -76,22 +76,6 @@ class TagAdmin(admin.ModelAdmin):
 
     list_display = ("name", "created_at")
     search_fields = ("name",)
-
-
-@admin.register(SportsCategory)
-class SportsCategoryAdmin(admin.ModelAdmin):
-    """Admin panel for managing sports categories."""
-
-    list_display = (
-        "name",
-        "description",
-        "start_year",
-        "end_year",
-        "fee_amount",
-        "created_at",
-    )
-    search_fields = ("name",)
-    ordering = ("-start_year",)
 
 
 @admin.register(MembershipFee)

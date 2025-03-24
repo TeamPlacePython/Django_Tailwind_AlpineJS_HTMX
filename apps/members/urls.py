@@ -7,7 +7,8 @@ from .views import (
     MemberUpdateView,
     MemberDeleteView,
     UpdatePhotoView,
-    SportsCategoryListView,
+    # SportsCategoryListView,
+    # TrainingHoursView,
 )
 
 app_name = "members"
@@ -31,10 +32,5 @@ urlpatterns = [
         "member/<int:pk>/photo/update/",
         UpdatePhotoView.as_view(),
         name="update-photo",
-    ),
-    path(
-        "tarif/",
-        SportsCategoryListView.as_view(),
-        name="sport_category-prices",
     ),
 ]

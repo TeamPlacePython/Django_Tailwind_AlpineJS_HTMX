@@ -38,97 +38,122 @@
 
             <!-- Container filter -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Status filter -->
+                <!-- STATUS FILTER START -->
                 {% if request.user.is_authenticated and request.user.is_staff %}
-                <select id="status-filter"
-                        name="status"
-                        class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
-                        aria-label="Filter by status">
-                    <option value="">{{ status_label }}</option>
-                    {% for status in status_choices %}
-                    <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
-                    {% endfor %}
-                </select>
-                {% endif %}
+                    <select id="status-filter"
+                            name="status"
+                            class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
+                            aria-label="Filter by status">
 
-                <!-- Category filter -->
+                        <option value="">{{ status_label }}</option>
+
+                    {% for status in status_choices %}
+                        <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
+                    {% endfor %}
+
+                    </select>
+                {% endif %}
+                <!-- STATUS FILTER END -->
+
+                <!-- CATEGORY FILTER START -->
                 <select id="category-filter"
                         name="category"
                         class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]">
                     <option value="">{{ category_label }}</option>
+
                     {% for category in category_choices %}
                         <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
                     {% endfor %}
-                </select>
 
-                <!-- Roles filter -->
+                </select>
+                <!-- CATEGORY FILTER END -->
+
+                <!-- ROLES FILTER START -->
                 <select id="roles-filter"
                         name="roles"
                         class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
                         aria-label="Filter by roles">
                     <option value="">{{ role_label }}</option>
+
                     {% for role in roles_choices %}
                         <option value="{{ role.0 }}" {% if request.GET.roles == role.0 %}selected{% endif %}>{{ role.1 }}</option>
                     {% endfor %}
-                </select>
 
-                <!-- Gender filter -->
+                </select>
+                <!-- ROLES FILTER END -->
+
+                <!-- GENDER FILTER START -->
                 <select id="gender-filter"
                         name="gender"
                         class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
                         aria-label="Filter by gender">
                     <option value="">{{ gender_label }}</option>
+
                     {% for gender in gender_choices %}
                         <option value="{{ gender.0 }}" {% if request.GET.gender == gender.0 %}selected{% endif %}>{{ gender.1 }}</option>
                     {% endfor %}
-                </select>
 
-                <!-- Weapon filter -->
+                </select>
+                <!-- GENDER FILTER END -->
+
+                <!-- WEAPON FILTER START -->
                 <select id="weapon-filter"
                         name="weapon"
                         class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
                         aria-label="Filter by weapon">
                     <option value="">{{ weapon_label }}</option>
+
                     {% for weapon in weapon_choices %}
                         <option value="{{ weapon.0 }}" {% if request.GET.weapon == weapon.0 %}selected{% endif %}>{{ weapon.1 }}</option>
                     {% endfor %}
-                </select>
 
-                <!-- Handeness filter -->
+                </select>
+                <!-- WEAPON FILTER END -->
+
+                <!-- HANDENESS FILTER START -->
                 <select id="handeness-filter"
                         name="handeness"
                         class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
                         aria-label="Filter by handeness">
                     <option value="">{{ handedness_label }}</option>
+
                     {% for handeness in handeness_choices %}
                         <option value="{{ handeness.0 }}" {% if request.GET.handeness == handeness.0 %}selected{% endif %}>{{ handeness.1 }}</option>
                     {% endfor %}
+
                 </select>
+                <!-- HANDENESS FILTER END -->
+
             </div>
         </form>
     </div>
 
-    <!-- List of members -->
+    <!-- LIST OF MEMBERS START -->
     <div id="members-list">
         <div class="htmx-indicator flex justify-center py-4" style="display: none;">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-text_navbar"></div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
             {% for member in members %}
-                <div class="bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar border border-text_navbar p-6">
+                <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
                     <div class="flex flex-col items-center">
+
                         {% if member.photo %}
                             <img src="{{ member.photo.url }}" 
                                  alt="{{ member.get_full_name }}" 
                                  class="w-24 h-24 rounded-full mb-4 object-cover border-2 border-text_navbar">
                         {% endif %}
+
                         <span class="text-2xl font-title font-semibold mb-2">{{ member.get_full_name }}</span>
+
                         {% if request.user.is_authenticated and request.user.is_staff %}
                         <p class="text-gray-600 mb-1">{{ member.email }}</p>
                         <span class="badge {{ status_badge_colors|get_item:member.status }}">
                             {{ member.get_status_display }}
                         </span>
                         {% endif %}
+
                         {% if member.sports_category %}
                             <p class="text-sm mb-4">{{ member.sports_category.name }}</p>
                         {% else %}
@@ -138,6 +163,7 @@
                                 {% endif %}
                             </p>
                         {% endif %}
+
                         {% if request.user.is_authenticated and request.user.is_staff %}
                         <div class="flex gap-2 mt-auto">
                             <button type="button" 
@@ -150,19 +176,23 @@
                             </button>
                         </div>
                         {% endif %}
+
                     </div>
                 </div>
+
             {% empty %}
                 <div class="col-span-3 text-center py-8">
                     <p class="text-gray-500">{{ member_not_found_message }}</p>
                 </div>
             {% endfor %}
+
         </div>
 
-        <!-- Pagination -->
+        <!-- PAGINATION START -->
         {% if is_paginated %}
             <div class="flex justify-center mt-8">
                 <div class="btn-group">
+
                     {% if page_obj.has_previous %}
                         <a href="?page={{ page_obj.previous_page_number }}" 
                            class="btn bg-hover_navbar hover:bg-arrow_paginator text-text_navbar font-bold py-2 px-4 rounded-l"
@@ -172,7 +202,9 @@
                            hx-push-url="true"
                            hx-trigger="click">«</a>
                     {% endif %}
+
                     <span class="bg-hover_navbar text-text_navbar font-bold py-2 px-4">{{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+
                     {% if page_obj.has_next %}
                         <a href="?page={{ page_obj.next_page_number }}" 
                            class="btn bg-hover_navbar hover:bg-arrow_paginator text-text_navbar font-bold py-2 px-4 rounded-r"
@@ -182,10 +214,14 @@
                            hx-push-url="true"
                            hx-trigger="click">»</a>
                     {% endif %}
+
                 </div>
             </div>
         {% endif %}
+        <!-- PAGINATION END -->
     </div>
+    <!-- LIST OF MEMBERS END -->
+
 </div>
 
 <!-- Modal -->

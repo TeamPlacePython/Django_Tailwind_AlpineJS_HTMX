@@ -1,0 +1,52 @@
+{% extends 'layouts/blank.html' %}
+{% load django_vite %}
+{% load custom_filters %}
+
+{% block title %}{{ sport_category_price_title }}{% endblock title %}
+{% block meta_description %}{{ sport_category_price_description }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+    <h1 class="mb-8 font-title">{{ sport_category_price_title }}</h1>
+</div>
+
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
+        
+        {% include "components/logo_title.html" %}
+
+        <div class="overflow-x-auto w-full">
+            <table class="bg-navbar w-full p-6 md:p-8 min-w-max">
+                <thead>
+                    <tr class="px-6 py-3 border-b-2 border-text_navbar text-left text-text_navbar bg-hover_navbar font-title text-2xl">
+                        <th>Catégorie</th>
+                        <th>Lundi</th>
+                        <th>Mardi</th>
+                        <th>Mercredi</th>
+                        <th>Jeudi</th>
+                        <th>Vendredi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category, hours in schedule.items %}
+                    <tr class="px-6 py-4 border-b text-text_navbar border-text_navbar hover:bg-hover_navbar hover:text-black cursor-pointer">
+                        <td>{{ category }}</td>
+                        <td>{{ hours.Lundi|default:"-" }}</td>
+                        <td>{{ hours.Mardi|default:"-" }}</td>
+                        <td>{{ hours.Mercredi|default:"-" }}</td>
+                        <td>{{ hours.Jeudi|default:"-" }}</td>
+                        <td>{{ hours.Vendredi|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">not found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}

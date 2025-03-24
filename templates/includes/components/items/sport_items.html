@@ -1,0 +1,7 @@
+{% for sport in sport_items %}
+<li>
+    <a href="{% url sport.url %}">
+        {{ sport.name }}
+    </a>
+</li>
+{% endfor %}
