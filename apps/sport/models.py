@@ -1,4 +1,5 @@
 from django.db import models
+from django.apps import apps
 
 
 class SportsCategory(models.Model):
@@ -25,7 +26,7 @@ class SportsCategory(models.Model):
 
     class Meta:
         verbose_name_plural = "Sports categories"
-        ordering = ["name"]
+        ordering = ["-start_year"]
 
     def __str__(self):
         return f"{self.name}"
@@ -35,3 +36,50 @@ class SportsCategory(models.Model):
         if self.start_year and self.end_year:
             return self.start_year <= birth_year <= self.end_year
         return False
+
+
+class Performance(models.Model):
+    member = models.ForeignKey(
+        "members.Member", on_delete=models.CASCADE, related_name="performances"
+    )
+    title = models.CharField(
+        max_length=200, verbose_name="Titre de la performance"
+    )
+    description = models.TextField(verbose_name="Détails de la performance")
+    creation_date = models.DateField(verbose_name="Date de réalisation")
+
+    class Meta:
+        verbose_name = "Performance"
+        verbose_name_plural = "Performances"
+        ordering = ["-creation_date"]
+
+    def __str__(self):
+        return f"{self.title} - {self.member}"
+
+    @staticmethod
+    def check_member_model_exists():
+        try:
+            # Checks if the "Member" template exists in the "members" application
+            model = apps.get_model("members", "Member")
+            return True
+        except LookupError:
+            # The template was not found
+            return False
+
+
+class Results(models.Model):
+    member = models.ForeignKey(
+        "members.Member", on_delete=models.CASCADE, related_name="resultats"
+    )
+    event = models.CharField(max_length=200, verbose_name="Événement")
+    position = models.PositiveIntegerField(verbose_name="Position obtenue")
+    date_event = models.DateField(verbose_name="Date de l'événement")
+    comment = models.TextField(blank=True, verbose_name="Commentaire")
+
+    class Meta:
+        verbose_name = "Résultat"
+        verbose_name_plural = "Résultats"
+        ordering = ["-date_event"]
+
+    def __str__(self):
+        return f"{self.event} - {self.member} : {self.position}ᵉ place"

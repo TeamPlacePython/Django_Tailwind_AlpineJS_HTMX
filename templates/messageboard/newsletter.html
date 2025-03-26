@@ -1,22 +1,25 @@
 {% extends 'layouts/blank.html' %}
 {% load django_vite %}
 
-{% block title %}{{ newsletter_title  }}{% endblock title %}
-{% block meta_description %}{{ newsletter_description }}{% endblock meta_description %}
+{% block title %}{{ news_letter_title  }}{% endblock title %}
+{% block meta_description %}{{ news_letter_description }}{% endblock meta_description %}
 
 {% block content %}
-
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-   <h1 class="mb-8 font-title">{{ newsletter_title  }}</h1>
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+   <h1 class="mb-8 font-title text-3xl md:text-4xl">{{ news_letter_title }}</h1>
 </div>
    
-<div class="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
    <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
        <div class="p-6">
          <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-navbar rounded-lg max-w-3xl w-full">
-               <!-- Image d'en-tête -->
-               <img src="{% vite_asset_url 'images/newsletters.jpg' %}" alt="Header Image" class="w-full rounded-t-lg">
+            <div class="bg-navbar rounded-lg max-w-6xl w-full">
+               <h1 class="text-lg text-center font-title">{{ monthly_picture }}</h1>
+
+                <!-- Image d'en-tête -->
+                <img src="{% vite_asset_url 'images/newsletters.jpg' %}" 
+                     alt="Header Image" 
+                     class="w-full rounded-lg shadow-md">
 
                <!-- Contenu principal -->
                <div class="p-6 text-center">
@@ -26,7 +29,7 @@
 
                      <!-- Bouton "Visit Website" -->
                      <a href="https://www.laurentjouron.dev/" target="_blank" class="button bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar">
-                        {{ website_link_text }}
+                        {{ website_link_label }}
                      </a>
                </div>
 
@@ -42,10 +45,10 @@
                      <div class="max-w-lg mx-auto text-left">
                         <p class="font-semibold mb-2">Launching soon:</p>
                         <ul class="list-disc list-inside text-gray-700 space-y-2">
-                           <li>Login with Google and X</li>
-                           <li>Stripe Implementation</li>
-                           <li>Image & Caption Game</li>
-                           <li>AI</li>
+                           <li>Fédération d'éscrime infos</li>
+                           <li>Club infos</li>
+                           <li>Resultats infos</li>
+                           <li>Event à venir infos</li>
                         </ul>
                      </div>
                   </div>

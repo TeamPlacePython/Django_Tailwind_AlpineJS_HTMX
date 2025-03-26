@@ -6,9 +6,11 @@
 {% block meta_description %}{{ member_list_description }}{% endblock meta_description %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="mb-8 font-title">{{ member_list_title }}</h1>
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+    <h1 class="mb-8 font-title text-3xl md:text-4xl">{{ member_list_title }}</h1>
+</div>
 
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
     <!-- Header with search and filters -->
     <div class="mb-6">
         <form class="w-full"

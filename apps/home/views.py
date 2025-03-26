@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView
+from .models import MapsLocation
 
 
 class HomeIndexView(TemplateView):
@@ -6,5 +7,14 @@ class HomeIndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Accueil"
+
+        # Ajouter les stations au contexte
+        context["stations"] = list(
+            MapsLocation.objects.values(
+                "latitude",
+                "longitude",
+                "station_name",
+                "address",
+            )
+        )
         return context

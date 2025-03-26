@@ -118,9 +118,9 @@ class MemberListView(BaseMemberListView):
         context.update(
             {
                 "button_details_label": CONSTANT_DETAILS,
+                **self._context_defaults,
             }
         )
-        context.update(self._context_defaults)
         return context
 
 
@@ -148,9 +148,9 @@ class MemberTableView(LoginRequiredMixin, BaseMemberListView):
                 "member_weapon_label": "Arme",
                 "member_handedness_label": "Main",
                 "member_not_found_message": "Aucun membre trouvé.",
+                **self._context_defaults,
             }
         )
-        context.update(self._context_defaults)
         return context
 
 
@@ -228,9 +228,9 @@ class MemberCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
                 "button_avatar_label": "Ajouter un avatar",
                 "button_close_label": CONSTANT_CLOSE,
                 "button_save_label": CONSTANT_SAVE,
+                **self._context_defaults,
             }
         )
-        context.update(self._context_defaults)
         return context
 
 
@@ -260,9 +260,9 @@ class MemberUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
                 "button_avatar_label": "Changer l'avatar",
                 "button_save_label": CONSTANT_UPDATE,
                 "button_close_label": CONSTANT_CLOSE,
+                **self._context_defaults,
             }
         )
-        context.update(self._context_defaults)
         return context
 
     def form_valid(self, form):

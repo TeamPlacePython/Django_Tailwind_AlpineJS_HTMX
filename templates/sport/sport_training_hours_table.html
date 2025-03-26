@@ -19,12 +19,12 @@
             <table class="bg-navbar w-full p-6 md:p-8 min-w-max">
                 <thead>
                     <tr class="px-6 py-3 border-b-2 border-text_navbar text-left text-text_navbar bg-hover_navbar font-title text-2xl">
-                        <th>Catégorie</th>
-                        <th>Lundi</th>
-                        <th>Mardi</th>
-                        <th>Mercredi</th>
-                        <th>Jeudi</th>
-                        <th>Vendredi</th>
+                        <th>{{ sport_category }}</th>
+                        <th>{{ monday }}</th>
+                        <th>{{ tuesday }}</th>
+                        <th>{{ wednesday }}</th>
+                        <th>{{ thursday }}</th>
+                        <th>{{ friday }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,7 +45,10 @@
                 </tbody>
             </table>
         </div>
-
+        
+        <h2 class="font-title mt-4">
+            {{ respect_instructions }}
+        </h2>
     </div>
 </div>
 

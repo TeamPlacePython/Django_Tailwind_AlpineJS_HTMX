@@ -16,30 +16,26 @@ class MessageBoardView(LoginRequiredMixin, FormView):
     form_class = MessageCreateForm
     success_url = reverse_lazy("messageboard:messageboard")
     _context_defaults = {
-        "title": "Messages ...",
-        "description": "Liste des membres du club avec option de filtrage.",
+        "message_board_title": "Messages ...",
+        "message_board_description": "",
     }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         # Dictionnaire des messages constants
-        context_data = {
-            "messageboard": get_object_or_404(MessageBoard, id=1),
-            "are_subscribe": "Vous êtes inscrit!",
-            "subscribe": "S'inscrire",
-            "unsubscribe": "Se désinscrire",
-            "subscriber": "Abonné",
-            "informations": "Inscrivez-vous pour recevoir les informations et les résultats du club.",
-            "not_informations": "Vous recevrez des informations et des résultats du club.",
-        }
-
-        # Mise à jour du contexte avec les données du dictionnaire
-        context.update(context_data)
-
-        # Mise à jour du contexte avec les valeurs par défaut
-        context.update(self._context_defaults)
-
+        context.update(
+            {
+                "message_board": get_object_or_404(MessageBoard, id=1),
+                "subscription_success_message": "Vous êtes inscrit!",
+                "button_subscribe_label": "S'inscrire",
+                "button_unsubscribe_label": "Se désinscrire",
+                "subscriber_label": "Abonné",
+                "subscription_info_message": "Inscrivez-vous pour recevoir les informations et les résultats du club.",
+                "subscription_confirmation_message": "Vous recevrez des informations et des résultats du club.",
+                **self._context_defaults,
+            }
+        )
         return context
 
     def form_valid(self, form):
@@ -97,20 +93,24 @@ class EmailService:
 
 class NewsletterView(UserPassesTestMixin, View):
     template_name = "messageboard/newsletter.html"
+    _context_defaults = {
+        "news_letter_title": "Newsletter ...",
+        "news_letter_description": "Description des résultats et des projets du club",
+    }
 
     def get_context_data(self, **kwargs):
         return {
-            "newsletter_title": "Newsletter...",
-            "newsletter_description": "Description des résultats et des projets du club",
+            "monthly_picture": "L'image du mois",
             "greeting_hello": "Bonjour",
             "newsletter_welcome_message": "Bienvenue dans notre bulletin mensuel!",
             "club_updates_notice": "Soyez attentif aux informations fournies par le club.",
-            "website_link_text": "Accès au site",
+            "website_link_label": "Accès au site",
             "news_title_escrime": "Actu Escrime Mandelieu",
             "message_appreciation": "Merci, vous êtes géniaux! 😎",
             "gratitude_message": "Merci pour vos propositions, vos accompagnements, vos commentaires et votre soutien! 🥰",
             "club_support_title": "Soutenez le club ⚔️",
-            "support_message": "✨ Rejoignez-nous sur les réseaux sociaux, partagez vos idées💡 et/ou images📸 avec nous. ✨",
+            "support_message": "✨ Rejoignez-nous sur les réseaux sociaux, partagez vos idées💡et/ou vos images 📸 avec nous. ✨",
+            **self._context_defaults,
         }
 
     def get(self, request, *args, **kwargs):

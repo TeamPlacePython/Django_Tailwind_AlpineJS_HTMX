@@ -1,0 +1,119 @@
+{% extends 'layouts/blank.html' %}
+{% load django_vite %}
+
+{% block title %}L'Histoire de l'Escrime{% endblock title %}
+{% block meta_description %}Découvrez l'histoire fascinante de l'escrime, ses trois armes principales et les athlètes qui ont marqué ce sport.{% endblock meta_description %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+    <h1 class="mb-8 font-title text-3xl md:text-4xl">Histoire de l'escrime ...</h1>
+</div>
+
+<wrapper class="block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div id="messageboard" class="grid bg-navbar shadow-2xl rounded-2xl relative border border-text_navbar shadow-text_navbar p-6 overflow-y-auto">
+        <div id="messages" class="flex flex-col relative overflow-y-auto h-full">
+            <div class="flex flex-col gap-6 pl-4 px-4 sm:px-8 md:py-10 grow">
+
+                {% include "components/logo_title.html" %}
+
+                <article class="flex flex-col gap-4">
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        L'escrime, art du combat à l'épée, possède une histoire riche qui s'étend sur plusieurs millénaires. 
+                        De ses origines martiales à sa codification en tant que sport, elle a évolué pour devenir une 
+                        discipline olympique respectée, pratiquée avec trois armes principales : le fleuret, l'épée et le sabre.
+                    </p>
+
+                    <span class="text-2xl md:text-3xl font-bold font-title text-center">
+                        Origines et Évolution
+                    </span>
+
+                    <img src="{% vite_asset_url 'images/origines_escrime.png' %}" alt="Premier pas de l'histoire de l'escrime " class="my-6 mx-auto w-full sm:w-3/4 lg:w-1/2">
+
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        Les premières traces de combats à l'épée remontent à l'Égypte ancienne, vers 1190 av. J.-C., 
+                        où des fresques dépeignent des duels armés. Au fil des siècles, l'escrime s'est développée en Europe, 
+                        notamment en France et en Italie, où elle est devenue un élément central de la formation militaire et aristocratique. 
+                        Au XVIIIᵉ siècle, l'escrime s'est transformée en une discipline sportive, avec l'introduction de règles 
+                        et de conventions visant à assurer la sécurité des pratiquants. Cette évolution a conduit à la création des 
+                        trois armes distinctes que nous connaissons aujourd'hui.
+                    </p>
+
+                    <span class="text-2xl md:text-3xl font-bold font-title text-center">
+                        Les Trois Armes de l'Escrime
+                    </span>
+
+                    <img src="{% vite_asset_url 'images/trois_armes_without_bg.png' %}" alt="Les trois armes de l'escrime" class="my-6 mx-auto">
+
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>Le sabre</strong> est une arme d'estoc et de taille, ce qui signifie que les touches peuvent 
+                        être portées avec la pointe ainsi qu'avec le tranchant de la lame. Historiquement, le sabre était 
+                        utilisé par la cavalerie, et ses techniques reflètent cet héritage militaire. En compétition, les 
+                        cibles valides sont le tronc, la tête et les bras de l'adversaire. 
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>Le fleuret</strong> est une arme d'estoc légère, caractérisée par une lame fine 
+                        et flexible à section carrée. À ses origines, à la fin du XVIIIᵉ siècle, le fleuret servait 
+                        d'arme d'entraînement pour l'étude de l'escrime. Contrairement au sabre et à l'épée, il n'a 
+                        jamais été utilisé sur les champs de bataille ou dans les duels. Les règles du fleuret sont 
+                        basées sur des conventions strictes, où seules les touches portées avec la pointe et visant 
+                        le tronc de l'adversaire sont valides.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>L'épée</strong> est également une arme d'estoc, mais elle est plus lourde que le fleuret et possède une 
+                        lame à section triangulaire. Historiquement, l'épée était l'arme privilégiée pour les duels, 
+                        son objectif étant d'atteindre l'adversaire tout en évitant d'être touché. En compétition, 
+                        l'ensemble du corps est une cible valable, et les règles sont moins conventionnelles que celles du 
+                        fleuret, permettant des touches simultanées.
+                    </p>
+
+                    <span class="text-2xl md:text-3xl font-bold font-title text-center">
+                        Athlètes marquants de l'escrime
+                    </span>
+
+                    <img src="{% vite_asset_url 'images/laura_flessel.png' %}" alt="Laura Flessel" class="my-6 mx-auto w-full sm:w-3/4 lg:w-1/2">
+
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        De nombreux escrimeurs ont laissé une empreinte indélébile dans l'histoire de ce sport. Voici quelques figures emblématiques :
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>Lucien Gaudin (1886-1934):</strong> Surnommé le « hors classe », il a dominé son époque par sa maîtrise 
+                        technique et son élégance. Sa carrière s'étend de 1904 à 1928, remportant quatre médailles d'or et deux d'argent 
+                        aux Jeux olympiques, ainsi que deux titres de champion du monde. 
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>Aldo Nadi (1899-1965):</strong> Escrimeur italien considéré comme l'un des plus grands de l'histoire, 
+                        il a réalisé l'exploit de remporter une médaille d'or aux Jeux olympiques d'Anvers dans chacune des trois armes.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>Aladár Gerevich (1910-1991):</strong> Sabreur hongrois, il est le seul athlète à avoir remporté 
+                        une médaille d'or lors de six Jeux olympiques différents, totalisant dix médailles olympiques, dont sept d'or, 
+                        et onze titres de champion du monde entre 1932 et 1957. 
+                    ​</p>
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>Christian d'Oriola (1928-2007):</strong> Fleurettiste français surnommé « d'Artagnan », il a remporté 
+                        quatre médailles d'or et deux d'argent aux Jeux olympiques, ainsi que huit titres de champion du monde.
+                    ​</p>
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>Valentina Vezzali (1974-):</strong> Escrimeuse italienne, elle a remporté six médailles d'or 
+                        olympiques au fleuret, dont trois individuelles consécutives (2000, 2004, 2008), devenant la 
+                        première escrimeuse à réaliser cet exploit. Elle détient également six titres de championne du monde. 
+                    ​</p>
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        <strong>Laura Flessel (1971-):</strong> Escrimeuse française, surnommé la « guèpe », elle est l'une des sportives 
+                        les plus médaillées de France, avec cinq médailles olympiques à son actif 
+                    ​</p>
+
+                    <p class="text-base sm:text-lg leading-relaxed">
+                        L'escrime est un sport qui allie tradition et modernité, technique et stratégie. 
+                        Les trois armes offrent des approches et des styles variés, reflétant l'évolution 
+                        historique de cette discipline. Les athlètes qui ont marqué l'escrime ont contribué à son 
+                        prestige et continuent d'inspirer de nouvelles générations de pratiquants.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </div>
+</wrapper>
+
+{% endblock content %}

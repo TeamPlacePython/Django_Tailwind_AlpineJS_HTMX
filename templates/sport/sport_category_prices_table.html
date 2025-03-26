@@ -18,21 +18,21 @@
             <table class="bg-navbar w-full p-6 md:p-8 min-w-max">
                 <thead>
                     <tr class="px-6 py-3 border-b-2 border-text_navbar text-left text-text_navbar bg-hover_navbar font-title text-2xl">
-                        <th>Catégories</th>
-                        <th>Description</th>
-                        <th>Naissance de</th>
-                        <th>Jusqu'à</th>
-                        <th>Montant</th>
+                        <th>{{ sport_category_name }}</th>
+                        <th>{{ sport_category_description }}</th>
+                        <th>{{ sport_category_born_start }}</th>
+                        <th>{{ sport_category_born_end }}</th>
+                        <th>{{ sport_category_price }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for information in sport_category %}
+                    {% for sport in sport_category %}
                     <tr class="px-6 py-4 border-b text-text_navbar border-text_navbar hover:bg-hover_navbar hover:text-black cursor-pointer">
-                        <td>{{ information.name }}</td>
-                        <td>{{ information.description }}</td>
-                        <td>{{ information.start_year }}</td>
-                        <td>{{ information.end_year }}</td>
-                        <td>{{ information.fee_amount }} €</td>
+                        <td>{{ sport.name }}</td>
+                        <td>{{ sport.description }}</td>
+                        <td>{{ sport.start_year }}</td>
+                        <td>{{ sport.end_year }}</td>
+                        <td>{{ sport.fee_amount }} €</td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -42,7 +42,9 @@
                 </tbody>
             </table>
         </div>
-
+        <h2 class="font-title mt-4">
+            {{ respect_instructions }}
+        </h2>
     </div>
 </div>
 

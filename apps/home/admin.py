@@ -1,3 +1,12 @@
 from django.contrib import admin
+from .models import MapsLocation
 
-# Register your models here.
+
+@admin.register(MapsLocation)
+class MapsLocationAdmin(admin.ModelAdmin):
+    list_display = (
+        "station_name",
+        "latitude",
+        "longitude",
+        "address",
+    )

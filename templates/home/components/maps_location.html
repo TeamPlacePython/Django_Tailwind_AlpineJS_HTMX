@@ -1,0 +1,109 @@
+<!-- En-tête -->
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+    <h1 class="mb-8 font-title text-3xl md:text-4xl">Viens nous voir ...</h1>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
+
+        <!-- Section gauche : Carte -->
+        <div class="flex relative overflow-y-auto h-full">
+            <div class="flex flex-col gap-6 px-4 pt-8 md:px-10 grow">
+                <div class="flex justify-center items-center">
+                    <!-- Carte Leaflet (responsive) -->
+                    <div id="map"
+                        class="h-[300px] w-full sm:h-[350px] sm:w-[600px] md:h-[400px] md:w-[800px] lg:h-[450px] lg:w-[1000px] rounded-lg z-0 relative">
+                    </div>
+                </div>
+
+                <!-- Adresse affichée sous la carte -->
+                <div id="station-address"
+                    class="text-center mt-4 text-lg font-semibold text-defilepsie_blue min-h-[2rem]">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclusion des données JSON -->
+{{ stations|json_script:"stations_json" }}
+
+<style>
+    /* Empêche le saut en fixant la hauteur minimale */
+    #station-address {
+        min-height: 2rem; /* Ajuste la hauteur selon tes besoins */
+    }
+
+    /* Supprime le fond blanc et l'ombre des popups Leaflet */
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+</style>
+
+<!-- Script principal -->
+<script>
+    // Initialisation de la carte
+    var map = L.map('map').setView([43.55080613354596, 6.9426728430989515], 16);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Récupération des données JSON
+    const stationsElement = document.getElementById('stations_json');
+    const stations = stationsElement ? JSON.parse(stationsElement.textContent) : [];
+
+    // Élément pour afficher l'adresse sous la carte
+    const addressDisplay = document.getElementById('station-address');
+
+    // Détection des écrans (tablette et mobile : < 768px)
+    function isTouchDevice() {
+        return window.matchMedia("(max-width: 768px)").matches;
+    }
+
+    // Ajout des marqueurs avec l'affichage dynamique
+    stations.forEach(station => {
+        const marker = L.marker([station.latitude, station.longitude]).addTo(map);
+
+        // Contenu personnalisé du popup
+        const popupContent = `
+            <div class="bg-defilepsie_blue text-white px-3 py-1.5 rounded-md text-center">
+                <b>${station.station_name}</b><br>
+            </div>
+        `;
+
+        // Associer le popup au marker
+        marker.bindPopup(popupContent, { closeButton: false });
+
+        // Gestion des événements selon l'appareil
+        if (isTouchDevice()) {
+            // 📱 Clic sur mobile/tablette : Afficher l'adresse
+            marker.on('click', function () {
+                addressDisplay.style.visibility = 'visible';
+                addressDisplay.innerHTML = `<b>${station.address}</b>`;
+                this.openPopup(); // Affiche le popup
+            });
+        } else {
+            // 🖥️ Survol sur desktop : Afficher l'adresse
+            marker.on('mouseover', function () {
+                addressDisplay.style.visibility = 'visible';
+                addressDisplay.innerHTML = `<b>${station.address}</b>`;
+                this.openPopup();
+            });
+            marker.on('mouseout', function () {
+                addressDisplay.style.visibility = 'hidden';
+                addressDisplay.innerHTML = ''; // Efface le texte
+                this.closePopup();
+            });
+
+        }
+    });
+
+    // ✅ Mise à jour dynamique si la fenêtre est redimensionnée
+    window.addEventListener('resize', () => {
+        stations.forEach(station => {
+            marker.closePopup(); // Ferme les popups ouverts
+        });
+    });
+</script>

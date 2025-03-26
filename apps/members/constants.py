@@ -1,19 +1,18 @@
 ROLES_CHOICES = [
+    ("president", "Président"),
+    ("vice-president", "Vice-Président"),
+    ("treasurer", "Trésorier"),
+    ("secretary", "Secrétaire"),
     ("coach", "Maître d'armes"),
     ("member", "Membre"),
-    ("president", "Président"),
-    ("treasurer", "Trésorier"),
-    ("vice-president", "Vice-Président"),
-    ("secretary", "Secrétaire"),
     ("web-master", "Web-master"),
-    ("visitor", "Visiteur"),
     ("testman", "Testman"),
 ]
 
 STATUS_CHOICES = [
     ("active", "Actif"),
-    ("inactive", "Inactif"),
     ("pending", "En attente"),
+    ("inactive", "Inactif"),
 ]
 
 WEAPON_CHOICES = [

@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from datetime import date
 from django.utils.timezone import now
-from apps.sport.models import SportsCategory
+from django.apps import apps
 from .constants import (
     ROLES_CHOICES,
     STATUS_CHOICES,
@@ -79,7 +79,7 @@ class Member(models.Model):
         Tag, related_name="members", blank=True, verbose_name="tag"
     )
     sports_category = models.ForeignKey(
-        SportsCategory,
+        "sport.SportsCategory",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -163,6 +163,7 @@ class Member(models.Model):
             return None
 
         birth_year = self.birth_date.year
+        SportsCategory = apps.get_model("sport", "SportsCategory")
         categories = cache.get("sports_categories")
 
         if not categories:
@@ -213,7 +214,7 @@ class MembershipFee(models.Model):
         Member, on_delete=models.CASCADE, related_name="fees"
     )
     sports_category = models.ForeignKey(
-        SportsCategory,
+        "sport.SportsCategory",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

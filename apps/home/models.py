@@ -120,3 +120,13 @@ class Tag(models.Model):
 
     def get_absolute_url(self):
         return f"/category/{self.slug}/"
+
+
+class MapsLocation(models.Model):
+    station_name = models.CharField(max_length=250)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    address = models.CharField(max_length=500, blank=True, null=True)
+
+    def __str__(self):
+        return self.station_name
