@@ -6,6 +6,8 @@ from django.views import View
 from django.views.generic.edit import FormView
 from django.core.mail import EmailMessage
 
+import threading
+
 from .tasks import send_email_task
 from .models import MessageBoard
 from .forms import MessageCreateForm
@@ -46,7 +48,7 @@ class MessageBoardView(LoginRequiredMixin, FormView):
             message.messageboard = messageboard
             message.save()
             # Utilisation de la classe EmailService
-            # EmailService.send_email(message)
+            EmailService.send_email(message)
         else:
             messages.warning(self.request, "You need to be Subscribed!")
             return redirect(self.success_url)
@@ -83,7 +85,10 @@ class EmailService:
             send_email_task.delay(subject, body, subscriber.email)
 
             # Envoi alternatif avec threading (au cas où Celery n'est pas configuré)
-            # threading.Thread(target=EmailService.send_email_thread, args=(subject, body, subscriber)).start()
+            threading.Thread(
+                target=EmailService.send_email_thread,
+                args=(subject, body, subscriber),
+            ).start()
 
     @staticmethod
     def send_email_thread(subject, body, subscriber):

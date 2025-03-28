@@ -83,7 +83,7 @@ class BaseMemberListView(MemberQuerysetMixin, ListView):
         context = super().get_context_data(**kwargs)
         context.update(
             {
-                "search_placeholder": "Recherche par nom...",
+                "search_placeholder": "Recherche par nom...🔍",
                 "button_reset_label": "Réinitialiser",
                 "status_label": "Tous les statuts",
                 "status_choices": STATUS_CHOICES,

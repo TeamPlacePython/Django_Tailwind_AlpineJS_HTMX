@@ -1,0 +1,36 @@
+{% load django_vite %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative overflow-hidden">
+        <h1 class="mb-8 font-title text-3xl md:text-4xl">
+            {{ results }}
+        </h1>
+        {% if grouped_results %}
+        <ul>
+            {% for group in grouped_results %}
+                <li class="mt-5">
+                    <strong>
+                        {{ group.event_title }} ({{ group.event_date|date:"d F Y" }}) - {{ group.sports_category }}
+                    </strong>
+                </li>
+                <ul>
+                    {% for result in group.members %}
+                        <li>
+                            {% if result.score %}
+                            🏆 {{ result.member.first_name }} {{ result.member.last_name }} - Classement : {% if result.rank == 1 %}{{ result.rank }}<sup>er</sup>{% else %}{{ result.rank }}<sup>ème</sup>{% endif %} | Score : {{ result.score }}<br>
+                            {% else %}
+                            🏆 {{ result.member.first_name }} {{ result.member.last_name }} - Classement : {% if result.rank == 1 %}{{ result.rank }}<sup>er</sup>{% else %}{{ result.rank }}<sup>ème</sup>{% endif %}<br>
+                            {% endif %}
+                            {% if result.details %}
+                                📄 {{ result.details }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>Aucun résultat disponible.</p>
+        {% endif %}
+    </div>
+</div>

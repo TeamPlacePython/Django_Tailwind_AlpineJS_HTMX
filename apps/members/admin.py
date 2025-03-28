@@ -51,7 +51,15 @@ class MemberAdmin(admin.ModelAdmin):
         ),
         (
             "Categorization",
-            {"fields": ("roles", "tags", "weapon", "sports_category")},
+            {
+                "fields": (
+                    "roles",
+                    "handeness",
+                    "tags",
+                    "weapon",
+                    "sports_category",
+                )
+            },
         ),
         ("Status", {"fields": ("status",)}),
     )

@@ -54,6 +54,15 @@ p {
 .button-gray {
     @apply !bg-text_navbar_secondary hover:!bg-text_navbar text-center
 }
+.slider-button {
+    @apply bg-transparent shadow-none p-0;
+}
+.slider-button:hover {
+    @apply bg-transparent;
+}
+.slider-button:active {
+    @apply scale-100;
+}
 .navitems>li>a {
     @apply flex items-center gap-2 h-12 px-4 hover:underline hover:bg-hover_navbar rounded-lg transition-all duration-200 ease-in-out hover:scale-105;
 }

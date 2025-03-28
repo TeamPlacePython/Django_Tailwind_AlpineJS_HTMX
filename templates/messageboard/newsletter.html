@@ -16,10 +16,17 @@
             <div class="bg-navbar rounded-lg max-w-6xl w-full">
                <h1 class="text-lg text-center font-title">{{ monthly_picture }}</h1>
 
-                <!-- Image d'en-tête -->
-                <img src="{% vite_asset_url 'images/newsletters.jpg' %}" 
-                     alt="Header Image" 
-                     class="w-full rounded-lg shadow-md">
+               <!-- Image d'en-tête -->
+               <div class="relative h-80 overflow-hidden rounded-lg md:h-[500px]">
+                  <img src="{% vite_asset_url 'images/competition_mandelieu.jpg' %}" 
+                       {% if is_landscape %}
+                           class="rounded-lg shadow-md absolute block w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                       {% else %}
+                           class="rounded-lg shadow-md absolute block w-full h-full object-contain top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                       {% endif %}
+                       alt="Header Image">
+              </div>
+
 
                <!-- Contenu principal -->
                <div class="p-6 text-center">
@@ -94,4 +101,5 @@
       </div>
    </div>
 </div>
+
 {% endblock content %}

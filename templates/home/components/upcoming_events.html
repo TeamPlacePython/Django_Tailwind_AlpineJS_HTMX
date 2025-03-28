@@ -1,0 +1,27 @@
+{% load django_vite %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative overflow-hidden">
+
+        {% if upcoming_events %}
+        <h1 class="mb-8 font-title text-3xl md:text-4xl">Les compétions à venir ...</h1>
+        <ul>
+            {% for event in upcoming_events %}
+                <li class="mt-5">
+                    <strong>{{ event.title }}</strong><br>
+                    📅 {{ event.date|date:"d F Y H:i" }}<br>
+                    📍 {{ event.location }}<br>
+                    👥 Participants : 
+                    {% for participant in event.participants.all %}
+                        {{ participant.first_name }} {{ participant.last_name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        Aucun participant.
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun événement à venir.</p>
+    {% endif %}
+    </div>
+</div>
