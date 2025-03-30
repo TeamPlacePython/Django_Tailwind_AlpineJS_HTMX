@@ -24,4 +24,4 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(Result)
 class ResultAdmin(admin.ModelAdmin):
-    list_display = ("event", "member", "rank", "score", "details")
+    list_display = ("event", "member", "rank", "information", "details")

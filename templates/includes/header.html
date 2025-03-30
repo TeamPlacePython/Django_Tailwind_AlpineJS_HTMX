@@ -1,9 +1,7 @@
 {% load django_vite %}
 
 <header x-data="{ mobileMenuOpen: false }" class="flex items-center justify-between px-4 md:px-8 bg-navbar h-20 text-text_navbar sticky top-0 z-50 border-b border-text_navbar">
-    <a href="/">    
-        {% include "components/logo_title.html" %}
-    </a>
+    {% include "components/logo_title.html" %}
 
     <!-- BURGER BUTTON (MOBILE) -->
     <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">

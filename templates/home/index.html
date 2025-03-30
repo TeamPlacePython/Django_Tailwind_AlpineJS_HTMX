@@ -4,9 +4,13 @@
 
 {% block content %}
     {% include "home/components/carousel.html" %}
-    <div class="flex flex-col md:flex-row gap-6 max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
-        {% include "home/components/upcoming_events.html" %}
-        {% include "home/components/results_events.html" %}
-    </div>   
+    <div class="flex flex-col mt-10 md:flex-row gap-6 max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+        <div class="flex-1 h-full">
+            {% include "home/components/upcoming_events.html" %}
+        </div>
+        <div class="flex-1 h-full">
+            {% include "home/components/results_events.html" %}
+        </div>
+    </div>
     {% include "home/components/maps_location.html" %}
 {% endblock %}

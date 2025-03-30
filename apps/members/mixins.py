@@ -9,9 +9,4 @@ class HTMXMixin:
 
 class MemberQuerysetMixin:
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .select_related("sports_category")
-            .prefetch_related("tags")
-        )
+        return super().get_queryset().select_related("sports_category")

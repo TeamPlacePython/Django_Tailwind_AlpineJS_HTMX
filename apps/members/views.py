@@ -162,12 +162,7 @@ class MemberDetailView(
     context_object_name = "member"
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .select_related("sports_category")
-            .prefetch_related("tags")
-        )
+        return super().get_queryset().select_related("sports_category")
 
     def get_template_names(self):
         return self.get_htmx_template(self.template_name, self.template_name)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Member, Tag, MembershipFee
+from .models import Member, MembershipFee
 
 
 @admin.register(Member)
@@ -19,7 +19,7 @@ class MemberAdmin(admin.ModelAdmin):
         "date_joined",
         "display_photo",
     )
-    list_filter = ("status", "sports_category", "roles", "tags")
+    list_filter = ("status", "sports_category", "roles")
     search_fields = ("first_name", "last_name", "email")
     ordering = ("last_name", "first_name")
 
@@ -55,7 +55,6 @@ class MemberAdmin(admin.ModelAdmin):
                 "fields": (
                     "roles",
                     "handeness",
-                    "tags",
                     "weapon",
                     "sports_category",
                 )
@@ -76,14 +75,6 @@ class MemberAdmin(admin.ModelAdmin):
         return "No Photo"
 
     display_photo.short_description = "Photo"
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    """Admin panel for managing tags."""
-
-    list_display = ("name", "created_at")
-    search_fields = ("name",)
 
 
 @admin.register(MembershipFee)

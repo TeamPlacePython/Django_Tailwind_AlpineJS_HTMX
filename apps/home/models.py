@@ -1,130 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.utils.timezone import now
 from PIL import Image
 from io import BytesIO
-import uuid
-
-
-class Blog(models.Model):
-    title = models.CharField(max_length=150)
-    author = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="blogs"
-    )
-    content = models.TextField()
-    image = models.ImageField(upload_to="blog_images/")
-    location = models.CharField(max_length=255, null=True, blank=True)
-    latitude = models.FloatField(null=True, blank=True)  # Coordonnées GPS
-    longitude = models.FloatField(null=True, blank=True)
-    tags = models.ManyToManyField("Tag", blank=True)  # Ajout des tags
-    likes = models.ManyToManyField(
-        User, related_name="liked_blogs", through="LikedBlog"
-    )
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, primary_key=True, editable=False
-    )
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        ordering = ["-created"]
-
-    def get_absolute_url(self):
-        return f"/blog/{self.id}"
-
-
-class LikedBlog(models.Model):
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} aime {self.blog.title}"
-
-
-class Comment(models.Model):
-    author = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="comments"
-    )
-    parent_blog = models.ForeignKey(
-        Blog, on_delete=models.CASCADE, related_name="comments"
-    )
-    body = models.CharField(max_length=150)
-    likes = models.ManyToManyField(
-        User, related_name="liked_comments", through="LikedComment"
-    )
-    created = models.DateTimeField(auto_now_add=True)
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, primary_key=True, editable=False
-    )
-
-    def __str__(self):
-        return f"{self.author.username} : {self.body[:30]}"
-
-    class Meta:
-        ordering = ["-created"]
-
-
-class LikedComment(models.Model):
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'{self.user.username} aime "{self.comment.body[:30]}"'
-
-
-class Reply(models.Model):
-    author = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="replies"
-    )
-    parent_comment = models.ForeignKey(
-        Comment, on_delete=models.CASCADE, related_name="replies"
-    )
-    body = models.CharField(max_length=150)
-    likes = models.ManyToManyField(
-        User, related_name="liked_replies", through="LikedReply"
-    )
-    created = models.DateTimeField(auto_now_add=True)
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, primary_key=True, editable=False
-    )
-
-    def __str__(self):
-        return f"{self.author.username} : {self.body[:30]}"
-
-    class Meta:
-        ordering = ["created"]
-
-
-class LikedReply(models.Model):
-    reply = models.ForeignKey(Reply, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'{self.user.username} aime "{self.reply.body[:30]}"'
-
-
-class Tag(models.Model):
-    name = models.CharField(max_length=20)
-    image = models.FileField(upload_to="icons/", null=True, blank=True)
-    slug = models.SlugField(max_length=20, unique=True)
-    order = models.IntegerField(null=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ["order"]
-
-    def get_absolute_url(self):
-        return f"/category/{self.slug}/"
 
 
 class MapsLocation(models.Model):
@@ -141,7 +19,7 @@ def validate_image_format(image):
     """Vérifie que le fichier uploadé est bien une image valide"""
     try:
         img = Image.open(image)
-        img.verify()  # Vérifie si c'est une vraie image
+        img.verify()
     except Exception as e:
         raise ValidationError(
             "Téléversez une image valide (JPEG ou PNG)."
@@ -161,7 +39,7 @@ class CarouselImage(models.Model):
     def clean(self):
         """Vérifie que l'image est au format paysage avant l'enregistrement"""
         if not self.image:
-            return  # Empêche une erreur si aucune image n'est fournie
+            return
         img = Image.open(self.image)
         width, height = img.size
         if width <= height:
@@ -215,7 +93,7 @@ class Event(models.Model):
 
 class Result(models.Model):
     event = models.ForeignKey(
-        Event,
+        "Event",
         on_delete=models.CASCADE,
         related_name="results",
         verbose_name="Évènement",
@@ -229,8 +107,8 @@ class Result(models.Model):
     rank = models.PositiveIntegerField(
         verbose_name="Classement", null=True, blank=True
     )
-    score = models.CharField(
-        max_length=50, verbose_name="Score", null=True, blank=True
+    information = models.CharField(
+        max_length=50, verbose_name="Information", null=True, blank=True
     )
     details = models.TextField(verbose_name="Détails du résultat", blank=True)
 

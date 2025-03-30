@@ -15,19 +15,6 @@ from .constants import (
 )
 
 
-class Tag(models.Model):
-    """Flexible tags assigned to members (e.g., Fencer, Volunteer)."""
-
-    name = models.CharField(max_length=100, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
 class Member(models.Model):
     """Represents a fencing association member."""
 
@@ -74,9 +61,6 @@ class Member(models.Model):
         default="visitor",
         blank=True,
         verbose_name="Role",
-    )
-    tags = models.ManyToManyField(
-        Tag, related_name="members", blank=True, verbose_name="tag"
     )
     sports_category = models.ForeignKey(
         "sport.SportsCategory",

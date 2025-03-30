@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block layout %}
+
+{% include "includes/hero.html" %}
+
+<content x-data="{ mobileSidebarOpen: false }" class="grid grid-cols-3 max-w-7xl mx-auto py-2 md:py-6 px-3 relative z-0 md:z-10 mt-0 lg:-mt-[80px]">
+
+    <mobileSidebarNav class="md:hidden col-span-full mx-auto my-1 z-10 relative">
+        <a @click="mobileSidebarOpen = !mobileSidebarOpen" class="flex items-center cursor-pointer select-none font-bold hover:bg-gray-200 rounded-lg p-3">
+            <span>Categories</span>
+            <img x-bind:class="mobileSidebarOpen &amp;&amp; 'rotate-180 duration-300'" class="w-4 ml-1.5" src="{% static 'images/expand-arrow.png' %}" />
+        </a>
+    </mobileSidebarNav>
+
+    <main class="col-span-full md:col-span-2 md:mr-[5%] lg:mx-[10%] order-2 md:order-1">
+        {% block content %}{% endblock content %}
+    </main>
+
+    {% load sidebar %}
+    {% sidebar_view tag user %}
+
+</content>
+
+{% endblock layout %}

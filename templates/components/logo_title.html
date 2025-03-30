@@ -1,7 +1,10 @@
 {% load django_vite %}
-<logo>
-    <div class="flex items-center gap-2 mb-2">
-        <img class="h-12 md:h-15 -mt-1" src="{% vite_asset_url 'images/logo.png' %}" alt="Logo"/>
-        <span class="text-2xl md:text-3xl font-bold font-title">Salle d'escrime de Mandelieu</span>
-    </div> 
-</logo>
+
+<a href="/">
+    <logo>
+        <div class="flex items-center gap-2 mb-2">
+            <img class="h-12 md:h-15 -mt-1" src="{% vite_asset_url 'images/logo.png' %}" alt="Logo"/>
+            <span class="text-2xl md:text-3xl font-bold font-title">Salle d'escrime de Mandelieu</span>
+        </div> 
+    </logo>
+</a>
