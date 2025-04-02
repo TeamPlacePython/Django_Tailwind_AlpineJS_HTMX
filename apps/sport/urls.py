@@ -1,5 +1,10 @@
 from django.urls import path
-from .views import TrainingHoursView, SportsCategoryListView, SportHistoryView
+from .views import (
+    TrainingHoursView,
+    SportsCategoryListView,
+    SportHistoryView,
+    ResultsListView,
+)
 
 app_name = "sport"
 
@@ -15,4 +20,5 @@ urlpatterns = [
         name="sport_training_hours",
     ),
     path("history/", SportHistoryView.as_view(), name="sport_history"),
+    path("results/", ResultsListView.as_view(), name="results_list"),
 ]

@@ -1,5 +1,8 @@
 from django.views.generic import ListView
 from django.views.generic import TemplateView
+from itertools import groupby
+import re
+from apps.home.models import Event, Result
 from .models import SportsCategory
 
 CONST_RESPECT_INSTRUCTONS = "Tous les tireurs du club s'engagent à respecter les consignes données par le maître d'armes."
@@ -91,4 +94,55 @@ class SportHistoryView(TemplateView):
         context["message_board_description"] = (
             "Découvrez les origines et l'évolution de l'escrime à travers les âges."
         )
+        return context
+
+
+class ResultsListView(ListView):
+    model = Result
+    template_name = "sport/results_list.html"
+    context_object_name = "results"
+
+    def get_queryset(self):
+        queryset = Result.objects.select_related("member", "event").order_by(
+            "-event__date"
+        )
+
+        if event_id := self.request.GET.get("event"):
+            queryset = queryset.filter(event_id=event_id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Ajouter les événements à filtrer
+        context["events"] = Event.objects.order_by("-date")
+
+        # Grouper les résultats par événement et catégorie sportive
+        results = self.get_queryset()
+
+        # Fonction pour extraire le numéro après "M-"
+        def extract_number(category):
+            match = re.search(r"M-(\d+)", category.name if category else "")
+            return int(match[1]) if match else float("inf")
+
+        grouped_results = []
+        for (event, category), group in groupby(
+            results, key=lambda r: (r.event, r.member.sports_category)
+        ):
+            grouped_results.append(
+                {
+                    "event_title": event.title,
+                    "event_date": event.date,
+                    "sports_category": category.name,
+                    "sort_key": extract_number(category),
+                    "members": list(group),
+                }
+            )
+
+        # Trier par la clé "sort_key" (numéro après "M-")
+        grouped_results.sort(key=lambda x: x["sort_key"])
+
+        context["grouped_results"] = grouped_results
+
         return context
