@@ -20,7 +20,7 @@ from .models import Member
 from .forms import MemberForm
 from .mixins import MemberQuerysetMixin, HTMXMixin
 from .constants import (
-    HANDENESS_CHOICES,
+    HANDEDNESS_CHOICES,
     STATUS_CHOICES,
     ROLES_CHOICES,
     GENDER_CHOICES,
@@ -50,7 +50,7 @@ class BaseMemberListView(MemberQuerysetMixin, ListView):
         roles_filter = self.request.GET.get("roles")
         gender_filter = self.request.GET.get("gender")
         weapon_filter = self.request.GET.get("weapon")
-        handeness_filter = self.request.GET.get("handeness")
+        handedness_filter = self.request.GET.get("handedness")
 
         if search_query:
             queryset = queryset.filter(
@@ -74,8 +74,8 @@ class BaseMemberListView(MemberQuerysetMixin, ListView):
         if weapon_filter:
             queryset = queryset.filter(weapon=weapon_filter)
 
-        if handeness_filter:
-            queryset = queryset.filter(handeness=handeness_filter)
+        if handedness_filter:
+            queryset = queryset.filter(handedness=handedness_filter)
 
         return queryset
 
@@ -96,7 +96,7 @@ class BaseMemberListView(MemberQuerysetMixin, ListView):
                 "weapon_label": "Toutes les armes",
                 "weapon_choices": WEAPON_CHOICES,
                 "handedness_label": "Toutes les mains",
-                "handeness_choices": HANDENESS_CHOICES,
+                "handedness_choices": HANDEDNESS_CHOICES,
                 "member_not_found_message": "Aucun membre trouvé",
                 "status_badge_colors": STATUS_BADGES,
             }

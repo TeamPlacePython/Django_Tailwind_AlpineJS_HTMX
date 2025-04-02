@@ -54,7 +54,7 @@ class MemberAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "roles",
-                    "handeness",
+                    "handedness",
                     "weapon",
                     "sports_category",
                 )

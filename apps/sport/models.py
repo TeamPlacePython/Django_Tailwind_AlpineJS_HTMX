@@ -1,5 +1,7 @@
 from django.db import models
 from django.apps import apps
+from django.utils.timezone import now
+from django.db.models import UniqueConstraint
 
 
 class SportsCategory(models.Model):
@@ -38,6 +40,62 @@ class SportsCategory(models.Model):
         return False
 
 
+class Event(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Titre")
+    date = models.DateTimeField(
+        verbose_name="Date de l'évènement", default=now
+    )
+    location = models.TextField(verbose_name="Lieu")
+    participants = models.ManyToManyField(
+        "members.Member", related_name="events", verbose_name="Participants"
+    )
+
+    class Meta:
+        ordering = ["date"]
+
+    def has_results(self):
+        return self.results.exists()
+
+    def is_upcoming(self):
+        return self.date >= now()
+
+    def __str__(self):
+        return f"{self.title} - {self.date.strftime('%d/%m/%Y %H:%M')}"
+
+
+class Result(models.Model):
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        related_name="results",
+        verbose_name="Évènement",
+    )
+    member = models.ForeignKey(
+        "members.Member",
+        on_delete=models.CASCADE,
+        related_name="results",
+        verbose_name="Membre",
+    )
+    rank = models.PositiveIntegerField(
+        verbose_name="Classement", null=True, blank=True
+    )
+    information = models.CharField(
+        max_length=50, verbose_name="Information", null=True, blank=True
+    )
+    details = models.TextField(verbose_name="Détails du résultat", blank=True)
+
+    class Meta:
+        ordering = ["rank"]
+        constraints = [
+            UniqueConstraint(
+                fields=["event", "member"], name="unique_event_member"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.member.first_name} {self.member.last_name} - {self.event.title} ({self.rank})"
+
+
 class Performance(models.Model):
     member = models.ForeignKey(
         "members.Member", on_delete=models.CASCADE, related_name="performances"
@@ -58,28 +116,6 @@ class Performance(models.Model):
 
     @staticmethod
     def check_member_model_exists():
-        try:
-            # Checks if the "Member" template exists in the "members" application
-            model = apps.get_model("members", "Member")
-            return True
-        except LookupError:
-            # The template was not found
-            return False
-
-
-class Results(models.Model):
-    member = models.ForeignKey(
-        "members.Member", on_delete=models.CASCADE, related_name="resultats"
-    )
-    event = models.CharField(max_length=200, verbose_name="Événement")
-    position = models.PositiveIntegerField(verbose_name="Position obtenue")
-    date_event = models.DateField(verbose_name="Date de l'événement")
-    comment = models.TextField(blank=True, verbose_name="Commentaire")
-
-    class Meta:
-        verbose_name = "Résultat"
-        verbose_name_plural = "Résultats"
-        ordering = ["-date_event"]
-
-    def __str__(self):
-        return f"{self.event} - {self.member} : {self.position}ᵉ place"
+        return apps.is_installed("members") and "Member" in apps.get_models(
+            "members"
+        )

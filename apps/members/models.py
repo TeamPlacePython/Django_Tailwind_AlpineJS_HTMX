@@ -5,12 +5,13 @@ from django.db import models
 from datetime import date
 from django.utils.timezone import now
 from django.apps import apps
+
 from .constants import (
     ROLES_CHOICES,
     STATUS_CHOICES,
     WEAPON_CHOICES,
     GENDER_CHOICES,
-    HANDENESS_CHOICES,
+    HANDEDNESS_CHOICES,
     STATUS_BADGES,
 )
 
@@ -22,6 +23,7 @@ class Member(models.Model):
         regex=r"^\+?1?\d{9,15}$",
         message="Phone number must be in format: '+999999999'.",
     )
+
     # Personal Information
     first_name = models.CharField(max_length=100, verbose_name="First Name")
     last_name = models.CharField(max_length=100, verbose_name="Last Name")
@@ -45,7 +47,7 @@ class Member(models.Model):
         max_length=255,
         blank=True,
         null=True,
-        verbose_name="Address complement",
+        verbose_name="Address Complement",
     )
     postal_code = models.CharField(
         max_length=10, blank=True, null=True, verbose_name="Postal Code"
@@ -69,6 +71,7 @@ class Member(models.Model):
         blank=True,
         verbose_name="Sports Category",
     )
+
     # Status & Dates
     status = models.CharField(
         max_length=10,
@@ -79,30 +82,32 @@ class Member(models.Model):
     weapon = models.CharField(
         max_length=10,
         choices=WEAPON_CHOICES,
-        verbose_name="weapon",
+        verbose_name="Weapon",
         blank=True,
         null=True,
     )
     gender = models.CharField(
         max_length=10,
         choices=GENDER_CHOICES,
-        verbose_name="gender",
+        verbose_name="Gender",
         blank=True,
         null=True,
     )
-    handeness = models.CharField(
+    handedness = models.CharField(
         max_length=15,
-        choices=HANDENESS_CHOICES,
-        verbose_name="handeness",
+        choices=HANDEDNESS_CHOICES,
+        verbose_name="Handedness",
         blank=True,
         null=True,
     )
+
     date_joined = models.DateField(
         auto_now_add=True, verbose_name="Date Joined"
     )
     last_updated = models.DateTimeField(
         auto_now=True, verbose_name="Last Updated"
     )
+
     # Media
     photo = models.ImageField(
         upload_to="member_photos/", blank=True, null=True, verbose_name="Photo"
@@ -148,14 +153,14 @@ class Member(models.Model):
 
         birth_year = self.birth_date.year
         SportsCategory = apps.get_model("sport", "SportsCategory")
-        categories = cache.get("sports_categories")
 
+        # Récupération des catégories via le cache
+        categories = cache.get("sports_categories")
         if not categories:
             categories = list(SportsCategory.objects.all())
-            cache.set(
-                "sports_categories", categories, 3600
-            )  # Cache for 1 hour
+            cache.set("sports_categories", categories, 3600)
 
+        # Attribution de la catégorie
         for category in categories:
             if category.is_applicable(birth_year):
                 self.sports_category = category
@@ -165,17 +170,23 @@ class Member(models.Model):
 
     def clean(self):
         """Validation centralisée."""
-        # 1. Date de naissance future
         if self.birth_date and self.birth_date > date.today():
             raise ValidationError(
                 "La date de naissance ne peut pas être dans le futur."
             )
 
+        # Vérifier si un email similaire existe (sans tenir compte de la casse)
+        if (
+            Member.objects.filter(email__iexact=self.email)
+            .exclude(pk=self.pk)
+            .exists()
+        ):
+            raise ValidationError("Cet email est déjà utilisé.")
+
     def save(self, *args, **kwargs):
+        """Nettoyage avant sauvegarde."""
         if kwargs.get("update_fields") is None:
             self.full_clean()
-        if not self.roles:
-            self.roles = "visitor"
         super().save(*args, **kwargs)
 
     def create_payment(self):

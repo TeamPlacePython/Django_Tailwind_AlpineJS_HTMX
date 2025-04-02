@@ -3,7 +3,8 @@ from django.views.generic import TemplateView
 from itertools import groupby
 from datetime import timedelta
 import re
-from .models import MapsLocation, CarouselImage, Event, Result
+from apps.sport.models import Event, Result
+from .models import MapsLocation, CarouselImage
 
 CONST_RESPECT_INSTRUCTONS = "Tous les tireurs du club s'engagent à respecter les consignes données par le maître d'armes."
 
@@ -42,7 +43,8 @@ class HomeIndexView(TemplateView):
         results = Result.objects.select_related(
             "member__sports_category", "event"
         ).order_by(
-            "event__date", "event__title", "member__sports_category__name"
+            "-event__date",  # 🔹 On trie d'abord par date DESCENDANTE (événements récents en premier)
+            "member__sports_category__name",  # 🔹 Ensuite, on trie par catégorie (M-11, M-13, etc.)
         )
 
         # Fonction pour extraire le numéro après "M-"
@@ -60,15 +62,18 @@ class HomeIndexView(TemplateView):
                     "event_title": event.title,
                     "event_date": event.date,
                     "sports_category": category.name,
-                    # Clé de tri basée sur le numéro
-                    "sort_key": extract_number(category),
+                    # Clé de tri basée sur la date et la catégorie
+                    "sort_key": (
+                        -event.date.timestamp(),
+                        extract_number(category),
+                    ),
                     # Liste des résultats pour cet événement et cette catégorie
                     "members": list(group),
                 }
             )
 
-        # Trier par la clé "sort_key" (numéro après "M-")
+        # Trier en priorité par date DESCENDANTE, puis par catégorie (M-11, M-13, etc.)
         grouped_results.sort(key=lambda x: x["sort_key"])
-        context["grouped_results"] = grouped_results
 
+        context["grouped_results"] = grouped_results
         return context

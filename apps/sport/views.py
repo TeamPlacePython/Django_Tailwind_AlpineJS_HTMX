@@ -2,8 +2,7 @@ from django.views.generic import ListView
 from django.views.generic import TemplateView
 from itertools import groupby
 import re
-from apps.home.models import Event, Result
-from .models import SportsCategory
+from .models import SportsCategory, Event, Result
 
 CONST_RESPECT_INSTRUCTONS = "Tous les tireurs du club s'engagent à respecter les consignes données par le maître d'armes."
 
@@ -144,5 +143,4 @@ class ResultsListView(ListView):
         grouped_results.sort(key=lambda x: x["sort_key"])
 
         context["grouped_results"] = grouped_results
-
         return context

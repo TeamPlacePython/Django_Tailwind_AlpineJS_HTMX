@@ -7,8 +7,6 @@ from .views import (
     MemberUpdateView,
     MemberDeleteView,
     UpdatePhotoView,
-    # SportsCategoryListView,
-    # TrainingHoursView,
 )
 
 app_name = "members"

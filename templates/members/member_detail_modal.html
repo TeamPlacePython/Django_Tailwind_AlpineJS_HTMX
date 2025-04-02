@@ -33,7 +33,7 @@
         <h6 class="font-bold">{{ member_sports_information_label }} </h6>
         {% member_info "Catégorie" member.sports_category.name %}
         {% member_info "Arme" member.get_weapon_display %}
-        {% member_info "Main" member.get_handeness_display %}
+        {% member_info "Main" member.get_handedness_display %}
 
         {% if member.tags.exists %}
         <p><strong>Tags :</strong>

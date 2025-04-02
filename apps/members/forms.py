@@ -7,7 +7,7 @@ from .models import Member
 from .constants import (
     GENDER_CHOICES,
     WEAPON_CHOICES,
-    HANDENESS_CHOICES,
+    HANDEDNESS_CHOICES,
     ROLES_CHOICES,
 )
 
@@ -23,9 +23,9 @@ WEAPON_CHOICES_WITH_PLACEHOLDER = [
     ("", "Selectionnez une arme...")
 ] + WEAPON_CHOICES
 
-HANDENESS_CHOICES_WITH_PLACEHOLDER = [
+HANDEDNESS_CHOICES_WITH_PLACEHOLDER = [
     ("", "Selectionnez la dominance manuelle...")
-] + HANDENESS_CHOICES
+] + HANDEDNESS_CHOICES
 
 
 class MemberForm(forms.ModelForm):
@@ -126,8 +126,8 @@ class MemberForm(forms.ModelForm):
         required=False,
     )
 
-    handeness = forms.ChoiceField(
-        choices=HANDENESS_CHOICES_WITH_PLACEHOLDER,
+    handedness = forms.ChoiceField(
+        choices=HANDEDNESS_CHOICES_WITH_PLACEHOLDER,
         widget=forms.Select(
             attrs={
                 "class": "form-control bg-navbar text-text_navbar_secondary"
@@ -151,7 +151,7 @@ class MemberForm(forms.ModelForm):
             "city",
             "sports_category",
             "weapon",
-            "handeness",
+            "handedness",
             "roles",
             "status",
         ]
@@ -201,7 +201,7 @@ class MemberForm(forms.ModelForm):
                     "class": "form-control bg-navbar text-text_navbar_secondary"
                 }
             ),
-            "handeness": forms.Select(
+            "handedness": forms.Select(
                 attrs={"class": "form-control bg-navbar"}
             ),
             "roles": forms.Select(

@@ -112,19 +112,19 @@
                 </select>
                 <!-- WEAPON FILTER END -->
 
-                <!-- HANDENESS FILTER START -->
-                <select id="handeness-filter"
-                        name="handeness"
+                <!-- HANDEDNESS FILTER START -->
+                <select id="handedness-filter"
+                        name="handedness"
                         class="select w-full bg-navbar border-text_navbar h-[42px] border-[1px]"
-                        aria-label="Filter by handeness">
+                        aria-label="Filter by handedness">
                     <option value="">{{ handedness_label }}</option>
 
-                    {% for handeness in handeness_choices %}
-                        <option value="{{ handeness.0 }}" {% if request.GET.handeness == handeness.0 %}selected{% endif %}>{{ handeness.1 }}</option>
+                    {% for handedness in handedness_choices %}
+                        <option value="{{ handedness.0 }}" {% if request.GET.handedness == handedness.0 %}selected{% endif %}>{{ handedness.1 }}</option>
                     {% endfor %}
 
                 </select>
-                <!-- HANDENESS FILTER END -->
+                <!-- HANDEDNESS FILTER END -->
 
             </div>
         </form>

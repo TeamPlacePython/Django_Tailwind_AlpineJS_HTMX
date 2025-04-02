@@ -20,7 +20,6 @@ INSTALLED_APPS = [
     "apps.members.apps.MembersConfig",
     "apps.messageboard.apps.MessageboardConfig",
     "apps.sport.apps.SportConfig",
-    "apps.blog.apps.BlogConfig",
     # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -87,8 +86,6 @@ TEMPLATES = [
                 "apps.sport.context_processors.sport_items",
                 # Messages
                 "apps.messageboard.context_processors.messageboard_items",
-                # Blog
-                "apps.blog.context_processors.blog_items",
             ],
         },
     },

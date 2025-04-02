@@ -21,7 +21,7 @@ WEAPON_CHOICES = [
     ("sabre", "Sabre"),
 ]
 
-HANDENESS_CHOICES = [
+HANDEDNESS_CHOICES = [
     ("right", "Droitier"),
     ("left", "Gaucher"),
     ("ambidextrous", "Ambidextre"),
