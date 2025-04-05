@@ -80,21 +80,21 @@ class TestProfileEditView:
 
     def test_profile_edit_view_unauthenticated(self, client):
         """Test that unauthenticated users cannot access edit page."""
-        url = reverse("users:profile-edit")
+        url = reverse("users:profile_edit")
         response = client.get(url)
         assert response.status_code == 302
         assert "/login/" in response.url
 
     def test_profile_edit_view_get(self, authenticated_client):
         """Test displaying the profile edit form."""
-        url = reverse("users:profile-edit")
+        url = reverse("users:profile_edit")
         response = authenticated_client.get(url)
         assert response.status_code == 200
         assert "form" in response.context
 
     def test_profile_edit_view_post_valid(self, authenticated_client):
         """Test submitting valid profile edit data."""
-        url = reverse("users:profile-edit")
+        url = reverse("users:profile_edit")
         data = {"bio": "New bio text", "location": "New location"}
         response = authenticated_client.post(url, data)
         assert response.status_code == 302
@@ -151,16 +151,16 @@ class TestProfileDeleteView:
 
     def test_profile_delete_view_get(self, authenticated_client):
         """Test displaying the account deletion confirmation page."""
-        url = reverse("users:profile-delete")
+        url = reverse("users:profile_delete")
         response = authenticated_client.get(url)
         assert response.status_code == 200
 
     def test_profile_delete_view_post(self, authenticated_client, user):
         """Test successful account deletion."""
-        url = reverse("users:profile-delete")
+        url = reverse("users:profile_delete")
         response = authenticated_client.post(url)
         assert response.status_code == 302
-        assert response.url == reverse("home:home-index")
+        assert response.url == reverse("home:home_index")
         assert not User.objects.filter(id=user.id).exists()
         messages = list(get_messages(response.wsgi_request))
         assert "Account deleted" in str(messages[0])
@@ -238,18 +238,18 @@ class TestProfileUsernameChangeView:
 
     def test_username_change_view_htmx(self, authenticated_client):
         """Test getting the username change form via HTMX."""
-        url = reverse("users:profile-username-change")
+        url = reverse("users:profile_username_change")
         response = authenticated_client.get(url, HTTP_HX_REQUEST="true")
         assert response.status_code == 200
         assert "form" in response.context
 
     def test_username_change_view_post_valid(self, authenticated_client):
         """Test successful username change."""
-        url = reverse("users:profile-username-change")
+        url = reverse("users:profile_username_change")
         data = {"username": "newusername"}
         response = authenticated_client.post(url, data)
         assert response.status_code == 302
-        assert response.url == reverse("users:profile-settings")
+        assert response.url == reverse("users:profile_settings")
         messages = list(get_messages(response.wsgi_request))
         assert "Username successfully updated" in str(messages[0])
 
@@ -258,7 +258,7 @@ class TestProfileUsernameChangeView:
     ):
         """Test username change with an already existing username."""
         User.objects.create_user("existinguser", "test@test.com", "pass123")
-        url = reverse("users:profile-username-change")
+        url = reverse("users:profile_username_change")
         data = {"username": "existinguser"}
         response = authenticated_client.post(url, data)
         assert response.status_code == 302
@@ -277,14 +277,14 @@ class TestProfileSettingsView:
 
     def test_settings_view_unauthenticated(self, client):
         """Test that unauthenticated users cannot access settings."""
-        url = reverse("users:profile-settings")
+        url = reverse("users:profile_settings")
         response = client.get(url)
         assert response.status_code == 302
         assert "/login/" in response.url
 
     def test_settings_view_authenticated(self, authenticated_client):
         """Test that authenticated users can access settings."""
-        url = reverse("users:profile-settings")
+        url = reverse("users:profile_settings")
         response = authenticated_client.get(url)
         assert response.status_code == 200
 
@@ -299,10 +299,10 @@ class TestProfileEmailVerifyView:
 
     def test_email_verify_view(self, authenticated_client):
         """Test requesting a new verification email."""
-        url = reverse("users:profile-emailverify")
+        url = reverse("users:profile_emailverify")
         response = authenticated_client.get(url)
         assert response.status_code == 302
-        assert response.url == reverse("users:profile-settings")
+        assert response.url == reverse("users:profile_settings")
         assert len(mail.outbox) == 1
 
 

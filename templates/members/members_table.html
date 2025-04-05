@@ -36,7 +36,7 @@
                 <tbody>
                     {% for member in members %}
                     <tr class="px-6 py-4 border-b text-text_navbar border-text_navbar hover:bg-hover_navbar hover:text-black cursor-pointer"
-                        hx-get="{% url 'members:member-detail' member.pk %}"
+                        hx-get="{% url 'members:member_detail' member.pk %}"
                         hx-target="#memberModalContent"
                         hx-trigger="dblclick"
                         hx-swap="innerHTML"

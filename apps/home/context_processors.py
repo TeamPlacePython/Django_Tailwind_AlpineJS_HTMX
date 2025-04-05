@@ -1,6 +1,6 @@
 def home_items(request):
     menu_items = [
-        {"name": "Home", "url": "home:home-index"},
+        {"name": "Accueil", "url": "home:home_index"},
     ]
     return {"home_items": menu_items}
 

@@ -59,6 +59,22 @@ class MessageBoardView(LoginRequiredMixin, FormView):
 
 
 class SubscribeView(LoginRequiredMixin, View):
+    _context_defaults = {
+        "subscrite_title": "",
+        "subscrite_description": "",
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Dictionnaire des messages constants
+        context.update(
+            {
+                **self._context_defaults,
+            }
+        )
+        return context
+
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
 

@@ -14,16 +14,17 @@ ___________
 
 <h1 align="center">Getting the files</h1>
 
-* Download zip file 
-or
-* git clone command (need git to be installed) and remove git folder afterwards
+> **Download zip file**<br>
+  or<br>
+> **git clone command (need git to be installed) and remove git folder afterwards**<br>
+
 ```
 git clone https://github.com/LaurentJouron/Django_New_Tailwind_Starter.git . && rm -rf .git
 ```
 
 <h1 align="center">Setup</h1>
 
-* Create Virtual Environment
+> **Create Virtual Environment**
 
 ```
 mkdir .venv
@@ -55,11 +56,11 @@ python manage.py createsuperuser
 ```
 cd frontend
 ```
-* for watch
+> **for watch**
 ```
 npm start
 ```
-* for minify build
+> **for minify build**
 ```
 npm build
 ```

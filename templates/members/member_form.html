@@ -1,4 +1,4 @@
-{% extends "layouts/blank.html" %}
+{% extends "layouts/b.html" %}
 {% load static %}
 {% load django_vite %}
 {% load crispy_forms_tags %}
@@ -7,7 +7,7 @@
 {% block meta_description %}{{ member_create_update_description }}{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto sm:px-6">
     <h1 class="mb-8 font-title text-3xl md:text-4xl">{{ member_create_update_title }}</h1>
 </div>
 
@@ -16,7 +16,7 @@
         <div class="p-6">
             <!-- Formulaire de création/modification -->
             <form method="post" 
-                  hx-post="{% if form.instance.pk %}{% url 'members:member-update' form.instance.pk %}{% else %}{% url 'members:member-create' %}{% endif %}"
+                  hx-post="{% if form.instance.pk %}{% url 'members:member_update' form.instance.pk %}{% else %}{% url 'members:member_create' %}{% endif %}"
                   hx-encoding="multipart/form-data"
                   hx-swap="outerHTML"
                   hx-trigger="submit"
@@ -28,7 +28,7 @@
                 <div class="text-center flex flex-col items-center mb-6">
                     <!-- Prévisualisation de l'avatar -->
                     <img id="member-photo"
-                        src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% else %}{% vite_asset_url 'images/avatar.svg' %}{% endif %}"
+                        src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% else %}{% vite_asset_url 'images/default_avatar.svg' %}{% endif %}"
                         alt="{{ form.instance.pk|default:'New Member' }}"
                         class="w-32 h-32 rounded-full object-cover mb-4">
 
@@ -38,7 +38,7 @@
                            id="id_photo" 
                            class="hidden" 
                            accept="image/*"
-                           hx-post="{% if form.instance.pk %}{% url 'members:update-photo' form.instance.pk %}{% endif %}"
+                           hx-post="{% if form.instance.pk %}{% url 'members:update_photo' form.instance.pk %}{% endif %}"
                            hx-encoding="multipart/form-data"
                            hx-trigger="change"
                            hx-swap="none">

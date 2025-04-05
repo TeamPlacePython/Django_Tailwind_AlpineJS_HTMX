@@ -48,13 +48,13 @@ class TestProfileView:
 @pytest.mark.django_db
 class TestProfileEditView:
     def test_profile_edit_view_get(self, authenticated_client):
-        url = reverse("users:profile-edit")
+        url = reverse("users:profile_edit")
         response = authenticated_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "users/profile_edit.html")
 
     def test_profile_edit_view_post_valid(self, authenticated_client):
-        url = reverse("users:profile-edit")
+        url = reverse("users:profile_edit")
         data = {
             "bio": "New bio text",
             # Ajoutez d'autres champs de formulaire nécessaires ici
@@ -64,7 +64,7 @@ class TestProfileEditView:
         assert response.url == reverse("users:profile")
 
     def test_profile_edit_view_unauthenticated(self, client):
-        url = reverse("users:profile-edit")
+        url = reverse("users:profile_edit")
         response = client.get(url)
         assert response.status_code == 302
         assert "/accounts/login/" in response.url
@@ -73,13 +73,13 @@ class TestProfileEditView:
 @pytest.mark.django_db
 class TestProfileEmailChangeView:
     def test_email_change_view_get_htmx(self, authenticated_client):
-        url = reverse("users:profile-emailchange")
+        url = reverse("users:profile_emailchange")
         response = authenticated_client.get(url, HTTP_HX_REQUEST="true")
         assert response.status_code == 200
         assertTemplateUsed(response, "partials/email_form.html")
 
     def test_email_change_view_post_valid(self, authenticated_client):
-        url = reverse("users:profile-emailchange")
+        url = reverse("users:profile_emailchange")
         data = {"email": "newemail@example.com"}
         response = authenticated_client.post(url, data)
         assert response.status_code == 302
@@ -91,7 +91,7 @@ class TestProfileEmailChangeView:
         User.objects.create_user(
             username="other", email="existing@example.com", password="pass123"
         )
-        url = reverse("users:profile-emailchange")
+        url = reverse("users:profile_emailchange")
         data = {"email": "existing@example.com"}
         response = authenticated_client.post(url, data)
         messages = list(get_messages(response.wsgi_request))
@@ -118,16 +118,16 @@ class TestProfileUsernameChangeView:
 @pytest.mark.django_db
 class TestProfileDeleteView:
     def test_profile_delete_view_get(self, authenticated_client):
-        url = reverse("users:profile-delete")
+        url = reverse("users:profile_delete")
         response = authenticated_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "users/profile_delete.html")
 
     def test_profile_delete_view_post(self, authenticated_client, user):
-        url = reverse("users:profile-delete")
+        url = reverse("users:profile_delete")
         response = authenticated_client.post(url)
         assert response.status_code == 302
-        assert response.url == reverse("home:home-index")
+        assert response.url == reverse("home:home_index")
         assert not User.objects.filter(id=user.id).exists()
         messages = list(get_messages(response.wsgi_request))
         assert "Account deleted" in str(messages[0])
@@ -136,8 +136,8 @@ class TestProfileDeleteView:
 @pytest.mark.django_db
 class TestProfileEmailVerifyView:
     def test_email_verify_view(self, authenticated_client):
-        url = reverse("users:profile-emailverify")
+        url = reverse("users:profile_emailverify")
         response = authenticated_client.get(url)
         assert response.status_code == 302
-        assert response.url == reverse("users:profile-settings")
+        assert response.url == reverse("users:profile_settings")
         assert len(mail.outbox) == 1  # Vérifie qu'un email a été envoyé

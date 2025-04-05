@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "apps.members.apps.MembersConfig",
     "apps.messageboard.apps.MessageboardConfig",
     "apps.sport.apps.SportConfig",
+    "apps.posts.apps.PostsConfig",
     # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -86,6 +87,8 @@ TEMPLATES = [
                 "apps.sport.context_processors.sport_items",
                 # Messages
                 "apps.messageboard.context_processors.messageboard_items",
+                # Posts
+                "apps.posts.context_processors.posts_items",
             ],
         },
     },
@@ -268,7 +271,7 @@ CRISPY_TEMPLATE_PACK = "tailwind"
 
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_SIGNUP_REDIRECT_URL = (
-    "{% url 'account_signup' %}?next={% url 'profile-onboarding' %}"
+    "{% url 'account_signup' %}?next={% url 'profile_onboarding' %}"
 )
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

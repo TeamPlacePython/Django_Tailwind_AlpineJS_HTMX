@@ -15,23 +15,23 @@ app_name = "users"
 urlpatterns = [
     path("", ProfileView.as_view(), name="profile"),
     path("@<username>/", ProfileView.as_view(), name="profile"),
-    path("edit/", ProfileEditView.as_view(), name="profile-edit"),
-    path("onboarding/", ProfileEditView.as_view(), name="profile-onboarding"),
-    path("settings/", ProfileSettingsView.as_view(), name="profile-settings"),
-    path("delete/", ProfileDeleteView.as_view(), name="profile-delete"),
+    path("edit/", ProfileEditView.as_view(), name="profile_edit"),
+    path("onboarding/", ProfileEditView.as_view(), name="profile_onboarding"),
+    path("settings/", ProfileSettingsView.as_view(), name="profile_settings"),
+    path("delete/", ProfileDeleteView.as_view(), name="profile_delete"),
     path(
         "emailchange/",
         ProfileEmailChangeView.as_view(),
-        name="profile-emailchange",
+        name="profile_emailchange",
     ),
     path(
         "emailverify/",
         ProfileEmailVerifyView.as_view(),
-        name="profile-emailverify",
+        name="profile_emailverify",
     ),
     path(
         "usernamechange/",
         ProfileUsernameChangeView.as_view(),
-        name="profile-username-change",
+        name="profile_username_change",
     ),
 ]

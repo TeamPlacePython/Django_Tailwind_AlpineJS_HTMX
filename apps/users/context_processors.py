@@ -8,8 +8,8 @@ def allauth_login_context(request):
 def profile_items(request):
     menu_items = [
         {"name": "My profile", "url": "users:profile"},
-        {"name": "Edit Profile", "url": "users:profile-edit"},
-        {"name": "Settings", "url": "users:profile-settings"},
+        {"name": "Edit Profile", "url": "users:profile_edit"},
+        {"name": "Settings", "url": "users:profile_settings"},
         {"name": "Log Out", "url": "account_logout"},
     ]
     return {"profile_items": menu_items}

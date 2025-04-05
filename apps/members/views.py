@@ -199,7 +199,7 @@ class MemberCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Member
     form_class = MemberForm
     template_name = "members/member_form.html"
-    success_url = reverse_lazy("members:member-list")
+    success_url = reverse_lazy("members:member_list")
     _context_defaults = {
         "member_create_update_title": "Créer un membre ...",
         "member_create_update_description": "Création d'un membre de l'association.",
@@ -233,7 +233,7 @@ class MemberUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Member
     form_class = MemberForm
     template_name = "members/member_form.html"
-    success_url = reverse_lazy("members:member-list")
+    success_url = reverse_lazy("members:member_list")
     success_message = "The member has been successfully updated."
     _context_defaults = {
         "member_create_update_description": "Modification d'un membre de l'association.",
@@ -275,7 +275,7 @@ class MemberUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 class MemberDeleteView(LoginRequiredMixin, DeleteView):
     model = Member
     template_name = "members/member_confirm_delete.html"
-    success_url = reverse_lazy("members:member-list")
+    success_url = reverse_lazy("members:member_list")
 
     def delete(self, request, *args, **kwargs):
         member = self.get_object()

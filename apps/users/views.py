@@ -78,7 +78,7 @@ class ProfileEditView(LoginRequiredMixin, View):
 
     def _render_form(self, request, form):
         """Factorize form rendering logic for GET and invalid POST requests."""
-        onboarding = request.path == reverse("users:profile-onboarding")
+        onboarding = request.path == reverse("users:profile_onboarding")
         context = self.get_context_data(form=form, onboarding=onboarding)
         return render(request, self.template_name, context)
 
@@ -145,7 +145,7 @@ class ProfileEmailChangeView(LoginRequiredMixin, View):
             form = self.form_class(instance=request.user)
             context = {"form": form}
             return render(request, self.template_name, context=context)
-        return redirect("users:profile-settings")
+        return redirect("users:profile_settings")
 
     def post(self, request):
         """Handle email change form submission.
@@ -165,14 +165,14 @@ class ProfileEmailChangeView(LoginRequiredMixin, View):
                 .exists()
             ):
                 messages.warning(request, f"{email} is already in use.")
-                return redirect("users:profile-settings")
+                return redirect("users:profile_settings")
 
             form.save()
             send_email_confirmation(request, request.user)
-            return redirect("users:profile-settings")
+            return redirect("users:profile_settings")
 
         messages.warning(request, "Email not valid or already in use")
-        return redirect("users:profile-settings")
+        return redirect("users:profile_settings")
 
 
 class ProfileUsernameChangeView(LoginRequiredMixin, View):
@@ -198,7 +198,7 @@ class ProfileUsernameChangeView(LoginRequiredMixin, View):
             form = self.form_class(instance=request.user)
             context = {"form": form}
             return render(request, self.template_name, context=context)
-        return redirect("users:profile-settings")
+        return redirect("users:profile_settings")
 
     def post(self, request):
         """Handle username change form submission.
@@ -218,12 +218,12 @@ class ProfileUsernameChangeView(LoginRequiredMixin, View):
                 .exists()
             ):
                 messages.warning(request, _("This username is already in use"))
-                return redirect("users:profile-settings")
+                return redirect("users:profile_settings")
             form.save()
             messages.success(request, _("Username successfully updated"))
-            return redirect("users:profile-settings")
+            return redirect("users:profile_settings")
         messages.warning(request, _("Invalid or already used username"))
-        return redirect("users:profile-settings")
+        return redirect("users:profile_settings")
 
 
 class ProfileEmailVerifyView(LoginRequiredMixin, View):
@@ -242,7 +242,7 @@ class ProfileEmailVerifyView(LoginRequiredMixin, View):
             Redirects to settings
         """
         send_email_confirmation(request, request.user)
-        return redirect("users:profile-settings")
+        return redirect("users:profile_settings")
 
 
 class ProfileDeleteView(LoginRequiredMixin, View):
@@ -277,4 +277,4 @@ class ProfileDeleteView(LoginRequiredMixin, View):
         logout(request)
         user.delete()
         messages.success(request, "Account deleted, what a pity")
-        return redirect("home:home-index")
+        return redirect("home:home_index")

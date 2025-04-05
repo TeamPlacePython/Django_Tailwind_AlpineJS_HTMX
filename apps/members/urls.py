@@ -12,23 +12,23 @@ from .views import (
 app_name = "members"
 
 urlpatterns = [
-    path("", MemberListView.as_view(), name="member-list"),
-    path("table/", MemberTableView.as_view(), name="member-table"),
-    path("member/<int:pk>/", MemberDetailView.as_view(), name="member-detail"),
-    path("member/add/", MemberCreateView.as_view(), name="member-create"),
+    path("", MemberListView.as_view(), name="member_list"),
+    path("table/", MemberTableView.as_view(), name="member_table"),
+    path("member/<int:pk>/", MemberDetailView.as_view(), name="member_detail"),
+    path("member/add/", MemberCreateView.as_view(), name="member_create"),
     path(
         "member/<int:pk>/edit/",
         MemberUpdateView.as_view(),
-        name="member-update",
+        name="member_update",
     ),
     path(
         "member/<int:pk>/delete/",
         MemberDeleteView.as_view(),
-        name="member-delete",
+        name="member_delete",
     ),
     path(
         "member/<int:pk>/photo/update/",
         UpdatePhotoView.as_view(),
-        name="update-photo",
+        name="update_photo",
     ),
 ]

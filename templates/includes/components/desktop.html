@@ -2,59 +2,10 @@
     <ul class="navitems flex items-center justify-center h-full gap-6">
 
         <!-- HOME START -->
-        <li x-data="{ dropdownOpen: false }" class="relative">
-            <!-- FLECHE -->
-            <a @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="cursor-pointer select-none">
-
-                Home
-                <img x-bind:class="dropdownOpen ? 'rotate-180' : 'rotate-0'" 
-                class="w-4 transition-transform duration-300 ease-in-out" 
-                src="https://img.icons8.com/small/32/text_navbar/expand-arrow.png" alt="Dropdown"/>
-            </a>
-
-            <div x-show="dropdownOpen" 
-                x-cloak 
-                class="absolute right-0 bg-navbar text-text_navbar shadow rounded-lg w-40 p-2 z-20 overflow-hidden"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform -translate-y-2"
-                x-transition:enter-end="opacity-100 transform translate-y-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform -translate-y-2">
-                <ul class="hoverlist [&>li>a]:justify-end">
-                    {% include "includes/components/items/home_items.html" %}
-                </ul>
-            </div>
-        </li>
+        {% include "includes/components/items/home_items.html" %}
         <!-- HOME END -->
-        <!-- BLOG START -->
-        <li x-data="{ dropdownOpen: false }" class="relative">
-            <!-- FLECHE -->
-            <a @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="cursor-pointer select-none">
 
-                Blog
-                <img x-bind:class="dropdownOpen ? 'rotate-180' : 'rotate-0'" 
-                class="w-4 transition-transform duration-300 ease-in-out" 
-                src="https://img.icons8.com/small/32/text_navbar/expand-arrow.png" alt="Dropdown"/>
-            </a>
-
-            <div x-show="dropdownOpen" 
-                x-cloak 
-                class="absolute right-0 bg-navbar text-text_navbar shadow rounded-lg w-40 p-2 z-20 overflow-hidden"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform -translate-y-2"
-                x-transition:enter-end="opacity-100 transform translate-y-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform -translate-y-2">
-                <ul class="hoverlist [&>li>a]:justify-end">
-                    {% include "includes/components/items/blog_items.html" %}
-                </ul>
-            </div>
-        </li>
-        <!-- BLOG END -->
-
-        <!-- INFORMATIONS START -->
+        <!-- SPORT START -->
         <li x-data="{ dropdownOpen: false }" class="relative">
             <!-- FLECHE -->
             <a @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="cursor-pointer select-none">
@@ -79,8 +30,7 @@
                 </ul>
             </div>
         </li>
-        <!-- INFORMATIONS END -->
-
+        <!-- SPORT END -->
 
         <!-- MESSAGES START -->
         {% if request.user.is_authenticated %}
@@ -104,6 +54,10 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2">
                 <ul class="hoverlist [&>li>a]:justify-end">
+                    <!-- POSTS START -->
+                    {% include "includes/components/items/posts_items.html" %}
+                    <!-- POSTS END -->
+
                     {% include "includes/components/items/messages_items.html" %}
                 </ul>
             </div>
@@ -138,7 +92,7 @@
         </li>
         <!-- MEMBERS END -->
         
-        <!-- PROFILE -->
+        <!-- PROFILE START -->
         {% if request.user.is_authenticated %}
         <li x-data="{ dropdownOpen: false }" class="relative">
             <!-- ARROW -->
@@ -166,13 +120,15 @@
                 </ul>
             </div>
         </li>
-        
+        <!-- PROFILE END -->
+
         {% else %}
 
-        <!-- LOGIN -->
+        <!-- LOGIN SIGNUP START -->
         <ul class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
             {% include "includes/components/items/login_signup_items.html" %}
         </ul>
+        <!-- LOGIN SIGNUP END -->
 
         {% endif %}
     </ul>
