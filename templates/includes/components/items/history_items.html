@@ -1,0 +1,7 @@
+{% for history in history_items %}
+<li>
+    <a href="{% url history.url %}">
+        {{ history.name }}
+    </a>
+</li>
+{% endfor %}

@@ -14,7 +14,7 @@ from .forms import MessageCreateForm
 
 
 class MessageBoardView(LoginRequiredMixin, FormView):
-    template_name = "messageboard/index.html"
+    template_name = "messageboard/home_index.html"
     form_class = MessageCreateForm
     success_url = reverse_lazy("messageboard:messageboard")
     _context_defaults = {

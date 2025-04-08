@@ -10,6 +10,7 @@ urlpatterns = [
     path("members/", include("apps.members.urls", namespace="members")),
     path("sport/", include("apps.sport.urls", namespace="sport")),
     path("posts/", include("apps.posts.urls", namespace="posts")),
+    path("history/", include("apps.history.urls", namespace="history")),
     path(
         "messageboard/",
         include("apps.messageboard.urls", namespace="messageboard"),

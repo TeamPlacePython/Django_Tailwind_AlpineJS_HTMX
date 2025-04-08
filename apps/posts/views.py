@@ -92,11 +92,17 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 
 # ✏️ Modification d'un post
+
+
 class PostEditView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostEditForm
     template_name = "posts/post_edit.html"
     success_url = reverse_lazy("posts:home")
+    _context_defaults = {
+        "post_edit_title": "",
+        "post_edit_description": "",
+    }
 
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -106,12 +112,25 @@ class PostEditView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, "Post mis à jour avec succès !")
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                **self._context_defaults,
+            }
+        )
+        return context
+
 
 # 📄 Détail d'un post avec commentaires
 class PostDetailView(DetailView):
     model = Post
     template_name = "posts/post_page.html"
     context_object_name = "post"
+    _context_defaults = {
+        "post_detail_title": "",
+        "post_detail_description": "",
+    }
 
     def get_object(self, queryset=None):
         """
@@ -127,11 +146,15 @@ class PostDetailView(DetailView):
         Adds comments and forms to the page context.
         """
         context = super().get_context_data(**kwargs)
-        post = self.object  # Récupération de l'objet de la vue
-
-        context["commentform"] = CommentCreateForm()
-        context["replyform"] = ReplyCreateForm()
-        context["comments"] = post.comments.all()
+        post = self.object
+        context.update(
+            {
+                "commentform": CommentCreateForm(),
+                "replyform": ReplyCreateForm(),
+                "comments": post.comments.all(),
+                **self._context_defaults,
+            }
+        )
 
         return context
 

@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "apps.messageboard.apps.MessageboardConfig",
     "apps.sport.apps.SportConfig",
     "apps.posts.apps.PostsConfig",
+    "apps.history.apps.HistoryConfig",
     # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -89,6 +90,8 @@ TEMPLATES = [
                 "apps.messageboard.context_processors.messageboard_items",
                 # Posts
                 "apps.posts.context_processors.posts_items",
+                # History
+                "apps.history.context_processors.history_items",
             ],
         },
     },

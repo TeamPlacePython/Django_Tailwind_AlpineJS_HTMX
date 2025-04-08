@@ -10,7 +10,7 @@ CONST_RESPECT_INSTRUCTONS = "Tous les tireurs du club s'engagent à respecter le
 
 
 class HomeIndexView(TemplateView):
-    template_name = "home/index.html"
+    template_name = "home/home_index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -43,8 +43,8 @@ class HomeIndexView(TemplateView):
         results = Result.objects.select_related(
             "member__sports_category", "event"
         ).order_by(
-            "-event__date",  # 🔹 On trie d'abord par date DESCENDANTE (événements récents en premier)
-            "member__sports_category__name",  # 🔹 Ensuite, on trie par catégorie (M-11, M-13, etc.)
+            "-event__date",
+            "member__sports_category__name",
         )
 
         # Fonction pour extraire le numéro après "M-"
