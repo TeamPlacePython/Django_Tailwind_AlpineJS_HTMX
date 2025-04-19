@@ -4,7 +4,7 @@ _="on load transition my margin-top to 0 over 0.2 seconds then transition my opa
 </fade-in>
 
 <form class="replyform flex justify-between" autocomplete="off"
-hx-post="{% url 'posts:reply-sent' comment.id %}"
+hx-post="{% url 'posts:reply_sent' comment.id %}"
 hx-target="this" 
 hx-swap="outerHTML" >
     {% csrf_token %}

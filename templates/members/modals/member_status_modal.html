@@ -1,0 +1,36 @@
+{% extends "layouts/modal.html" %}
+{% load django_vite %}
+
+{% block modal_content %}
+<div class="modal-body border-text_navbar gap-4">
+    <h2 class="text-xl font-semibold text-text_navbar mb-4">
+        Confirmer la réinitialisation
+    </h2>
+    <p class="text-sm text-text_navbar mb-6">
+        Cette action remettra le statut de tous les membres ayant le rôle <strong>"Actif"</strong> à <strong>"En attente"</strong>.
+    </p>
+    <p class="text-sm text-text_navbar mb-6">
+        Es-tu sûr de vouloir continuer ?
+    </p>
+
+    <div class="modal-footer border-text_navbar flex justify-between">
+        <button type="button"
+                onclick="document.getElementById('confirm-reset-modal').classList.add('hidden')"
+                class="button button-gray">
+            Annuler
+        </button>
+
+        <!-- Confirmer (HTMX) -->
+        <form id="confirm-reset-status-form"
+                hx-post="{% url 'members:reset_member_status' %}"
+                hx-target="#reset-status-feedback"
+                hx-swap="beforeend"
+                onsubmit="document.getElementById('confirm-reset-modal').classList.add('hidden')">
+            <button type="submit"
+                    class="button button-red">
+                Confirmer
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock modal_content %}

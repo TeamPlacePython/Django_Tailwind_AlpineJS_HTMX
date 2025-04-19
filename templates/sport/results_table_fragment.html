@@ -1,0 +1,20 @@
+<tbody id="results-table">
+    {% for result in results %}
+    <tr class="px-6 py-4 border-b text-text_navbar border-text_navbar hover:bg-hover_navbar hover:text-black cursor-pointer">
+        <td>{{ result.event.title }}</td>
+        <td>{{ result.member.first_name }} {{ result.member.last_name }}</td>
+        <td>
+            {% if result.rank == 1 %}
+                {{ result.rank }}<sup>er</sup>
+            {% else %}
+                {{ result.rank }}<sup>ème</sup>
+            {% endif %}
+        </td>
+        <td>{{ result.member.sports_category }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4" class="text-center py-4 text-text_navbar">Aucun résultat disponible.</td>
+    </tr>
+    {% endfor %}
+</tbody>

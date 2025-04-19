@@ -1,0 +1,42 @@
+{% load django_vite %}
+
+
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center">
+        <h1 class="font-title text-3xl md:text-4xl">Les membres ...</h1>
+        <a href="{% url 'members:member_list' %}" 
+            aria-label="Voir tous les membres"
+            class="btn btn-primary text-defilepsie_blue px-4 py-2 rounded-md hover:opacity-80">
+            Tous les membres →
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for member in random_members %}
+        <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
+            <div class="flex flex-col items-center">
+
+                {% if member.photo %}
+                    <img src="{{ member.photo.url }}" 
+                        alt="{{ member.get_full_name|default:'Photo de membre' }}" 
+                        loading="lazy"
+                        class="w-24 h-24 rounded-full mb-4 object-cover border-2 border-text_navbar transition-transform duration-300 hover:scale-110">
+                {% endif %}
+
+                <span class="text-2xl font-title font-semibold mb-2">{{ member.get_full_name }}</span>
+
+                {% if member.sports_category %}
+                    <p class="text-sm mb-4">{{ member.sports_category.name }}</p>
+                {% elif member.roles %}
+                    <p class="text-sm mb-4">{{ member.get_roles_display }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+    {% empty %}
+        <div class="col-span-3 text-center py-8">
+            <p class="text-gray-500">{{ member_not_found_message }}</p>
+        </div>
+    {% endfor %}
+    </div>
+</div>

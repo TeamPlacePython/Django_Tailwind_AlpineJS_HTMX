@@ -1,42 +1,30 @@
 {% load django_vite %}
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative overflow-hidden">
-        <div class="flex items-center space-x-4">
-            <h1 class="font-title text-3xl md:text-4xl mb-8">
-                {{ results }}
-            </h1>
-            <a href="{% url 'sport:results_list' %}" class="btn btn-primary text-defilepsie_blue px-4 py-2 rounded-md hover:opacity-80">
-                Voir tous les résultats →
-            </a>
-        </div>
-        {% if grouped_results %}
+{% if grouped_results %}
+<ul>
+    {% for group in grouped_results %}
+        <li class="mt-5">
+            <span>{{ group.event_date|date:"d F Y" }}</span><br>
+            <strong>
+                {{ group.event_title }} - {{ group.sports_category }}
+            </strong>
+        </li>
         <ul>
-            {% for group in grouped_results %}
-                <li class="mt-5">
-                    <span>{{ group.event_date|date:"d F Y" }}</span><br>
-                    <strong>
-                        {{ group.event_title }} - {{ group.sports_category }}
-                    </strong>
+            {% for result in group.members %}
+                <li>
+                    {% if result.information %}
+                    🏆 {{ result.member.first_name }} {{ result.member.last_name }} - Classement : {% if result.rank == 1 %}{{ result.rank }}<sup>er</sup>{% else %}{{ result.rank }}<sup>ème</sup>{% endif %} | {{ result.information }}<br>
+                    {% else %}
+                    🏆 {{ result.member.first_name }} {{ result.member.last_name }} - Classement : {% if result.rank == 1 %}{{ result.rank }}<sup>er</sup>{% else %}{{ result.rank }}<sup>ème</sup>{% endif %}<br>
+                    {% endif %}
+                    {% if result.details %}
+                        📄 {{ result.details }}
+                    {% endif %}
                 </li>
-                <ul>
-                    {% for result in group.members %}
-                        <li>
-                            {% if result.information %}
-                            🏆 {{ result.member.first_name }} {{ result.member.last_name }} - Classement : {% if result.rank == 1 %}{{ result.rank }}<sup>er</sup>{% else %}{{ result.rank }}<sup>ème</sup>{% endif %} | {{ result.information }}<br>
-                            {% else %}
-                            🏆 {{ result.member.first_name }} {{ result.member.last_name }} - Classement : {% if result.rank == 1 %}{{ result.rank }}<sup>er</sup>{% else %}{{ result.rank }}<sup>ème</sup>{% endif %}<br>
-                            {% endif %}
-                            {% if result.details %}
-                                📄 {{ result.details }}
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
             {% endfor %}
         </ul>
-        {% else %}
-            <p>Aucun résultat disponible.</p>
-        {% endif %}
-    </div>
-</div>
+    {% endfor %}
+</ul>
+{% else %}
+    <p>Aucun résultat disponible.</p>
+{% endif %}

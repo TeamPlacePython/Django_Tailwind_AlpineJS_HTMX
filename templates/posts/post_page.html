@@ -1,20 +1,20 @@
-{% extends 'layouts/a.html' %}
+{% extends 'layouts/post_content.html' %}
 
 {% block content %}
 
-{% include 'posts/post.html' %}
+{% include 'posts/post_index.html' %}
 
 {% if user.is_authenticated %}
 <div class="card !pb-0 -mt-3">
-    <form class="flex items-center p-4" autocomplete="off"
-    hx-post="{% url 'posts:comment-sent' post.id %}" 
+    {% comment %} <form class="flex items-center p-4" autocomplete="off"
+    hx-post="{% url 'posts:comment_sent' post.id %}" 
     hx-target="#tab-contents" 
     hx-swap="afterbegin"
     _="on htmx:afterRequest reset() me" >
         {% csrf_token %}
         {{ commentform }}
         <button @click="open = false" class="block ml-2" type="submit">Submit</button>
-    </form>
+    </form> {% endcomment %}
 </div>
 {% endif %}
 
@@ -23,8 +23,8 @@
     hx-target="#tab-contents" 
     hx-swap="innerHTML"
     _="on htmx:afterOnLoad take .selected for event.target">
-        <a hx-get="{% url 'posts:post-page' post.id %}" class="tab selected">Newest First</a> 
-        <a hx-get="{% url 'posts:post-page' post.id %}?top" class="tab">Top Comments</a>
+        <a hx-get="{% url 'posts:post_page' post.id %}" class="tab selected">Newest First</a> 
+        <a hx-get="{% url 'posts:post_page' post.id %}?top" class="tab">Top Comments</a>
     </div>
 
     <div id="tab-contents">

@@ -1,0 +1,38 @@
+{% load django_vite %}
+
+
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center">
+        <h1 class="font-title text-3xl md:text-4xl">Les derniers posts ...</h1>
+        <a href="{% url 'posts:post_index' %}" class="btn btn-primary text-defilepsie_blue px-4 py-2 rounded-md hover:opacity-80">
+            Voir tous les posts →
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for post in posts %}
+        <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar border border-text_navbar overflow-hidden flex flex-col">
+            
+            {% if post.image.url %}
+            <img src="{{ post.image.url }}" alt="Titre de l'article" class="w-full h-48 object-cover transition-transform duration-300 hover:scale-105">
+            {% else %}
+            <img src="{% vite_asset_url 'images/default_picture.png' %}" alt="Titre de l'article" class="w-full h-48 object-cover">
+            {% endif %}
+            
+            <div class="p-4 flex flex-col flex-grow text-text_navbar">
+                <h3 class="text-xl font-semibold mb-2">{{ post.title }}</h3>
+                <p class="text-sm mb-4">
+                    {{ post.body|truncatewords:30 }}
+                </p>
+                {% comment %} <button type="button" 
+                    class="btn btn-sm bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
+                    hx-get="{% url 'members:member_edit' member.pk %}"
+                    hx-trigger="click"
+                    hx-swap="innerHTML">
+                Voir le détail
+                </button> {% endcomment %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

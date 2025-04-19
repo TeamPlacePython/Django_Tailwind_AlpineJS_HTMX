@@ -6,7 +6,7 @@
 {% block meta_description %}{{ member_list_description }}{% endblock meta_description %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 pt-8">
     <h1 class="mb-8 font-title text-3xl md:text-4xl">{{ member_list_title }}</h1>
 </div>
 
@@ -170,7 +170,7 @@
                         <div class="flex gap-2 mt-auto">
                             <button type="button" 
                                     class="btn btn-sm bg-navbar border-text_navbar hover:bg-text_navbar hover:text-navbar"
-                                    hx-get="{% url 'members:member_detail' member.pk %}"
+                                    hx-get="{% url 'members:member_edit' member.pk %}"
                                     hx-target="#memberModalContent"
                                     hx-trigger="click"
                                     hx-swap="innerHTML">
@@ -224,9 +224,18 @@
     </div>
     <!-- LIST OF MEMBERS END -->
 
+    <!-- Modal de confirmation -->
+    {% comment %} <div id="confirm-reset-modal">
+        {% include "members/modals/member_status_modal.html" %}
+    </div> {% endcomment %}
+
+    <!-- Feedback ici -->
+    <div id="reset-status-feedback" class="fixed bottom-4 right-4 z-50"></div>
+
+
 </div>
 
-<!-- Modal -->
+<!-- Modal membre -->
 <div class="modal fade" 
      id="memberModal" 
      tabindex="-1" 
@@ -234,6 +243,19 @@
      aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content bg-navbar" id="memberModalContent">
+            <!-- Content will be loaded here by HTMX -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal reset status -->
+<div class="modal fade" 
+     id="resetStatusModal" 
+     tabindex="-1" 
+     aria-labelledby="resetStatusModal" 
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-navbar" id="resetStatusModal">
             <!-- Content will be loaded here by HTMX -->
         </div>
     </div>

@@ -1,5 +1,4 @@
 from django.db import models
-from django.apps import apps
 from django.utils.timezone import now
 from django.db.models import UniqueConstraint
 
@@ -94,28 +93,3 @@ class Result(models.Model):
 
     def __str__(self):
         return f"{self.member.first_name} {self.member.last_name} - {self.event.title} ({self.rank})"
-
-
-class Performance(models.Model):
-    member = models.ForeignKey(
-        "members.Member", on_delete=models.CASCADE, related_name="performances"
-    )
-    title = models.CharField(
-        max_length=200, verbose_name="Titre de la performance"
-    )
-    description = models.TextField(verbose_name="Détails de la performance")
-    creation_date = models.DateField(verbose_name="Date de réalisation")
-
-    class Meta:
-        verbose_name = "Performance"
-        verbose_name_plural = "Performances"
-        ordering = ["-creation_date"]
-
-    def __str__(self):
-        return f"{self.title} - {self.member}"
-
-    @staticmethod
-    def check_member_model_exists():
-        return apps.is_installed("members") and "Member" in apps.get_models(
-            "members"
-        )

@@ -1,0 +1,31 @@
+{% extends "layouts/modal.html" %}
+
+{% block modal_content %}
+<h2 class="text-xl font-semibold text-text_navbar mb-4">
+    Confirmer la réinitialisation
+</h2>
+
+<p class="text-sm text-text_navbar mb-6">
+    Cette action remettra le statut de tous les membres ayant le rôle <strong>"Actif"</strong> à <strong>"En attente"</strong>.
+</p>
+
+<p class="text-sm text-text_navbar mb-6">
+    Es-tu sûr de vouloir continuer ?
+</p>
+
+<div class="flex justify-end gap-2">
+    <button type="button"
+            @click="show = false"
+            class="button button-gray">
+        Annuler
+    </button>
+
+    <form hx-post="{% url 'members:reset_member_status' %}"
+          hx-target="body"
+          hx-swap="none">
+        <button type="submit" class="button button-red">
+            Confirmer
+        </button>
+    </form>
+</div>
+{% endblock %}

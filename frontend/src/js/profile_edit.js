@@ -20,3 +20,4 @@ document.addEventListener("DOMContentLoaded", function () {
         display_nameOutput.innerText = event.target.value;
     });
 });
+

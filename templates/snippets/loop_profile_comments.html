@@ -4,7 +4,7 @@
     {% if comments %}
         {% for comment in comments %}
         <div class="flex gap-2">
-            <a href="{% url 'posts:post-page' comment.parent_post.id %}">
+            <a href="{% url 'posts:post_page' comment.parent_post.id %}">
                 <img class="w-20 h-20 object-cover rounded-xl hover:scale-95 max-w-none" src="{{ comment.parent_post.image }}">
             </a>
             {% include 'posts/comment.html' %}

@@ -3,16 +3,15 @@
     {% if comment.likes.count %}
     <div class="flex items-center gap-1">
         {% if user in comment.likes.all %}
-        <img class="w-4 -mt-1" src="{% static 'images/fireheart_red.svg' %}">
+        <img class="w-7 -mt-1" src="https://img.icons8.com/?size=100&id=4yauMM-kbvJ-&format=png&color=000000">
         {% else %}
-        <img class="w-4 -mt-1" src="{% static 'images/fireheart.svg' %}">
+        <img class="w-7 -mt-1" src="https://img.icons8.com/?size=100&id=uG-gOKWvvi8T&format=png&color=000000">
         {% endif %}
-        {{ comment.likes.count }}
     </div>
     {% endif %}
     {% if user.is_authenticated and user != comment.author %}                    
         <a class="cursor-pointer" 
-        hx-get="{% url 'posts:like-comment' comment.id %}"
+        hx-get="{% url 'posts:like_comment' comment.id %}"
         hx-target="closest div"
         hx-swap="outerHTML">
             {% if user in comment.likes.all %}

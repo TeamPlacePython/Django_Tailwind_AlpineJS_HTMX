@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SportsCategory, Event, Result, Performance
+from .models import SportsCategory, Event, Result
 
 
 @admin.register(SportsCategory)
@@ -75,12 +75,3 @@ class ResultAdmin(admin.ModelAdmin):
     search_fields = ("member__first_name", "member__last_name", "event__title")
     autocomplete_fields = ("member",)
     ordering = ("rank",)
-
-
-@admin.register(Performance)
-class PerformanceAdmin(admin.ModelAdmin):
-    list_display = ("title", "member", "creation_date")
-    list_filter = ("creation_date",)
-    search_fields = ("title", "member__first_name", "member__last_name")
-    autocomplete_fields = ("member",)
-    ordering = ("-creation_date",)

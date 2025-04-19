@@ -2,11 +2,12 @@ from django.urls import path
 from .views import (
     MemberListView,
     MemberTableView,
-    MemberDetailView,
+    MemberEditView,
     MemberCreateView,
     MemberUpdateView,
     MemberDeleteView,
     UpdatePhotoView,
+    ResetMemberStatusView,
 )
 
 app_name = "members"
@@ -14,7 +15,7 @@ app_name = "members"
 urlpatterns = [
     path("", MemberListView.as_view(), name="member_list"),
     path("table/", MemberTableView.as_view(), name="member_table"),
-    path("member/<int:pk>/", MemberDetailView.as_view(), name="member_detail"),
+    path("member/<int:pk>/", MemberEditView.as_view(), name="member_edit"),
     path("member/add/", MemberCreateView.as_view(), name="member_create"),
     path(
         "member/<int:pk>/edit/",
@@ -30,5 +31,10 @@ urlpatterns = [
         "member/<int:pk>/photo/update/",
         UpdatePhotoView.as_view(),
         name="update_photo",
+    ),
+    path(
+        "reset-status/",
+        ResetMemberStatusView.as_view(),
+        name="reset_member_status",
     ),
 ]

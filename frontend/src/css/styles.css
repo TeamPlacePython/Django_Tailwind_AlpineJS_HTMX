@@ -100,7 +100,7 @@ label {
     @apply hidden
 }
 input[type=file] {
-    @apply bg-hover_navbar text-gray-500 border border-gray-300 rounded-lg p-2 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-defilepsie_blue hover:file:bg-defilepsie_blue_secondary;
+    @apply bg-hover_navbar text-gray-500 border border-gray-300 rounded-lg p-2 cursor-pointer file:ml-0 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-defilepsie_blue hover:file:bg-defilepsie_blue_secondary;
 }
 .textarea, textarea, input {
     @apply w-full rounded-lg py-4 px-5 bg-hover_navbar

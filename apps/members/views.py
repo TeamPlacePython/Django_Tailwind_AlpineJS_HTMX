@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.views import View
 from django.views.generic import (
     ListView,
@@ -8,12 +9,18 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
+    TemplateView,
 )
 from django.urls import reverse_lazy
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
+
+from django.template.loader import render_to_string
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+
+from django.utils.timezone import now
+from django.utils.decorators import method_decorator
+from django.contrib.admin.views.decorators import staff_member_required
 
 from apps.sport.models import SportsCategory
 from .models import Member
@@ -154,11 +161,11 @@ class MemberTableView(LoginRequiredMixin, BaseMemberListView):
         return context
 
 
-class MemberDetailView(
+class MemberEditView(
     LoginRequiredMixin, HTMXMixin, MemberQuerysetMixin, DetailView
 ):
     model = Member
-    template_name = "members/member_detail_modal.html"
+    template_name = "members/modals/member_edit_modal.html"
     context_object_name = "member"
 
     def get_queryset(self):
@@ -316,3 +323,23 @@ class UpdatePhotoView(View):
         photo_url = f"{member.photo.url}?v={cache_buster}"
 
         return JsonResponse({"photo_url": photo_url})
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ResetMemberStatusView(View):
+    def post(self, request, *args, **kwargs):
+        today = now().date()
+        try:
+            updated_count = (
+                Member.objects.filter(roles="member")
+                .exclude(status="pending")
+                .update(status="pending")
+            )
+        except Exception as e:
+            return HttpResponse(f"Erreur : {str(e)}", status=500)
+
+        html = render_to_string(
+            "members/partials/reset_success_toast.html",
+            {"updated_count": updated_count},
+        )
+        return HttpResponse(html)

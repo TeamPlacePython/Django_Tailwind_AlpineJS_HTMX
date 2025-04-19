@@ -26,14 +26,12 @@ class PostCreateForm(ModelForm):
                 attrs={
                     "rows": 3,
                     "placeholder": "Ajoutez une légende ...",
-                    "class": "font1 text-1xl mb-4 w-full",
+                    "class": "mb-4 w-full",
                 }
             ),
             "tags": forms.CheckboxSelectMultiple(attrs={"class": "mb-4"}),
             "image": forms.ClearableFileInput(attrs={"class": "hidden"}),
         }
-
-    image = forms.ImageField(required=False)
 
 
 class PostEditForm(ModelForm):

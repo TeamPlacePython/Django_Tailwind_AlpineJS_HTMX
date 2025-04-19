@@ -1,5 +1,5 @@
-<!-- En-tête -->
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+<!-- Header -->
+<div class="max-w-7xl mx-auto mt-8 sm:px-6 lg:px-8 pt-8">
     <h1 class="mb-8 font-title text-3xl md:text-4xl">Viens nous voir ...</h1>
 </div>
 
@@ -16,7 +16,7 @@
                     </div>
                 </div>
 
-                <!-- Adresse affichée sous la carte -->
+                <!-- Address shown below the map -->
                 <div id="station-address"
                     class="text-center mt-4 text-lg font-semibold text-defilepsie_blue min-h-[2rem]">
                 </div>
@@ -25,67 +25,67 @@
     </div>
 </div>
 
-<!-- Inclusion des données JSON -->
+<!-- Inclusion of JSON data -->
 {{ stations|json_script:"stations_json" }}
 
 <style>
-    /* Empêche le saut en fixant la hauteur minimale */
+    /* Prevents the jump by setting the minimum height */
     #station-address {
-        min-height: 2rem; /* Ajuste la hauteur selon tes besoins */
+        min-height: 2rem; /* Adjust the height according to your needs */
     }
 
-    /* Supprime le fond blanc et l'ombre des popups Leaflet */
+    /* Removes white background and shadow from Leaflet popups */
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
         background: transparent !important;
         box-shadow: none !important;
     }
 </style>
 
-<!-- Script principal -->
+<!-- main script -->
 <script>
-    // Initialisation de la carte
+    // Card initialization
     var map = L.map('map').setView([43.55080613354596, 6.9426728430989515], 16);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    // Récupération des données JSON
+    // JSON Data Recovery
     const stationsElement = document.getElementById('stations_json');
     const stations = stationsElement ? JSON.parse(stationsElement.textContent) : [];
 
-    // Élément pour afficher l'adresse sous la carte
+    // Item to display the address under the map
     const addressDisplay = document.getElementById('station-address');
 
-    // Détection des écrans (tablette et mobile : < 768px)
+    // Screen detection (tablet and mobile: < 768px)
     function isTouchDevice() {
         return window.matchMedia("(max-width: 768px)").matches;
     }
 
-    // Ajout des marqueurs avec l'affichage dynamique
+    // Adding markers with dynamic display
     stations.forEach(station => {
         const marker = L.marker([station.latitude, station.longitude]).addTo(map);
 
-        // Contenu personnalisé du popup
+        // Custom popup content
         const popupContent = `
             <div class="bg-defilepsie_blue text-white px-3 py-1.5 rounded-md text-center">
                 <b>${station.station_name}</b><br>
             </div>
         `;
 
-        // Associer le popup au marker
+        // Associate the popup with the marker
         marker.bindPopup(popupContent, { closeButton: false });
 
-        // Gestion des événements selon l'appareil
+        // Event management by device
         if (isTouchDevice()) {
-            // 📱 Clic sur mobile/tablette : Afficher l'adresse
+            // 📱 Click on mobile/tablet: Show address
             marker.on('click', function () {
                 addressDisplay.style.visibility = 'visible';
                 addressDisplay.innerHTML = `<b>${station.address}</b>`;
-                this.openPopup(); // Affiche le popup
+                this.openPopup(); // Displays the popup
             });
         } else {
-            // 🖥️ Survol sur desktop : Afficher l'adresse
+            // 🖥️ Hover on desktop: Display address
             marker.on('mouseover', function () {
                 addressDisplay.style.visibility = 'visible';
                 addressDisplay.innerHTML = `<b>${station.address}</b>`;
@@ -93,16 +93,16 @@
             });
             marker.on('mouseout', function () {
                 addressDisplay.style.visibility = 'hidden';
-                addressDisplay.innerHTML = ''; // Efface le texte
+                addressDisplay.innerHTML = ''; // Deletes the text
                 this.closePopup();
             });
         }
     });
 
-    // ✅ Mise à jour dynamique si la fenêtre est redimensionnée
+    // ✅ Dynamic update if window is resized
     window.addEventListener('resize', () => {
         stations.forEach(station => {
-            marker.closePopup(); // Ferme les popups ouverts
+            marker.closePopup(); // Close open pop-ups
         });
     });
 </script>

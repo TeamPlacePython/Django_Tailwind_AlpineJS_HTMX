@@ -66,13 +66,13 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         post = form.save(commit=False)
         post.author = self.request.user
 
-        if not self.request.FILES.get("image"):
+        # ✅ Vérification de l'image
+        uploaded_image = form.cleaned_data.get("image")
+        if not uploaded_image:
             messages.error(self.request, "Vous devez ajouter une image !")
-            return self.form_invalid(
-                form
-            )  # Afficher le formulaire avec l'erreur
+            return self.form_invalid(form)
 
-        post.image = self.request.FILES["image"]
+        post.image = uploaded_image
         post.save()
         form.save_m2m()
 
@@ -92,13 +92,11 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 
 # ✏️ Modification d'un post
-
-
 class PostEditView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostEditForm
     template_name = "posts/post_edit.html"
-    success_url = reverse_lazy("posts:home")
+    success_url = reverse_lazy("posts:post_index")
     _context_defaults = {
         "post_edit_title": "",
         "post_edit_description": "",
@@ -192,7 +190,7 @@ class PostDetailView(DetailView):
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = "posts/post_delete.html"
-    success_url = reverse_lazy("posts:home")
+    success_url = reverse_lazy("posts:post_index")
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Post supprimé avec succès !")

@@ -7,21 +7,40 @@
 
 {% block content %}
 
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
-    <h1 class="mb-8 font-title text-3xl md:text-4xl">Résultats des compétitions</h1>
-</div>
-
-<!-- Sélecteur de compétition -->
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-    <label for="event-filter" class="block mb-2 font-title text-xl text-text_navbar">Filtrer par compétition :</label>
-    <select id="event-filter"
-            class="bg-navbar text-text_navbar border border-text_navbar rounded-md px-4 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-hover_navbar w-full md:w-1/3">
-        <option value="">Toutes les compétitions</option>
+{% if selected_event_id %}
+    <div class="max-w-7xl mx-auto font-title sm:px-6 lg:px-8 pt-8">
         {% for event in events %}
-            <option value="{{ event.id }}">{{ event.title }} - {{ event.date|date:"d/m/Y" }}</option>
+            {% if event.id|stringformat:"s" == selected_event_id %}
+                <h1 class="mb-8 font-title text-3xl md:text-4xl">
+                    Résultats pour : {{ event.title }} - {{ event.date|date:"d/m/Y" }}
+                </h1>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 pt-8">
+        <h1 class="mb-8 font-title text-3xl md:text-4xl">Résultats des compétitions ...</h1>
+    </div>
+{% endif %}
+
+<!-- Sélecteur de compétition stylé -->
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative">
+    <select id="event-filter"
+        name="event"
+        hx-get="{% url 'sport:results_list' %}"
+        hx-target="#results-table"
+        hx-push-url="true"
+        hx-trigger="change"
+        class="peer appearance-none bg-navbar text-text_navbar border border-text_navbar rounded-md px-4 py-2 pr-10 shadow-md focus:outline-none focus:ring-2 focus:ring-hover_navbar w-full transition-all duration-300 ease-in-out">
+        <option value="" {% if not request.GET.event %}selected{% endif %}>Toutes les compétitions</option>
+        {% for event in events %}
+            <option value="{{ event.id }}" {% if event.id|stringformat:"s" == selected_event_id %}selected{% endif %}>
+                {{ event.date|date:"d/m/Y" }} - {{ event.title }}
+            </option>
         {% endfor %}
     </select>
 </div>
+
 
 <!-- Table des résultats -->
 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-6">

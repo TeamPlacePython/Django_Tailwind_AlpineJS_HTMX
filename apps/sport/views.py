@@ -1,10 +1,13 @@
 from django.views.generic import ListView
 from django.views.generic import TemplateView
-from itertools import groupby
-import re
-from .models import SportsCategory, Event, Result
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
-CONST_RESPECT_INSTRUCTONS = "Tous les tireurs du club s'engagent à respecter les consignes données par le maître d'armes."
+from .models import SportsCategory, Event, Result
+from .utils.grouping import group_results_by_event_and_category
+
+
+CONST_RESPECT_INSTRUCTIONS = "Tous les tireurs du club s'engagent à respecter les consignes données par le maître d'armes."
 
 
 class SportsCategoryListView(ListView):
@@ -28,7 +31,7 @@ class SportsCategoryListView(ListView):
                 "sport_category_born_start": "Naissance de",
                 "sport_category_born_end": "Jusqu'à",
                 "sport_category_price": "Montant",
-                "respect_instructions": CONST_RESPECT_INSTRUCTONS,
+                "respect_instructions": CONST_RESPECT_INSTRUCTIONS,
                 **self._context_defaults,
             }
         )
@@ -77,21 +80,9 @@ class TrainingHoursView(TemplateView):
                 "wednesday": "Mercredi",
                 "thursday": "Jeudi",
                 "friday": "Vendredi",
-                "respect_instructions": CONST_RESPECT_INSTRUCTONS,
+                "respect_instructions": CONST_RESPECT_INSTRUCTIONS,
                 **self._context_defaults,
             }
-        )
-        return context
-
-
-class SportHistoryView(TemplateView):
-    template_name = "sport/sport_history.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["message_board_title"] = "L'Histoire de l'Escrime"
-        context["message_board_description"] = (
-            "Découvrez les origines et l'évolution de l'escrime à travers les âges."
         )
         return context
 
@@ -105,42 +96,28 @@ class ResultsListView(ListView):
         queryset = Result.objects.select_related("member", "event").order_by(
             "-event__date"
         )
-
         if event_id := self.request.GET.get("event"):
             queryset = queryset.filter(event_id=event_id)
-
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Ajouter les événements à filtrer
-        context["events"] = Event.objects.order_by("-date")
-
-        # Grouper les résultats par événement et catégorie sportive
-        results = self.get_queryset()
-
-        # Fonction pour extraire le numéro après "M-"
-        def extract_number(category):
-            match = re.search(r"M-(\d+)", category.name if category else "")
-            return int(match[1]) if match else float("inf")
-
-        grouped_results = []
-        for (event, category), group in groupby(
-            results, key=lambda r: (r.event, r.member.sports_category)
-        ):
-            grouped_results.append(
-                {
-                    "event_title": event.title,
-                    "event_date": event.date,
-                    "sports_category": category.name,
-                    "sort_key": extract_number(category),
-                    "members": list(group),
-                }
-            )
-
-        # Trier par la clé "sort_key" (numéro après "M-")
-        grouped_results.sort(key=lambda x: x["sort_key"])
-
-        context["grouped_results"] = grouped_results
+        context["events"] = self.get_events()
+        context["grouped_results"] = self.get_grouped_results()
+        context["selected_event_id"] = self.request.GET.get("event")
         return context
+
+    def get_events(self):
+        return Event.objects.order_by("-date")
+
+    def get_grouped_results(self):
+        results = self.get_queryset()
+        return group_results_by_event_and_category(results)
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get("HX-Request"):
+            html = render_to_string(
+                "sport/results_table_fragment.html", context
+            )
+            return HttpResponse(html)
+        return super().render_to_response(context, **response_kwargs)

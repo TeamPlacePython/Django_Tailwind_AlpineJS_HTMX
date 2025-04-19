@@ -14,7 +14,7 @@ app_name = "users"
 
 urlpatterns = [
     path("", ProfileView.as_view(), name="profile"),
-    path("@<username>/", ProfileView.as_view(), name="profile"),
+    path("@<username>/", ProfileView.as_view(), name="user_profile"),
     path("edit/", ProfileEditView.as_view(), name="profile_edit"),
     path("onboarding/", ProfileEditView.as_view(), name="profile_onboarding"),
     path("settings/", ProfileSettingsView.as_view(), name="profile_settings"),

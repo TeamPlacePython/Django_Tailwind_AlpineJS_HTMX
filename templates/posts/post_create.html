@@ -12,34 +12,33 @@
 
 <div class="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
     <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
-        <div class="flex flex-col items-center mb-6">
-            <!-- Zone d'affichage de l'image sélectionnée -->
-            <figure class="rounded-lg overflow-hidden shadow-md border mt-4 w-80 h-48 bg-gray-200 flex justify-center items-center">
-                <img id="previewImage" class="w-full h-full object-cover hidden" alt="Image sélectionnée">
-            </figure>
-
-            <!-- Champ input caché -->
-            <input type="file" id="imageInput" accept="image/*" class="hidden">
-
-            <!-- Bouton pour ouvrir la sélection d'image -->
-            <button type="button" id="uploadBtn" class="button mt-4 px-4 py-2">
-                Sélectionner une image
-            </button>
-        </div>
-
-        <form method='POST'>
+        <form method='POST' enctype="multipart/form-data">
             {% csrf_token %}
+            <div class="flex flex-col items-center mb-6">
+                <!-- Zone d'affichage de l'image sélectionnée -->
+                <figure class="rounded-lg overflow-hidden shadow-md border mt-4 w-80 h-48 bg-gray-200 flex justify-center items-center">
+                    <img id="previewImage" class="w-full h-full object-cover hidden" alt="Image sélectionnée">
+                </figure>
+    
+                <!-- Champ input caché -->
+                <input type="file" id="imageInput" accept="image/*" class="hidden">
+    
+                <!-- Bouton pour ouvrir la sélection d'image -->
+                <button type="button" id="uploadBtn" class="button mt-4 px-4 py-2">
+                    Sélectionner une image
+                </button>
+            </div>
             {{ form.as_p }}
-            <a class="button button-gray mr-1" href="{{ request.META.HTTP_REFERER }}">{{ button_cancel_label }}</a>
-            <button type="submit" class="mt-1">{{ button_save_label }}</button>
         </form>
+        <a class="button button-gray mr-1" href="{{ request.META.HTTP_REFERER }}">{{ button_cancel_label }}</a>
+        <button type="submit" class="mt-1">{{ button_save_label }}</button>
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const uploadBtn = document.getElementById("uploadBtn");
-        const imageInput = document.getElementById("imageInput");
+        const imageInput = document.getElementById("id_image");
         const previewImage = document.getElementById("previewImage");
 
         // Définir l'image par défaut au chargement

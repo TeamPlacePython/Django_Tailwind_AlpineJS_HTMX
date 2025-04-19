@@ -1,13 +1,16 @@
-<div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <!-- Semi-transparent background -->
-        <a href="{{ request.META.HTTP_REFERER }}" class="cursor-default">
-            <div class="fixed inset-0 bg-black/50 transition-opacity"></div>
-        </a>
+<div x-data="{ show: true }"
+     x-show="show"
+     x-transition.opacity.duration.300ms
+     class="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center px-4"
+     @keydown.escape.window="show = false">
 
-        <!-- Content of the modal -->
-        <div class="relative bg-navbar rounded-2xl shadow-md md:drop-shadow-2xl shadow-text_navbar w-full max-w-3xl p-6 md:p-8 border border-text_navbar">
-            {% block modal_content %}{% endblock modal_content %}
-        </div>
+    <div @click.away="show = false"
+         class="bg-navbar rounded-2xl shadow-lg w-full max-w-3xl p-6 md:p-8 border border-text_navbar transform transition-all duration-300 scale-100"
+         x-show="show"
+         x-transition.scale.duration.300ms>
+         
+        {% block modal_content %}
+        <!-- Injected content will go here -->
+        {% endblock %}
     </div>
 </div>

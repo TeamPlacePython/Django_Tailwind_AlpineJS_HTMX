@@ -1,12 +1,13 @@
 from django.utils.timezone import now
 from django.views.generic import TemplateView
-from itertools import groupby
 from datetime import timedelta
-import re
-from apps.sport.models import Event, Result
-from .models import MapsLocation, CarouselImage
+import random
 
-CONST_RESPECT_INSTRUCTONS = "Tous les tireurs du club s'engagent à respecter les consignes données par le maître d'armes."
+from apps.sport.utils.grouping import group_results_by_event_and_category
+from apps.sport.models import Event, Result
+from apps.posts.models import Post
+from apps.members.models import Member
+from .models import MapsLocation, CarouselImage
 
 
 class HomeIndexView(TemplateView):
@@ -14,9 +15,23 @@ class HomeIndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "stations": self.get_stations(),
+                "carousel_images": self.get_carousel_images(),
+                "posts": self.get_posts(),
+                "upcoming_events": self.get_upcoming_events(),
+                "grouped_results": self.get_grouped_results(),
+                "random_members": self.get_random_members(),
+                "home_index_title": "Accueil",
+                "carousel_home_index_title": "Entre tradition et modernité ...",
+                "results": "Les résultats ...",
+            }
+        )
+        return context
 
-        # Ajouter les stations au contexte
-        context["stations"] = list(
+    def get_stations(self):
+        return list(
             MapsLocation.objects.values(
                 "latitude",
                 "longitude",
@@ -25,55 +40,30 @@ class HomeIndexView(TemplateView):
             )
         )
 
-        # Ajouter les 10 dernières images du carrousel
-        context["carousel_images"] = CarouselImage.objects.all()[:10]
+    def get_carousel_images(self):
+        return CarouselImage.objects.all()[:10]
 
-        # Ajouter les événements à venir (triés par date)
-        context["upcoming_events"] = Event.objects.filter(
+    def get_posts(self):
+        return Post.objects.all()[:3]
+
+    def get_upcoming_events(self):
+        return Event.objects.filter(
             date__gte=now() - timedelta(hours=24)
         ).order_by("date")
 
-        context["home_index_title"] = "Accueil"
-        context["carousel_home_index_title"] = (
-            "Entre tradition et modernité ..."
-        )
-        context["results"] = "Les résultats ..."
-
-        # Ajouter les résultats des événements passés
+    def get_grouped_results(self):
         results = Result.objects.select_related(
             "member__sports_category", "event"
-        ).order_by(
-            "-event__date",
-            "member__sports_category__name",
-        )
+        ).order_by("-event__date", "member__sports_category__name")[:2]
+        return group_results_by_event_and_category(results)
 
-        # Fonction pour extraire le numéro après "M-"
-        def extract_number(category):
-            match = re.search(r"M-(\d+)", category.name if category else "")
-            return int(match[1]) if match else float("inf")
+    def get_random_members(self, count=3):
+        member_ids = list(Member.objects.values_list("id", flat=True))
+        if len(member_ids) <= count:
+            return Member.objects.filter(id__in=member_ids)
 
-        # Grouper par événement et catégorie sportive
-        grouped_results = []
-        for (event, category), group in groupby(
-            results, key=lambda r: (r.event, r.member.sports_category)
-        ):
-            grouped_results.append(
-                {
-                    "event_title": event.title,
-                    "event_date": event.date,
-                    "sports_category": category.name,
-                    # Clé de tri basée sur la date et la catégorie
-                    "sort_key": (
-                        -event.date.timestamp(),
-                        extract_number(category),
-                    ),
-                    # Liste des résultats pour cet événement et cette catégorie
-                    "members": list(group),
-                }
-            )
-
-        # Trier en priorité par date DESCENDANTE, puis par catégorie (M-11, M-13, etc.)
-        grouped_results.sort(key=lambda x: x["sort_key"])
-
-        context["grouped_results"] = grouped_results
-        return context
+        random_ids = random.sample(member_ids, count)
+        # Optionnel : garder l'ordre aléatoire d'origine
+        preserved_order = {id_: i for i, id_ in enumerate(random_ids)}
+        members = list(Member.objects.filter(id__in=random_ids))
+        return sorted(members, key=lambda m: preserved_order[m.id])
