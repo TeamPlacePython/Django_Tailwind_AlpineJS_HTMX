@@ -33,13 +33,13 @@
         </li>
         <!-- SPORT END -->
 
-        <!-- MESSAGES START -->
+        <!-- POST START -->
         {% if request.user.is_authenticated %}
         <li x-data="{ dropdownOpen: false }" class="relative">
             <!-- FLECHE -->
             <a @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="cursor-pointer select-none">
 
-                Messages
+                Blog
                 <img x-bind:class="dropdownOpen ? 'rotate-180' : 'rotate-0'" 
                 class="w-4 transition-transform duration-300 ease-in-out" 
                 src="https://img.icons8.com/small/32/text_navbar/expand-arrow.png" alt="Dropdown"/>
@@ -59,12 +59,15 @@
                     {% include "includes/components/items/posts_items.html" %}
                     <!-- POSTS END -->
 
-                    {% include "includes/components/items/messages_items.html" %}
                 </ul>
             </div>
         </li>
         {% endif %}
-        <!-- MESSAGES END -->
+        <!-- BLOG END -->
+        
+        <!-- MESSAGE START -->
+        {% include "includes/components/items/messages_items.html" %}
+        <!-- MESSAGE END -->
 
         <!-- MEMBERS START -->
         <li x-data="{ dropdownOpen: false }" class="relative">

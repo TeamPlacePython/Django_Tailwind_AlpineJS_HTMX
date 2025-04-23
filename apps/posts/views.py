@@ -4,6 +4,10 @@ from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.db.models import Count
+from django.utils.decorators import method_decorator
+from django.core.paginator import InvalidPage
+from django.views.decorators.cache import cache_page
+from django.views.generic.edit import FormView
 from django.views.generic import (
     ListView,
     DetailView,
@@ -11,15 +15,15 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
     View,
+    TemplateView,
 )
-from django.views.generic.edit import FormView
 import logging
 
-from apps.constant import CONSTANT_SAVE, CONSTANT_CANCEL
+from apps.constant import CONSTANT_SAVE, CONSTANT_CANCEL, CONSTANT_CONFIRM
 from .models import Post, Tag, Comment, Reply
 from .forms import (
     ReplyCreateForm,
-    PostCreateForm,
+    AddPostForm,
     PostEditForm,
     CommentCreateForm,
 )
@@ -28,38 +32,87 @@ logger = logging.getLogger(__name__)
 
 
 # 🏠 Page d'accueil avec pagination
-class PostIndexView(ListView):
+class PostHomeView(ListView):
     model = Post
-    template_name = "posts/post_index.html"
+    template_name = "posts/home.html"
     context_object_name = "posts"
     paginate_by = 3
 
+    def get_tag_slug(self):
+        return self.kwargs.get("tag")
+
     def get_queryset(self):
-        tag_slug = self.kwargs.get("tag")
+        tag_slug = self.get_tag_slug()
+        queryset = (
+            Post.objects.select_related("author")
+            .prefetch_related("tags")
+            .annotate(like_count=Count("likes"))
+        )
         if tag_slug:
-            return Post.objects.filter(tags__slug=tag_slug)
-        return Post.objects.all()
+            queryset = queryset.filter(tags__slug=tag_slug)
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tag"] = (
-            get_object_or_404(Tag, slug=self.kwargs.get("tag"))
-            if "tag" in self.kwargs
-            else None
+        tag_slug = self.get_tag_slug()
+        context.update(
+            {
+                "tag": (
+                    get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
+                ),
+                "page": self.request.GET.get("page", 1),
+            }
         )
-        context["post_index_title"] = "Le blog des adhérents ..."
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.htmx:
+            return render(
+                self.request, "posts/snippets/loop_home_posts.html", context
+            )
+        return super().render_to_response(context, **response_kwargs)
+
+    def paginate_queryset(self, queryset, page_size):
+        paginator = self.get_paginator(
+            queryset, page_size, allow_empty_first_page=True
+        )
+        page_number = self.request.GET.get("page") or 1
+        try:
+            page = paginator.page(page_number)
+            return (paginator, page, page.object_list, page.has_other_pages())
+        except InvalidPage:
+            logger.warning(
+                f"[Pagination out-of-bounds] page={page_number} | max={paginator.num_pages}"
+            )
+            # ➜ revenir à la première page si dépassement
+            page = paginator.page(1)
+            return (paginator, page, page.object_list, page.has_other_pages())
+
+
+@method_decorator(cache_page(60 * 15), name="dispatch")  # 15 minutes
+class LastPostHomeView(TemplateView):
+    template_name = "posts/components/last_post_home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["posts"] = (
+            Post.objects.select_related("author")
+            .prefetch_related("tags")
+            .annotate(like_count=Count("likes"))
+            .only("id", "title", "image", "created", "author__username")[:3]
+        )
         return context
 
 
 # 📌 Création d'un post
-class PostCreateView(LoginRequiredMixin, CreateView):
+class AddPostView(LoginRequiredMixin, CreateView):
     model = Post
-    form_class = PostCreateForm
-    template_name = "posts/post_create.html"
-    success_url = reverse_lazy("posts:post_index")
+    form_class = AddPostForm
+    template_name = "posts/add_post.html"
+    success_url = reverse_lazy("posts:post_home")
     _context_defaults = {
-        "post_create_title": "Nouveau post ...",
-        "post_create_description": "",
+        "add_post_title": "Nouveau post ...",
+        "add_post_description": "",
     }
 
     def form_valid(self, form):
@@ -92,15 +145,26 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 
 # ✏️ Modification d'un post
+
+
 class PostEditView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostEditForm
     template_name = "posts/post_edit.html"
-    success_url = reverse_lazy("posts:post_index")
+    success_url = reverse_lazy("posts:post_home")
     _context_defaults = {
-        "post_edit_title": "",
+        "post_edit_title": "Edit post ...",
         "post_edit_description": "",
     }
+
+    def dispatch(self, request, *args, **kwargs):
+        post = self.get_object()
+        if post.author != request.user:
+            messages.error(
+                request, "Vous n'avez pas la permission de modifier ce post."
+            )
+            return redirect("posts:post_detail", pk=post.pk)
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -114,6 +178,8 @@ class PostEditView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context.update(
             {
+                "button_save_label": CONSTANT_SAVE,
+                "button_cancel_label": CONSTANT_CANCEL,
                 **self._context_defaults,
             }
         )
@@ -123,7 +189,7 @@ class PostEditView(LoginRequiredMixin, UpdateView):
 # 📄 Détail d'un post avec commentaires
 class PostDetailView(DetailView):
     model = Post
-    template_name = "posts/post_page.html"
+    template_name = "posts/post_detail.html"
     context_object_name = "post"
     _context_defaults = {
         "post_detail_title": "",
@@ -178,7 +244,7 @@ class PostDetailView(DetailView):
             context.update({"comments": comments})
             return render(
                 request,
-                "snippets/loop_postpage_comments.html",
+                "posts/snippets/loop_postpage_comments.html",
                 context=context,
                 **response_kwargs,
             )
@@ -190,17 +256,33 @@ class PostDetailView(DetailView):
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = "posts/post_delete.html"
-    success_url = reverse_lazy("posts:post_index")
+    success_url = reverse_lazy("posts:post_home")
+    _context_defaults = {
+        "post_delete_title": "Suppression irréversible ...",
+        "post_delete_description": "",
+    }
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Post supprimé avec succès !")
         return super().delete(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "button_confirm_label": CONSTANT_CONFIRM,
+                "button_cancel_label": CONSTANT_CANCEL,
+                "sentence": "Voulez-vous vraiment supprimer ce post ?",
+                **self._context_defaults,
+            }
+        )
+        return context
+
 
 # 📝 Création d'un commentaire
 class CommentCreateView(LoginRequiredMixin, FormView):
     form_class = CommentCreateForm
-    template_name = "snippets/add_comment.html"
+    template_name = "posts/snippets/comment_create.html"
 
     def form_valid(self, form):
         post = get_object_or_404(Post, id=self.kwargs["id"])
@@ -215,7 +297,7 @@ class CommentCreateView(LoginRequiredMixin, FormView):
 # 🗨️ Création d'une réponse
 class ReplyCreateView(LoginRequiredMixin, FormView):
     form_class = ReplyCreateForm
-    template_name = "snippets/add_reply.html"
+    template_name = "posts/snippets/reply_create.html"
 
     def form_valid(self, form):
         comment = get_object_or_404(Comment, id=self.kwargs["id"])

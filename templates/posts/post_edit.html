@@ -1,21 +1,39 @@
 {% extends 'layouts/b.html' %}
+{% load django_vite %}
+
+{% block title %}{{ post_edit_title }}{% endblock title %}
+{% block meta_description %}{{ post_edit_description }}{% endblock meta_description %}
 
 {% block content %}
 
-<h1>Edit Post</h1>
-<div class="card p-4">
-    <div class="flex items-center mb-4">
-        <img class="w-20 h-20 object-cover rounded-xl mr-4" src="{{ post.image.url }}">
-        <h3 class="text-lg font-bold">{{ post.title }}</h3>
-    </div>
+<div class="max-w-7xl mx-auto sm:px-6">
+    <h1 class="ml-1 mb-8 font-title text-3xl md:text-4xl">{{ post_edit_title }}</h1>
+</div>
 
-    <div class="pb-2">
-        <form method='POST'>
+<div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
+        <div class="flex items-center mb-4">
+            {% if post.image.url %}
+                <img class="w-20 h-20 object-cover rounded-xl mr-4" src="{{ post.image.url }}">
+            {% else %}
+                <img class="w-20 h-20 object-cover rounded-xl mr-4" src="{% vite_asset_url 'images/default_picture.png' %}">
+            {% endif %}
+            <h3 class="text-lg font-bold">{{ post.title }}</h3>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form }}
+            {% if form.non_field_errors %}
+                <div class="text-text-danger text-sm mb-4">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
             <div class="pt-4">
-                <button type="submit">Submit</button>
-                <a class="button secondaryAction ml-1" href="{{ request.META.HTTP_REFERER }}">Go Back</a>
+                <a class="button button-gray mr-1" href="{{ request.META.HTTP_REFERER }}">{{ button_cancel_label }}</a>
+                <button type="submit" title="Save the modifications">
+                    {{ button_save_label }}
+                </button>
             </div>
         </form>
     </div>

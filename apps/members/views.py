@@ -13,14 +13,13 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 from django.http import HttpResponse, JsonResponse
-
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-
 from django.utils.timezone import now
 from django.utils.decorators import method_decorator
-from django.contrib.admin.views.decorators import staff_member_required
+
+import random
 
 from apps.sport.models import SportsCategory
 from .models import Member
@@ -42,52 +41,55 @@ from apps.constant import (
     CONSTANT_UPDATE,
     CONSTANT_DETAILS,
 )
-import random
 
 
 class BaseMemberListView(MemberQuerysetMixin, ListView):
     model = Member
     context_object_name = "members"
 
-    def get_queryset(self):
-        queryset = super().get_queryset().order_by("first_name", "last_name")
-        search_query = self.request.GET.get("search")
-        status_filter = self.request.GET.get("status")
-        category_filter = self.request.GET.get("category")
-        roles_filter = self.request.GET.get("roles")
-        gender_filter = self.request.GET.get("gender")
-        weapon_filter = self.request.GET.get("weapon")
-        handedness_filter = self.request.GET.get("handedness")
+    def get_filters(self):
+        return {
+            "search": self.request.GET.get("search"),
+            "status": self.request.GET.get("status"),
+            "category": self.request.GET.get("category"),
+            "roles": self.request.GET.get("roles"),
+            "gender": self.request.GET.get("gender"),
+            "weapon": self.request.GET.get("weapon"),
+            "handedness": self.request.GET.get("handedness"),
+        }
 
-        if search_query:
+    def apply_filters(self, queryset, filters):
+        if filters["search"]:
             queryset = queryset.filter(
-                Q(first_name__icontains=search_query)
-                | Q(last_name__icontains=search_query)
-                | Q(email__icontains=search_query)
+                Q(first_name__icontains=filters["search"])
+                | Q(last_name__icontains=filters["search"])
+                | Q(email__icontains=filters["search"])
             )
 
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
+        filter_map = {
+            "status": "status",
+            "category": "sports_category_id",
+            "roles": "roles",
+            "gender": "gender",
+            "weapon": "weapon",
+            "handedness": "handedness",
+        }
 
-        if category_filter:
-            queryset = queryset.filter(sports_category_id=category_filter)
-
-        if roles_filter:
-            queryset = queryset.filter(roles=roles_filter)
-
-        if gender_filter:
-            queryset = queryset.filter(gender=gender_filter)
-
-        if weapon_filter:
-            queryset = queryset.filter(weapon=weapon_filter)
-
-        if handedness_filter:
-            queryset = queryset.filter(handedness=handedness_filter)
+        for key, field in filter_map.items():
+            if value := filters.get(key):
+                queryset = queryset.filter(**{field: value})
 
         return queryset
 
+    def get_queryset(self):
+        filters = self.get_filters()
+        queryset = super().get_queryset().order_by("first_name", "last_name")
+        return self.apply_filters(queryset, filters)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Éléments de contexte génériques centralisés ici
         context.update(
             {
                 "search_placeholder": "Recherche par nom...🔍",
@@ -108,26 +110,21 @@ class BaseMemberListView(MemberQuerysetMixin, ListView):
                 "status_badge_colors": STATUS_BADGES,
             }
         )
-
         return context
 
 
 class MemberListView(BaseMemberListView):
     template_name = "members/member_list.html"
+    paginate_by = 9
     _context_defaults = {
         "member_list_title": "Liste des membres ...",
         "member_list_description": "Liste des membres du club avec option de filtrage.",
     }
-    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "button_details_label": CONSTANT_DETAILS,
-                **self._context_defaults,
-            }
-        )
+        context["button_details_label"] = CONSTANT_DETAILS
+        context.update(self._context_defaults)
         return context
 
 
@@ -154,10 +151,18 @@ class MemberTableView(LoginRequiredMixin, BaseMemberListView):
                 "member_role_label": "Rôles",
                 "member_weapon_label": "Arme",
                 "member_handedness_label": "Main",
-                "member_not_found_message": "Aucun membre trouvé.",
-                **self._context_defaults,
             }
         )
+        context.update(self._context_defaults)
+        return context
+
+
+class MemberHomeView(TemplateView):
+    template_name = "members/components/random_members_home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["random_members"] = Member.objects.order_by("?")[:3]
         return context
 
 

@@ -1,0 +1,108 @@
+<!-- Header -->
+<div class="max-w-7xl mx-auto mt-8 sm:px-6 lg:px-8 pt-8">
+    <h1 class="mb-8 font-title text-3xl md:text-4xl">Viens nous voir ...</h1>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
+
+        <!-- Section gauche : Carte -->
+        <div class="flex relative overflow-y-auto h-full">
+            <div class="flex flex-col gap-6 px-4 pt-8 md:px-10 grow">
+                <div class="flex justify-center items-center">
+                    <!-- Carte Leaflet (responsive) -->
+                    <div id="map"
+                        class="h-[300px] w-full sm:h-[350px] sm:w-[600px] md:h-[400px] md:w-[800px] lg:h-[450px] lg:w-[1000px] rounded-lg z-0 relative">
+                    </div>
+                </div>
+
+                <!-- Address shown below the map -->
+                <div id="station-address"
+                    class="text-center mt-4 text-lg font-semibold text-defilepsie_blue min-h-[2rem]">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclusion of JSON data -->
+{{ stations|json_script:"stations_json" }}
+
+<style>
+    /* Prevents the jump by setting the minimum height */
+    #station-address {
+        min-height: 2rem; /* Adjust the height according to your needs */
+    }
+
+    /* Removes white background and shadow from Leaflet popups */
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+</style>
+
+<!-- main script -->
+<script>
+    // Card initialization
+    var map = L.map('map').setView([43.55080613354596, 6.9426728430989515], 16);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // JSON Data Recovery
+    const stationsElement = document.getElementById('stations_json');
+    const stations = stationsElement ? JSON.parse(stationsElement.textContent) : [];
+
+    // Item to display the address under the map
+    const addressDisplay = document.getElementById('station-address');
+
+    // Screen detection (tablet and mobile: < 768px)
+    function isTouchDevice() {
+        return window.matchMedia("(max-width: 768px)").matches;
+    }
+
+    // Adding markers with dynamic display
+    stations.forEach(station => {
+        const marker = L.marker([station.latitude, station.longitude]).addTo(map);
+
+        // Custom popup content
+        const popupContent = `
+            <div class="bg-defilepsie_blue text-white px-3 py-1.5 rounded-md text-center">
+                <b>${station.station_name}</b><br>
+            </div>
+        `;
+
+        // Associate the popup with the marker
+        marker.bindPopup(popupContent, { closeButton: false });
+
+        // Event management by device
+        if (isTouchDevice()) {
+            // 📱 Click on mobile/tablet: Show address
+            marker.on('click', function () {
+                addressDisplay.style.visibility = 'visible';
+                addressDisplay.innerHTML = `<b>${station.address}</b>`;
+                this.openPopup(); // Displays the popup
+            });
+        } else {
+            // 🖥️ Hover on desktop: Display address
+            marker.on('mouseover', function () {
+                addressDisplay.style.visibility = 'visible';
+                addressDisplay.innerHTML = `<b>${station.address}</b>`;
+                this.openPopup();
+            });
+            marker.on('mouseout', function () {
+                addressDisplay.style.visibility = 'hidden';
+                addressDisplay.innerHTML = ''; // Deletes the text
+                this.closePopup();
+            });
+        }
+    });
+
+    // ✅ Dynamic update if window is resized
+    window.addEventListener('resize', () => {
+        stations.forEach(station => {
+            marker.closePopup(); // Close open pop-ups
+        });
+    });
+</script>

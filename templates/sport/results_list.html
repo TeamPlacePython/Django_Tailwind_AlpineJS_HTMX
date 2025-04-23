@@ -60,7 +60,12 @@
                     <tr class="px-6 py-4 border-b text-text_navbar border-text_navbar hover:bg-hover_navbar hover:text-black cursor-pointer">
                         <td>{{ result.event.title }}</td>
                         <td>{{ result.member.first_name }} {{ result.member.last_name }}</td>
-                        <td>{% if result.rank == 1 %}{{ result.rank }}<sup>er</sup>{% else %}{{ result.rank }}<sup>ème</sup>{% endif %}</td>
+                        <td>{% if result.rank == 1 %}
+                            {{ result.rank }}<sup>{% if result.member.gender == "female" %}ère{% else %}er{% endif %}</sup>
+                            {% else %}
+                            {{ result.rank }}<sup>ème</sup>
+                            {% endif %}
+                        </td>
                         <td>{{ result.member.sports_category }}</td>
                     </tr>
                     {% empty %}

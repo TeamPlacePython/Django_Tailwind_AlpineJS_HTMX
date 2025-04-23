@@ -141,9 +141,13 @@
                 <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative">
                     <div class="flex flex-col items-center">
 
-                        {% if member.photo %}
+                        {% if member.photo.url %}
                             <img src="{{ member.photo.url }}" 
                                  alt="{{ member.get_full_name }}" 
+                                 class="w-24 h-24 rounded-full mb-4 object-cover border-2 border-text_navbar">
+                        {% else %}
+                            <img src="{% vite_asset_url 'images/default_avatar.svg' %}" 
+                                 alt="Default avatar" 
                                  class="w-24 h-24 rounded-full mb-4 object-cover border-2 border-text_navbar">
                         {% endif %}
 

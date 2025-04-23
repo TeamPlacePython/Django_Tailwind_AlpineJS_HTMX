@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from .models import Post, Comment, Reply
 
 
-class PostCreateForm(ModelForm):
+class AddPostForm(ModelForm):
     """Formulaire de création de Post avec upload d'image"""
 
     class Meta:
@@ -29,7 +29,9 @@ class PostCreateForm(ModelForm):
                     "class": "mb-4 w-full",
                 }
             ),
-            "tags": forms.CheckboxSelectMultiple(attrs={"class": "mb-4"}),
+            "tags": forms.CheckboxSelectMultiple(
+                attrs={"class": "mb-4 space-y-2 text-sm"}
+            ),
             "image": forms.ClearableFileInput(attrs={"class": "hidden"}),
         }
 
@@ -43,14 +45,20 @@ class PostEditForm(ModelForm):
         labels = {"body": "", "tags": "Category"}
         widgets = {
             "body": forms.Textarea(
-                attrs={"rows": 3, "class": "font1 text-4xl"}
+                attrs={
+                    "rows": 3,
+                    "placeholder": "Modifiez la légende...",
+                    "class": "w-full border rounded p-2 font1",
+                }
             ),
-            "tags": forms.CheckboxSelectMultiple(),
+            "tags": forms.CheckboxSelectMultiple(attrs={"class": "space-y-2"}),
         }
 
     image = forms.ImageField(
         required=False,
-        widget=forms.ClearableFileInput(attrs={"class": "mb-4"}),
+        widget=forms.ClearableFileInput(
+            attrs={"class": "block w-full text-sm text-gray-500"}
+        ),
     )
 
 
@@ -64,8 +72,8 @@ class CommentCreateForm(ModelForm):
         widgets = {
             "body": forms.TextInput(
                 attrs={
-                    "placeholder": "Add comment ...",
-                    "class": "w-full border p-2",
+                    "placeholder": "Ajouter un commentaire...",
+                    "class": "w-full border p-2 rounded bg-white shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-400",
                 }
             )
         }

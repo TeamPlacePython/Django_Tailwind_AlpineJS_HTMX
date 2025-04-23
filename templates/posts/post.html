@@ -1,15 +1,5 @@
-{% extends 'layouts/post_content.html' %}
 {% load django_vite %}
 
-{% block title %}{{ post_index_title }}{% endblock title %}
-{% block meta_description %}{{ member_list_description }}{% endblock meta_description %}
-
-{% block content %}
-<div class="max-w-7xl mx-auto px-2 pt-8">
-    <h1 class="mb-8 font-title text-3xl md:text-4xl">{{ post_index_title }}</h1>
-</div>
-
-{% for post in posts %}
 <article class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative mb-10">
     <figure class="w-full relative bg-gray-800 overflow-hidden">
         {% if user.is_authenticated and user == post.author %}
@@ -20,6 +10,7 @@
             <img class="w-full min-h-40 hover:scale-[105%] transition duration-700" src="{{ post.image.url }}">
         {% endif %}
     </figure>
+
     <div class="px-4 pt-4">
         <div class="flex flex-col items-center text-center text-4xl md:text-5xl pt-3 pb-4 pl-1 pr-4 text-slate-700">
             <span class="font1">{{ post.title|truncatechars:25 }}</span> 
@@ -44,7 +35,7 @@
             {% else %}
                 <div class="flex items-center gap-1 mb-4">
                     <img class="w-8 h-8 object-cover rounded-full" src="{% vite_asset_url 'images/avatar.svg' %}">
-                    <span class="text-gray-500">no author</span>
+                    <span class="text-gray-500">Auteur inconnu</span>
                 </div>
             {% endif %}
         </div>
@@ -52,7 +43,7 @@
 
     <div class="p-4 pb-2">
         <div class="flex items-center justify-between text-sm px-2">
-            <a class="font-bold hover:underline" href="{% url 'posts:post_page' post.id %}">
+            {% comment %} <a class="font-bold hover:underline" href="{% url 'posts:post_page' post.id %}"> {% endcomment %}
                 {% if post.comments.count %}
                     Commentaire{{ post.comments.count|pluralize:'s' }}
                     <span id="commentscount-{{ post.id }}" class="font-light text-gray-500 ml-1">
@@ -60,20 +51,19 @@
                     </span>
                 {% else %}
                     {% if user.is_authenticated %}
-                        Commenter
+                    🗨️Commenter
                     {% endif %}
                 {% endif %}
-            </a>
-
-            <div class="flex items-center gap-4 [&>a:hover]:underline">
-                {% include 'snippets/likes.html' %}
-                {% if user.is_authenticated and user == post.author %}
-                    <a href="{% url 'posts:post_edit' post.id %}">Edit</a>
-                    {% comment %} <a href="{% url 'posts:post_delete' post.id %}">Delete</a> {% endcomment %}
+                {% comment %} </a> {% endcomment %}
+                
+                <div class="flex items-center gap-4 [&>a:hover]:underline">
+                    {% include 'posts/snippets/likes.html' %}
+                    {% if user.is_authenticated and user == post.author %}
+                    <a href="{% url 'posts:post_edit' post.id %}">✏️Modifier</a>
+                    <a href="{% url 'posts:post_edit' post.id %}">👁️Voir</a>
+                    <a href="{% url 'posts:post_delete' post.id %}">🗑️Supprimer</a>
                 {% endif %}
             </div>
         </div>
     </div>
 </article>
-{% endfor %}
-{% endblock %}

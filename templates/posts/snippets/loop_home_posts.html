@@ -1,0 +1,18 @@
+<fade-in class="opacity-0" _="on load transition my opacity to 1 over 0.3 seconds">
+    {% for post in posts %}
+        {% include 'posts/post.html' %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <div
+            hx-get="{% if tag %}{% url 'posts:category' tag.slug %}{% else %}{% url 'posts:post_home' %}{% endif %}?page={{ page|add:1 }}"
+            hx-trigger="revealed"
+            hx-target="this"
+            hx-swap="outerHTML"
+        >
+            <p class="text-center py-4 text-gray-500">Chargement...</p>
+        </div>
+    {% else %}
+        <div class="text-center py-8 text-gray-500 italic">🎉 Vous avez tout lu, mais vous pouvez publier !</div>
+    {% endif %}
+</fade-in>
