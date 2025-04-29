@@ -14,6 +14,19 @@
     --color-defilepsie_blue_secondary: oklch(45% 0.137 248.91);
 }
 
+@keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .fade-in {
+    animation: fadeIn 1s ease-in-out forwards;
+  }
+
 
 [x-cloak] { 
     display: none !important; 

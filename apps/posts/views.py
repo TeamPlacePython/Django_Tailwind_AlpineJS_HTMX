@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from django.http import Http404
+from django.http import Http404, FileResponse, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.db.models import Count
@@ -20,7 +20,7 @@ from django.views.generic import (
 import logging
 
 from apps.constant import CONSTANT_SAVE, CONSTANT_CANCEL, CONSTANT_CONFIRM
-from .models import Post, Tag, Comment, Reply
+from .models import Post, Tag, Comment, Reply, Image
 from .forms import (
     ReplyCreateForm,
     AddPostForm,
@@ -84,7 +84,6 @@ class PostHomeView(ListView):
             logger.warning(
                 f"[Pagination out-of-bounds] page={page_number} | max={paginator.num_pages}"
             )
-            # ➜ revenir à la première page si dépassement
             page = paginator.page(1)
             return (paginator, page, page.object_list, page.has_other_pages())
 
@@ -367,3 +366,63 @@ class LikeCommentView(LikeToggleView):
 
 class LikeReplyView(LikeToggleView):
     model = Reply
+
+
+class ImageWallView(ListView):
+    model = Image
+    template_name = "posts/image_wall.html"
+    context_object_name = "images"
+    paginate_by = 20
+
+    def get_queryset(self):
+        return Image.objects.order_by("-uploaded_at")
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.htmx:
+            return render(
+                self.request,
+                "posts/partials/_image_list.html",
+                context,
+                **response_kwargs,
+            )
+        return super().render_to_response(context, **response_kwargs)
+
+    def paginate_queryset(self, queryset, page_size):
+        paginator = self.get_paginator(
+            queryset, page_size, allow_empty_first_page=True
+        )
+        page_number = self.request.GET.get("page") or 1
+        try:
+            page = paginator.page(page_number)
+        except InvalidPage:
+            logger.warning(
+                f"[Pagination out-of-bounds] page={page_number} | max={paginator.num_pages}"
+            )
+            page = paginator.page(1)
+
+        return paginator, page, page.object_list, page.has_other_pages()
+
+
+class ImageDownloadView(View):
+    def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden(
+                "You must be logged in to download images."
+            )
+
+        image = get_object_or_404(Image, pk=pk)
+        return FileResponse(
+            image.image.open(),
+            as_attachment=True,
+            filename=image.image.name.split("/")[-1],
+        )
+
+
+class HomeImageView(ListView):
+    model = Image
+    template_name = "posts/components/last_image_fragment.html"
+    context_object_name = "last_images"
+    paginate_by = None
+
+    def get_queryset(self):
+        return Image.objects.order_by("-uploaded_at")[:3]

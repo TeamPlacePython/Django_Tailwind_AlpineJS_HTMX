@@ -11,6 +11,9 @@ from .views import (
     CommentDeleteView,
     ReplyDeleteView,
     LastPostHomeView,
+    ImageWallView,
+    ImageDownloadView,
+    HomeImageView,
 )
 
 app_name = "posts"
@@ -24,4 +27,15 @@ urlpatterns = [
     path("post/<uuid:pk>/edit/", PostEditView.as_view(), name="post_edit"),
     path("delete/<uuid:pk>/", PostDeleteView.as_view(), name="post_delete"),
     path("last_post_home/", LastPostHomeView.as_view(), name="last_post_home"),
+    path("image_wall/", ImageWallView.as_view(), name="image_wall"),
+    path(
+        "download/<int:pk>/",
+        ImageDownloadView.as_view(),
+        name="image_download",
+    ),
+    path(
+        "last_image",
+        HomeImageView.as_view(),
+        name="last_image",
+    ),
 ]

@@ -22,11 +22,13 @@
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
+
     {% if onboarding %}
     <a class="button button-gray ml-1" href="{% url 'home:home_index' %}">{{ skip }}</a>
     {% else %}
     <a class="button button-gray ml-1" href="{{ request.META.HTTP_REFERER }}">{{ cancel }}</a>
     {% endif %}
+
     <button type="submit">{{ submit }}</button>
 </form>
 

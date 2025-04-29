@@ -77,7 +77,6 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.media",
                 # Home
-                "apps.home.context_processors.home_items",
                 "apps.home.context_processors.login_signup_items",
                 # Users
                 "apps.users.context_processors.allauth_login_context",

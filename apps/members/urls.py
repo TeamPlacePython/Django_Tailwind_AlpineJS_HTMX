@@ -6,7 +6,7 @@ from .views import (
     MemberCreateView,
     MemberUpdateView,
     MemberDeleteView,
-    UpdatePhotoView,
+    MemberPhotoUpdateView,
     ResetMemberStatusView,
     MemberHomeView,
 )
@@ -30,7 +30,7 @@ urlpatterns = [
     ),
     path(
         "member/<int:pk>/photo/update/",
-        UpdatePhotoView.as_view(),
+        MemberPhotoUpdateView.as_view(),
         name="update_photo",
     ),
     path(

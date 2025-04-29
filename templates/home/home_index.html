@@ -3,33 +3,47 @@
 {% block title %}{{ home_index_title }}{% endblock title %}
 
 {% block content %}
-
+    <!-- CAROUSEL START -->
     <div id="carousel-container"
         hx-get="{% url 'home:carousel_fragment' %}"
         hx-trigger="load"
         hx-swap="innerHTML">
     </div>
+    <!-- CAROUSEL END -->
 
+    <!-- LAST POSTS START -->
     <div id="last-post-container" hx-get="{% url 'posts:last_post_home' %}" 
         hx-trigger="load" 
         hx-target="#last-post-container" 
         hx-swap="innerHTML">
     </div>
+    <!-- LAST POSTS END -->
 
+    <!-- LAST IMAGE START -->
+    <div id="last-image-container" hx-get="{% url 'posts:last_image' %}" 
+        hx-trigger="load" 
+        hx-target="#last-image-container" 
+        hx-swap="innerHTML">
+    </div>
+    <!-- LAST IMAGE END -->
+
+    <!-- MEMBERS AVATAR START -->
     <div id="random-members-container" hx-get="{% url 'members:random_members' %}" 
         hx-trigger="load" 
         hx-target="#random-members-container" 
         hx-swap="innerHTML">
     </div>
+    <!-- MEMBERS AVATAR END -->
 
+    <!-- COMPETITIONS START -->
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 pt-8">
         <div class="grid grid-cols-1 md:grid-cols-2 items-start mb-1 gap-6">
-            <!-- Colonne gauche -->
+            <!-- Left column title -->
             <h1 class="font-title text-3xl md:text-4xl">
                 Les compétitions à venir ...
             </h1>
     
-            <!-- Colonne droite -->
+            <!-- Right column title -->
             <div class="flex items-center space-x-4 justify-start">
                 <h1 class="font-title text-3xl md:text-4xl mb-0">
                     {{ results }}
@@ -38,10 +52,12 @@
                     Voir tous les résultats →
                 </a>
             </div>
+
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Élément de gauche -->
+
+            <!-- Left items -->
             <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative overflow-hidden">
                 <div id="upcoming-event-container" hx-get="{% url 'sport:home_upcoming_events' %}" 
                     hx-trigger="load" 
@@ -49,23 +65,26 @@
                     hx-swap="innerHTML">
                 </div>
             </div>
-            
-            <!-- Élément de droite -->
+
+            <!-- Right items -->
             <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative overflow-hidden">
                 <div id="results-event-container" hx-get="{% url 'sport:home_results_events' %}" 
                     hx-trigger="load" 
                     hx-target="#results-event-container" 
                     hx-swap="innerHTML">
                 </div>
-
             </div>
+
         </div>
     </div>
+    <!-- COMPETITIONS END -->
 
+    <!-- LEAFLET MAP START -->
     <div id="map-fragment-container"
         hx-get="{% url 'home:map_fragment' %}"
         hx-trigger="load"
         hx-swap="innerHTML">
     </div>
+    <!-- LEAFLET MAP END -->
 
 {% endblock %}

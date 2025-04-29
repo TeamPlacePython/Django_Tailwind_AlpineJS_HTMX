@@ -63,6 +63,8 @@ class MemberForm(forms.ModelForm):
         required=False,
     )
 
+    photo = forms.ImageField(required=False, widget=forms.HiddenInput())
+
     # Phone number validator
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{10,15}$",
@@ -139,6 +141,7 @@ class MemberForm(forms.ModelForm):
     class Meta:
         model = Member
         fields = [
+            "photo",
             "gender",
             "first_name",
             "last_name",

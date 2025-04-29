@@ -218,15 +218,14 @@ class MemberCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     }
 
     def form_valid(self, form):
-        response = super().form_valid(form)
+        self.object = form.save(commit=False)
 
-        if self.request.headers.get("HX-Request"):
-            return HttpResponse(
-                headers={
-                    "HX-Redirect": self.success_url,
-                }
-            )
-        return response
+        # 🔥 Assure-toi que les fichiers sont bien récupérés
+        if self.request.FILES.get("photo"):
+            self.object.photo = self.request.FILES["photo"]
+
+        self.object.save()
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -311,7 +310,7 @@ class MemberDeleteView(LoginRequiredMixin, DeleteView):
         return context
 
 
-class UpdatePhotoView(View):
+class MemberPhotoUpdateView(View):
     def post(self, request, pk):
         member = get_object_or_404(Member, pk=pk)
 
