@@ -228,15 +228,8 @@
     </div>
     <!-- LIST OF MEMBERS END -->
 
-    <!-- Modal de confirmation -->
-    {% comment %} <div id="confirm-reset-modal">
-        {% include "members/modals/member_status_modal.html" %}
-    </div> {% endcomment %}
-
     <!-- Feedback ici -->
     <div id="reset-status-feedback" class="fixed bottom-4 right-4 z-50"></div>
-
-
 </div>
 
 <!-- Modal membre -->
@@ -247,19 +240,6 @@
      aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content bg-navbar" id="memberModalContent">
-            <!-- Content will be loaded here by HTMX -->
-        </div>
-    </div>
-</div>
-
-<!-- Modal reset status -->
-<div class="modal fade" 
-     id="resetStatusModal" 
-     tabindex="-1" 
-     aria-labelledby="resetStatusModal" 
-     aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content bg-navbar" id="resetStatusModal">
             <!-- Content will be loaded here by HTMX -->
         </div>
     </div>

@@ -1,0 +1,52 @@
+{# templates/components/image_lightbox_modal.html #}
+<div x-show="open" 
+  x-transition:enter="transition ease-out duration-300"
+  x-transition:enter-start="opacity-0"
+  x-transition:enter-end="opacity-100"
+  x-transition:leave="transition ease-in duration-200"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+  @keydown.arrow-right="nextImage()" 
+  @keydown.arrow-left="prevImage()" 
+  @click.outside="closeLightbox()"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+  <div class="relative max-w-5xl w-full mx-4 p-4 flex flex-col items-center">
+
+    <div x-show="isLoading" class="absolute inset-0 flex items-center justify-center">
+      <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+    </div>
+
+    <img 
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-300"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      :src="imageUrl"
+      @load="imageLoaded"
+      alt="Expanded Image"
+      class="rounded-lg max-h-[90vh]">
+
+    <button @click="closeLightbox()" class="button absolute top-4 right-4 font-bold z-50">
+      fermer
+    </button>
+
+    <button type="button"
+      @click.stop="prevImage()"
+      class="slider-button absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none">
+      {% include "components/left_arrow.html" %}
+    </button>
+
+    <button type="button"
+      @click.stop="nextImage()"
+      class="slider-button absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none">
+      {% include "components/right_arrow.html" %}
+    </button>
+
+  </div>
+</div>

@@ -12,7 +12,8 @@
     <!-- CAROUSEL END -->
 
     <!-- LAST POSTS START -->
-    <div id="last-post-container" hx-get="{% url 'posts:last_post_fragment' %}" 
+    <div id="last-post-container" 
+        hx-get="{% url 'posts:last_post_fragment' %}" 
         hx-trigger="load" 
         hx-target="#last-post-container" 
         hx-swap="innerHTML">
@@ -20,7 +21,8 @@
     <!-- LAST POSTS END -->
 
     <!-- LAST IMAGE START -->
-    <div id="last-image-container" hx-get="{% url 'posts:last_image' %}" 
+    <div id="last-image-container" 
+        hx-get="{% url 'posts:last_image_fragment' %}" 
         hx-trigger="load" 
         hx-target="#last-image-container" 
         hx-swap="innerHTML">

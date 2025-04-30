@@ -13,7 +13,7 @@ from .views import (
     LastPostFragmentView,
     ImageWallView,
     ImageDownloadView,
-    HomeImageView,
+    LastImageFragmentView,
 )
 
 app_name = "posts"
@@ -38,8 +38,8 @@ urlpatterns = [
         name="image_download",
     ),
     path(
-        "last_image",
-        HomeImageView.as_view(),
-        name="last_image",
+        "last_image_fragment",
+        LastImageFragmentView.as_view(),
+        name="last_image_fragment",
     ),
 ]

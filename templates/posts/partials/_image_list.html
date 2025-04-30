@@ -1,144 +1,101 @@
-<div 
-    x-data="imageWall()" 
-    x-init="init()"
-    class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4"
-    @htmx:afterSwap.window="init()"
->
+{% for image in images %}
+<div class="relative mb-4 break-inside-avoid overflow-hidden rounded-lg group cursor-pointer opacity-0 scale-95 transition-all duration-300"
+  _="on load transition my opacity to 1 over 0.5 seconds"
+  @click="openLightbox({{ forloop.counter0 }})"
+  data-image-url="{{ image.image.url }}"
+  >
+  <div class="relative w-full">
+    <div class="absolute inset-0 bg-gray-300 animate-pulse"></div>
 
-    {% for image in images %}
-      <div class="relative mb-4 break-inside-avoid overflow-hidden rounded-lg group cursor-pointer"
-           @click="openLightbox({{ forloop.counter0 }})"
-           data-image-url="{{ image.image.url }}">
-           
-        <div class="relative w-full">
-            <div class="absolute inset-0 bg-gray-300 animate-pulse"></div>
+    <img src="{{ image.image.url }}" alt="{{ image.title }}"
+      loading="lazy"
+      class="relative w-full h-auto object-contain rounded-lg">
+  </div>
 
-            <img src="{{ image.image.url }}" alt="{{ image.title }}"
-                 loading="lazy"
-                 style="animation-delay: {{ forloop.counter0|add:"0.1" }}s;"
-                 class="relative w-full h-auto object-contain rounded-lg fade-in">
-        </div>
-
-        {# ✅ Bouton de téléchargement #}
-        {% if user.is_authenticated %}
-          <a href="{% url 'posts:image_download' image.pk %}" 
-             class="absolute bottom-4 right-4 z-20 bg-defilepsie_blue p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" 
-                 fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                 class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" 
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 12l4.5 4.5m0 0l4.5-4.5m-4.5 4.5V3" />
-            </svg>
-          </a>
-        {% endif %}
-      </div>
-    {% endfor %}
-
-    {# ✅ Lightbox Modal avec loader + transitions #}
-    <div x-show="open" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         @keydown.arrow-right="nextImage()" 
-         @keydown.arrow-left="prevImage()" 
-         @click.outside="closeLightbox()"
-         class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-
-      <div class="relative max-w-5xl w-full mx-4 p-4 flex flex-col items-center">
-
-        {# ✅ Spinner loader pendant chargement image #}
-        <div x-show="isLoading" class="absolute inset-0 flex items-center justify-center">
-          <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-          </svg>
-        </div>
-
-        {# ✅ Image dans la Lightbox #}
-        <img 
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-300"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            :src="imageUrl"
-            @load="imageLoaded"
-            alt="Expanded Image"
-            class="rounded-lg max-h-[90vh]">
-
-        {# ✅ Bouton pour fermer #}
-        <button @click="closeLightbox()" 
-                class="button absolute top-4 right-4 font-bold z-50">
-          fermer
-        </button>
-
-        {# ✅ Bouton précédent #}
-        <button type="button"
-                @click="prevImage()"
-                class="slider-button absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-                data-carousel-prev>
-                {% include "components/left_arrow.html" %}
-        </button>
-
-        {# ✅ Bouton suivant #}
-        <button type="button"
-                @click="nextImage()"
-                class="slider-button absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-                data-carousel-next>
-                {% include "components/right_arrow.html" %}
-        </button>
-
-      </div>
-    </div>
+  {% if user.is_authenticated %}
+    <a href="{% url 'posts:image_download' image.pk %}" 
+      class="absolute bottom-4 right-4 z-20 bg-defilepsie_blue p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <svg xmlns="http://www.w3.org/2000/svg" 
+        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" 
+          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 12l4.5 4.5m0 0l4.5-4.5m-4.5 4.5V3" />
+      </svg>
+    </a>
+  {% endif %}
 </div>
+{% endfor %}
 
-<script>
-  function imageWall() {
-      return {
-          open: false,
-          imageUrl: '',
-          images: [],
-          currentIndex: 0,
-          isLoading: false,
-  
-          init() {
-              this.images = Array.from(
-                  document.querySelectorAll('[data-image-url]')
-              ).map(el => el.dataset.imageUrl);
-          },
-  
-          openLightbox(index) {
-              this.open = true;
-              this.isLoading = true;
-              this.currentIndex = index;
-              this.imageUrl = this.images[index];
-          },
-  
-          nextImage() {
-              this.currentIndex = (this.currentIndex + 1) % this.images.length;
-              this.isLoading = true;
-              this.imageUrl = this.images[this.currentIndex];
-          },
-  
-          prevImage() {
-              this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
-              this.isLoading = true;
-              this.imageUrl = this.images[this.currentIndex];
-          },
-  
-          closeLightbox() {
-              this.open = false;
-              this.isLoading = false;
-          },
-  
-          imageLoaded() {
-              this.isLoading = false;
-          }
-      }
-  }
-  </script>
-  
+{% if page_obj.has_next %}
+<div 
+  hx-get="{% url 'posts:image_wall' %}?page={{ page_obj.next_page_number }}"
+  hx-trigger="revealed"
+  hx-swap="beforeend"
+  hx-target="#image-wall"
+  >
+</div>
+{% endif %}
+
+{# ✅ Lightbox Modal avec loader + transitions #}
+<div x-show="open"
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @keydown.arrow-right="nextImage()"
+     @keydown.arrow-left="prevImage()"
+     @keydown.escape.window="closeLightbox()"
+     @click.outside="closeLightbox()"
+     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+     tabindex="0"
+     aria-modal="true"
+     role="dialog"
+>
+  <div class="relative max-w-5xl w-full mx-4 p-4 flex flex-col items-center focus:outline-none">
+
+    <!-- Spinner loader -->
+    <div x-show="isLoading" class="absolute inset-0 flex items-center justify-center z-50">
+      <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+    </div>
+
+    <!-- Image affichée -->
+    <img 
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-300"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        :src="imageUrl"
+        @load="imageLoaded"
+        alt="Image"
+        class="rounded-lg max-h-[90vh] z-40"
+    >
+
+    <!-- Bouton fermeture -->
+    <button @click="closeLightbox()" 
+            class="absolute top-4 right-4 font-bold text-white text-lg z-50 hover:opacity-80 focus:outline-none">
+      ✕
+    </button>
+
+    <!-- Flèche gauche -->
+    <button type="button"
+            @click.stop="prevImage()"
+            class="slider-button absolute top-1/2 left-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
+      {% include "components/left_arrow.html" %}
+    </button>
+
+    <!-- Flèche droite -->
+    <button type="button"
+            @click.stop="nextImage()"
+            class="slider-button absolute top-1/2 right-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
+      {% include "components/right_arrow.html" %}
+    </button>
+
+  </div>
+</div>

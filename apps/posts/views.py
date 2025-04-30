@@ -372,10 +372,15 @@ class ImageWallView(ListView):
     model = Image
     template_name = "posts/image_wall.html"
     context_object_name = "images"
-    paginate_by = 20
+    paginate_by = 10
 
     def get_queryset(self):
         return Image.objects.order_by("-uploaded_at")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_obj"] = context["page_obj"]
+        return context
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.htmx:
@@ -418,7 +423,7 @@ class ImageDownloadView(View):
         )
 
 
-class HomeImageView(ListView):
+class LastImageFragmentView(ListView):
     model = Image
     template_name = "posts/components/last_image_fragment.html"
     context_object_name = "last_images"
