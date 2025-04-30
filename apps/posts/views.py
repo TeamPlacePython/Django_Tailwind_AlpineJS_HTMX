@@ -89,8 +89,8 @@ class PostHomeView(ListView):
 
 
 @method_decorator(cache_page(60 * 15), name="dispatch")  # 15 minutes
-class LastPostHomeView(TemplateView):
-    template_name = "posts/components/last_post_home.html"
+class LastPostFragmentView(TemplateView):
+    template_name = "posts/components/last_post_fragment.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -32,8 +32,7 @@ ___________
 * Cotisation
 	- Le tableau est ok selon moi
 		- J'aimerais automatiser le changement de date pour les catégories, car dans 1 an, les dates ne seront plus en cohérence 
-		avec les catégories. 
-        - Je voudrais envisager une modification annuelle au 1er août par exemple. Je n'ai pas su faire.
+		avec les catégories. J'envisage une modification annuelle au 1er août, mais je n'ai pas su faire.
 
 * Horaires
 	- Le tableau des horaires est ok car s'il y avait des modifications elles seraient à apportées à la main.
