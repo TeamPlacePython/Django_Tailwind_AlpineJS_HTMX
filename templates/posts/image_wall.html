@@ -8,7 +8,7 @@
     x-data="imageWall()" 
     x-init="init()"
     @htmx:afterSwap.window="init()"
-    class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]"
+    class="columns-1 sm:columns-2 md:columns-3 gap-4 [column-fill:_balance]"
   >
     {% include 'posts/partials/_image_list.html' %}
   </div>
@@ -31,12 +31,21 @@
               ).map(el => el.dataset.imageUrl);
           },
   
-          openLightbox(index) {
-              this.open = true;
-              this.isLoading = true;
-              this.currentIndex = index;
-              this.imageUrl = this.images[index];
-          },
+          openLightboxByUrl(url) {
+            this.images = Array.from(
+                document.querySelectorAll('[data-image-url]')
+            ).map(el => el.dataset.imageUrl);
+        
+            const index = this.images.indexOf(url);
+            if (index !== -1) {
+                this.currentIndex = index;
+                this.imageUrl = url;
+                this.isLoading = true;
+                this.open = true;
+            } else {
+                console.warn("Image not found in DOM list");
+            }
+        },
   
           nextImage() {
               this.currentIndex = (this.currentIndex + 1) % this.images.length;
@@ -61,6 +70,5 @@
       }
   }
 </script>
-
 
 {% endblock content %}

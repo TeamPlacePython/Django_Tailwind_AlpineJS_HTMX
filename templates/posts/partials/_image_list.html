@@ -1,15 +1,15 @@
 {% for image in images %}
 <div class="relative mb-4 break-inside-avoid overflow-hidden rounded-lg group cursor-pointer opacity-0 scale-95 transition-all duration-300"
   _="on load transition my opacity to 1 over 0.5 seconds"
-  @click="openLightbox({{ forloop.counter0 }})"
+  @click="openLightboxByUrl('{{ image.image.url }}')"
   data-image-url="{{ image.image.url }}"
   >
   <div class="relative w-full">
-    <div class="absolute inset-0 bg-gray-300 animate-pulse"></div>
+    <div class="absolute inset-0 animate-pulse"></div>
 
     <img src="{{ image.image.url }}" alt="{{ image.title }}"
       loading="lazy"
-      class="relative w-full h-auto object-contain rounded-lg">
+      class="relative w-full h-auto object-contain rounded-lg shadow-2xl shadow-text_navbar">
   </div>
 
   {% if user.is_authenticated %}
@@ -79,7 +79,7 @@
 
     <!-- Bouton fermeture -->
     <button @click="closeLightbox()" 
-            class="absolute top-4 right-4 font-bold text-white text-lg z-50 hover:opacity-80 focus:outline-none">
+            class="button absolute top-4 right-4 text-navbar text-lg z-50">
       ✕
     </button>
 
