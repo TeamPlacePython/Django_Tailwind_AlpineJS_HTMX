@@ -2,9 +2,9 @@ from django.urls import path
 from .views import (
     SportsCategoryListView,
     TrainingHoursView,
-    ResultsListView,
-    ResultEventHomeView,
-    UpcomingEventHomeView,
+    ResultsEventListView,
+    ResultEventFragmentView,
+    UpcomingEventFragmentView,
 )
 
 app_name = "sport"
@@ -16,19 +16,21 @@ urlpatterns = [
         name="sport_category_cotisations",
     ),
     path(
-        "training-hours/",
+        "training_hours/",
         TrainingHoursView.as_view(),
-        name="sport_training_hours",
-    ),
-    path("results/", ResultsListView.as_view(), name="results_list"),
-    path(
-        "home_results_events/",
-        ResultEventHomeView.as_view(),
-        name="home_results_events",
+        name="training_hours",
     ),
     path(
-        "home_upcoming_events/",
-        UpcomingEventHomeView.as_view(),
-        name="home_upcoming_events",
+        "results/", ResultsEventListView.as_view(), name="results_event_list"
+    ),
+    path(
+        "results_events_fragment/",
+        ResultEventFragmentView.as_view(),
+        name="results_events_fragment",
+    ),
+    path(
+        "upcoming_events_fragment/",
+        UpcomingEventFragmentView.as_view(),
+        name="upcoming_events_fragment",
     ),
 ]

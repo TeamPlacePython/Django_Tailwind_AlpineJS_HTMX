@@ -28,7 +28,7 @@ class SportsContextMixin:
 class SportsCategoryListView(SportsContextMixin, ListView):
     model = SportsCategory
     context_object_name = "sport_category"
-    template_name = "sport/sport_category_prices_table.html"
+    template_name = "sport/category_prices_table.html"
 
     _context_defaults = {
         "sport_category_price_title": "Cotisations 2024 / 2025 ...",
@@ -50,8 +50,7 @@ class SportsCategoryListView(SportsContextMixin, ListView):
 
 
 class TrainingHoursView(SportsContextMixin, TemplateView):
-    template_name = "sport/sport_training_hours_table.html"
-
+    template_name = "sport/training_hours_table.html"
     _context_defaults = {
         "sport_category_price_title": "Horaires des entraînements ...",
         "sport_category_price_description": "Liste des horaires des entraînements selon les catégories.",
@@ -65,7 +64,6 @@ class TrainingHoursView(SportsContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         categories = SportsCategory.objects.values(
             "name",
             "monday_hours",
@@ -105,9 +103,9 @@ class GroupedResultsMixin:
         return group_results_by_event_and_category(queryset)
 
 
-class ResultsListView(GroupedResultsMixin, ListView):
+class ResultsEventListView(GroupedResultsMixin, ListView):
     model = Result
-    template_name = "sport/results_list.html"
+    template_name = "sport/results_event_list.html"
     context_object_name = "results"
 
     def get_queryset(self):
@@ -134,15 +132,13 @@ class ResultsListView(GroupedResultsMixin, ListView):
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get("HX-Request"):
-            html = render_to_string(
-                "sport/results_table_fragment.html", context
-            )
+            html = render_to_string("sport/results_event_table.html", context)
             return HttpResponse(html)
         return super().render_to_response(context, **response_kwargs)
 
 
-class ResultEventHomeView(GroupedResultsMixin, TemplateView):
-    template_name = "sport/components/result_event_home.html"
+class ResultEventFragmentView(GroupedResultsMixin, TemplateView):
+    template_name = "sport/components/result_event_fragment.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -150,8 +146,8 @@ class ResultEventHomeView(GroupedResultsMixin, TemplateView):
         return context
 
 
-class UpcomingEventHomeView(GroupedResultsMixin, TemplateView):
-    template_name = "sport/components/upcoming_event_home.html"
+class UpcomingEventFragmentView(GroupedResultsMixin, TemplateView):
+    template_name = "sport/components/upcoming_event_fragment.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

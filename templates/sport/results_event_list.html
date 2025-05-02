@@ -27,7 +27,7 @@
 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative">
     <select id="event-filter"
         name="event"
-        hx-get="{% url 'sport:results_list' %}"
+        hx-get="{% url 'sport:results_event_list' %}"
         hx-target="#results-table"
         hx-push-url="true"
         hx-trigger="change"

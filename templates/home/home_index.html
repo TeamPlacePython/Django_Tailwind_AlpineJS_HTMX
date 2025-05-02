@@ -7,6 +7,7 @@
     <div id="carousel-container"
         hx-get="{% url 'home:carousel_fragment' %}"
         hx-trigger="load"
+        hx-target="#carousel-container" 
         hx-swap="innerHTML">
     </div>
     <!-- CAROUSEL END -->
@@ -30,7 +31,8 @@
     <!-- LAST IMAGE END -->
 
     <!-- MEMBERS AVATAR START -->
-    <div id="random-members-container" hx-get="{% url 'members:random_members' %}" 
+    <div id="random-members-container" 
+        hx-get="{% url 'members:random_members_fragment' %}" 
         hx-trigger="load" 
         hx-target="#random-members-container" 
         hx-swap="innerHTML">
@@ -50,7 +52,7 @@
                 <h1 class="font-title text-3xl md:text-4xl mb-0">
                     {{ results }}
                 </h1>
-                <a href="{% url 'sport:results_list' %}" class="btn btn-primary text-defilepsie_blue px-4 rounded-md hover:opacity-80">
+                <a href="{% url 'sport:results_event_list' %}" class="btn btn-primary text-defilepsie_blue px-4 rounded-md hover:opacity-80">
                     Voir tous les résultats →
                 </a>
             </div>
@@ -61,7 +63,8 @@
 
             <!-- Left items -->
             <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative overflow-hidden">
-                <div id="upcoming-event-container" hx-get="{% url 'sport:home_upcoming_events' %}" 
+                <div id="upcoming-event-container" 
+                    hx-get="{% url 'sport:upcoming_events_fragment' %}" 
                     hx-trigger="load" 
                     hx-target="#upcoming-event-container" 
                     hx-swap="innerHTML">
@@ -70,7 +73,8 @@
 
             <!-- Right items -->
             <div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar shadow-text_navbar p-6 w-full relative overflow-hidden">
-                <div id="results-event-container" hx-get="{% url 'sport:home_results_events' %}" 
+                <div id="results-event-container" 
+                    hx-get="{% url 'sport:results_events_fragment' %}" 
                     hx-trigger="load" 
                     hx-target="#results-event-container" 
                     hx-swap="innerHTML">
@@ -85,6 +89,7 @@
     <div id="map-fragment-container"
         hx-get="{% url 'home:map_fragment' %}"
         hx-trigger="load"
+        hx-target="#map-fragment-container" 
         hx-swap="innerHTML">
     </div>
     <!-- LEAFLET MAP END -->

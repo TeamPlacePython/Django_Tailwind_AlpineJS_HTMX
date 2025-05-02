@@ -157,8 +157,8 @@ class MemberTableView(LoginRequiredMixin, BaseMemberListView):
         return context
 
 
-class MemberHomeView(TemplateView):
-    template_name = "members/components/random_members_home.html"
+class MemberFragmentView(TemplateView):
+    template_name = "members/components/random_members_fragment.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

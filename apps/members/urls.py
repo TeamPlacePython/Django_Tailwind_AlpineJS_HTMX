@@ -8,7 +8,7 @@ from .views import (
     MemberDeleteView,
     MemberPhotoUpdateView,
     ResetMemberStatusView,
-    MemberHomeView,
+    MemberFragmentView,
 )
 
 app_name = "members"
@@ -34,13 +34,13 @@ urlpatterns = [
         name="update_photo",
     ),
     path(
-        "reset-status/",
+        "reset_members_status/",
         ResetMemberStatusView.as_view(),
-        name="reset_member_status",
+        name="reset_members_status",
     ),
     path(
-        "random-members/",
-        MemberHomeView.as_view(),
-        name="random_members",
+        "random_members_fragment/",
+        MemberFragmentView.as_view(),
+        name="random_members_fragment",
     ),
 ]
