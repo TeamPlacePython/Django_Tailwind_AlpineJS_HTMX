@@ -88,7 +88,7 @@ class PostHomeView(ListView):
             return (paginator, page, page.object_list, page.has_other_pages())
 
 
-@method_decorator(cache_page(60 * 15), name="dispatch")  # 15 minutes
+# @method_decorator(cache_page(60 * 15), name="dispatch")  # 15 minutes
 class LastPostFragmentView(TemplateView):
     template_name = "posts/components/last_post_fragment.html"
 

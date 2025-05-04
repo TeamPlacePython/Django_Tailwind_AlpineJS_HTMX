@@ -1,0 +1,45 @@
+{% load django_vite %}
+
+<div class="bg-navbar rounded-2xl shadow-2xl border border-text_navbar overflow-hidden flex flex-col h-full">
+    <figure class="h-70 overflow-hidden">
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+        {% else %}
+            <img src="{% vite_asset_url 'images/default_picture.png' %}" alt="{{ post.title }}" class="w-full h-full object-cover">
+        {% endif %}
+    </figure>
+
+    <div class="p-4 flex flex-col flex-grow text-text_navbar">
+        <h3 class="text-xl font-semibold mb-2 min-h-[3rem]">{{ post.title|truncatechars:25 }}</h3>
+        <p class="text-sm mb-4 min-h-[4rem]">{{ post.body|truncatewords:30 }}</p>
+    </div>
+
+    <div class="px-4 pb-4 mt-auto">
+        <div class="flex items-center justify-between text-sm">
+            <a class="font-bold hover:underline" href="{% url 'posts:post_page' post.id %}">
+                {% if post.comments.count %}
+                    Commentaire{{ post.comments.count|pluralize:'s' }}
+                    <span class="font-light text-gray-500 ml-1">
+                        {{ post.comments.count }}
+                    </span>
+                {% else %}
+                    {% if user.is_authenticated %}
+                    {% include "components/icones/comments.html" %}
+                    {% endif %}
+                {% endif %}
+            </a>
+
+            <div class="flex items-center gap-4 [&>a:hover]:underline">
+                {% include 'posts/snippets/likes.html' %}
+                {% if user.is_authenticated and user == post.author %}
+                    <a href="{% url 'posts:post_edit' post.id %}">
+                        {% include "components/icones/edit.html" %}
+                    </a>
+                    <a href="{% url 'posts:post_delete' post.id %}">
+                        {% include "components/icones/delete.html" %}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

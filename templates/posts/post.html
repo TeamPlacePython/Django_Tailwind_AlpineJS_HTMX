@@ -51,7 +51,7 @@
                     </span>
                 {% else %}
                     {% if user.is_authenticated %}
-                    🗨️Commenter
+                        {% include "components/icones/comments.html" %}
                     {% endif %}
                 {% endif %}
                 {% comment %} </a> {% endcomment %}
@@ -59,9 +59,15 @@
                 <div class="flex items-center gap-4 [&>a:hover]:underline">
                     {% include 'posts/snippets/likes.html' %}
                     {% if user.is_authenticated and user == post.author %}
-                    <a href="{% url 'posts:post_edit' post.id %}">✏️Modifier</a>
-                    <a href="{% url 'posts:post_edit' post.id %}">👁️Voir</a>
-                    <a href="{% url 'posts:post_delete' post.id %}">🗑️Supprimer</a>
+                    <a href="{% url 'posts:post_edit' post.id %}">
+                        {% include "components/icones/modify.html" %}
+                    </a>
+                    <a href="{% url 'posts:post_edit' post.id %}">
+                        {% include "components/icones/edit.html" %}
+                    </a>
+                    <a href="{% url 'posts:post_delete' post.id %}">
+                        {% include "components/icones/delete.html" %}
+                    </a>
                 {% endif %}
             </div>
         </div>
