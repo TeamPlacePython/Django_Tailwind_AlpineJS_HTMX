@@ -196,34 +196,72 @@
 
         <!-- PAGINATION START -->
         {% if is_paginated %}
-            <div class="flex justify-center mt-8">
-                <div class="btn-group">
-
-                    {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}" 
-                           class="btn bg-hover_navbar hover:bg-arrow_paginator text-text_navbar font-bold py-2 px-4 rounded-l"
-                           hx-get="?page={{ page_obj.previous_page_number }}"
-                           hx-target="#members-list"
-                           hx-select="#members-list"
-                           hx-push-url="true"
-                           hx-trigger="click">«</a>
-                    {% endif %}
-
-                    <span class="bg-hover_navbar text-text_navbar font-bold py-2 px-4">{{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
-
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}" 
-                           class="btn bg-hover_navbar hover:bg-arrow_paginator text-text_navbar font-bold py-2 px-4 rounded-r"
-                           hx-get="?page={{ page_obj.next_page_number }}"
-                           hx-target="#members-list"
-                           hx-select="#members-list"
-                           hx-push-url="true"
-                           hx-trigger="click">»</a>
-                    {% endif %}
-
-                </div>
-            </div>
+        <div class="flex justify-center mt-8">
+          <div class="flex flex-wrap items-center justify-center gap-1">
+      
+            {# BOUTON PREVIOUS #}
+            <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}"
+               class="flex items-center gap-2 font-bold py-2 px-4 rounded-l transition duration-300 ease-in-out
+                      {% if page_obj.has_previous %}
+                        bg-hover_navbar text-text_navbar hover:bg-arrow_paginator
+                      {% else %}
+                        invisible
+                      {% endif %}"
+               {% if page_obj.has_previous %}
+                 hx-get="?page={{ page_obj.previous_page_number }}"
+                 hx-target="#members-list"
+                 hx-select="#members-list"
+                 hx-push-url="true"
+                 hx-trigger="click"
+               {% endif %}
+            >
+              {% include "components/icones/previous_page.html" %}
+            </a>
+      
+            {# NUMÉROS DE PAGE (plage autour de la page actuelle) #}
+            {% for num in page_obj.paginator.page_range %}
+              {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                {% if num == page_obj.number %}
+                  <span class="bg-defilepsie_blue text-white font-bold py-2 px-4 rounded shadow transition duration-300 ease-in-out">
+                    {{ num }}
+                  </span>
+                {% else %}
+                  <a href="?page={{ num }}"
+                     class="bg-hover_navbar text-text_navbar font-bold py-2 px-4 rounded hover:bg-arrow_paginator hover:text-white transition duration-300 ease-in-out"
+                     hx-get="?page={{ num }}"
+                     hx-target="#members-list"
+                     hx-select="#members-list"
+                     hx-push-url="true"
+                     hx-trigger="click">
+                    {{ num }}
+                  </a>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+      
+            {# BOUTON NEXT #}
+            <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}"
+               class="flex items-center gap-2 font-bold py-2 px-4 rounded-r transition duration-300 ease-in-out
+                      {% if page_obj.has_next %}
+                        bg-hover_navbar text-text_navbar hover:bg-arrow_paginator
+                      {% else %}
+                        invisible
+                      {% endif %}"
+               {% if page_obj.has_next %}
+                 hx-get="?page={{ page_obj.next_page_number }}"
+                 hx-target="#members-list"
+                 hx-select="#members-list"
+                 hx-push-url="true"
+                 hx-trigger="click"
+               {% endif %}
+            >
+              {% include "components/icones/next_page.html" %}
+            </a>
+      
+          </div>
+        </div>
         {% endif %}
+      
         <!-- PAGINATION END -->
     </div>
     <!-- LIST OF MEMBERS END -->
