@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MapsLocation, CarouselImage
+from .models import MapsLocation
 
 
 @admin.register(MapsLocation)
@@ -10,8 +10,3 @@ class MapsLocationAdmin(admin.ModelAdmin):
         "longitude",
         "address",
     )
-
-
-@admin.register(CarouselImage)
-class CarouselImageAdmin(admin.ModelAdmin):
-    list_display = ("id", "image", "uploaded_at")

@@ -5,7 +5,7 @@
 {% block content %}
     <!-- CAROUSEL START -->
     <div id="carousel-container"
-        hx-get="{% url 'home:carousel_fragment' %}"
+        hx-get="{% url 'images:carousel_fragment' %}"
         hx-trigger="load"
         hx-target="#carousel-container" 
         hx-swap="innerHTML">
@@ -23,7 +23,7 @@
 
     <!-- LAST IMAGE START -->
     <div id="last-image-container" 
-        hx-get="{% url 'posts:last_image_fragment' %}" 
+        hx-get="{% url 'images:last_image_fragment' %}" 
         hx-trigger="load" 
         hx-target="#last-image-container" 
         hx-swap="innerHTML">

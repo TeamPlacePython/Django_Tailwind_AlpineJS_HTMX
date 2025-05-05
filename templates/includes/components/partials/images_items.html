@@ -1,0 +1,7 @@
+{% for image in images_items %}
+<li>
+    <a href="{% url image.url %}">
+        {{ image.name }}
+    </a>
+</li>
+{% endfor %}

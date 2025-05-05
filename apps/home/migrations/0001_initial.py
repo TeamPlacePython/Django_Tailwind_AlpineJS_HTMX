@@ -9,32 +9,74 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='CarouselImage',
+            name="CarouselImage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to='carousel_images/', validators=[apps.home.models.validate_image_format])),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        upload_to="carousel_images/",
+                        validators=[],
+                    ),
+                ),
+                ("uploaded_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'ordering': ['-uploaded_at'],
+                "ordering": ["-uploaded_at"],
             },
         ),
         migrations.CreateModel(
-            name='MapsLocation',
+            name="MapsLocation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('station_name', models.CharField(max_length=250)),
-                ('latitude', models.FloatField(help_text='Valeur entre -90 et 90.', validators=[django.core.validators.MinValueValidator(-90.0), django.core.validators.MaxValueValidator(90.0)])),
-                ('longitude', models.FloatField(help_text='Valeur entre -180 et 180.', validators=[django.core.validators.MinValueValidator(-180.0), django.core.validators.MaxValueValidator(180.0)])),
-                ('address', models.CharField(blank=True, max_length=500, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("station_name", models.CharField(max_length=250)),
+                (
+                    "latitude",
+                    models.FloatField(
+                        help_text="Valeur entre -90 et 90.",
+                        validators=[
+                            django.core.validators.MinValueValidator(-90.0),
+                            django.core.validators.MaxValueValidator(90.0),
+                        ],
+                    ),
+                ),
+                (
+                    "longitude",
+                    models.FloatField(
+                        help_text="Valeur entre -180 et 180.",
+                        validators=[
+                            django.core.validators.MinValueValidator(-180.0),
+                            django.core.validators.MaxValueValidator(180.0),
+                        ],
+                    ),
+                ),
+                (
+                    "address",
+                    models.CharField(blank=True, max_length=500, null=True),
+                ),
             ],
             options={
-                'unique_together': {('latitude', 'longitude')},
+                "unique_together": {("latitude", "longitude")},
             },
         ),
     ]

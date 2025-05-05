@@ -29,17 +29,17 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2"
                 class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-                {% include "includes/components/items/sport_items.html" %}
+                {% include "includes/components/partials/sport_items.html" %}
+                {% include "includes/components/partials/history_items.html" %}
             </ul>
         </li>
         <!-- INFORMATIONS END -->
 
-        <!-- MESSAGES START -->
-        {% if request.user.is_authenticated %}
+        <!-- POST START -->
         <li x-data="{ profileOpen: false }" class="py-2">
             <div @click="profileOpen = !profileOpen" class="flex items-center justify-between cursor-pointer navitems-mobile">
                 <div class="flex items-center gap-2 flex-grow">
-                    <span>Message</span>
+                    <span>Escrime</span>
                 </div>
                 <img x-bind:class="profileOpen ? 'rotate-180' : 'rotate-0'" 
                         class="w-4 transition-transform duration-300 ease-in-out" 
@@ -54,10 +54,19 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2"
                 class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-                {% include "includes/components/items/messages_items.html" %}
+                <!-- POSTS START -->
+                {% include "includes/components/partials/posts_items.html" %}
+                <!-- POSTS END -->
+
+                <!-- IMAGES START -->
+                {% include "includes/components/partials/images_items.html" %}
+                <!-- IMAGES END -->
             </ul>
         </li>
-        {% endif %}
+        <!-- POST END -->
+
+        <!-- MESSAGES START -->
+        {% include "includes/components/partials/messages_items.html" %}
         <!-- MESSAGES END -->
 
         {% if request.user.is_authenticated %}
@@ -78,7 +87,7 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2"
                 class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-                {% include "includes/components/items/members_items.html" %}
+                {% include "includes/components/partials/members_items.html" %}
             </ul>
         </li>
         <!-- MEMBERS END -->
@@ -104,7 +113,7 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2"
                 class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-                {% include "includes/components/items/users_items.html" %}
+                {% include "includes/components/partials/users_items.html" %}
             </ul>
         </li>
         <!-- PROFILE END -->
@@ -112,7 +121,7 @@
 
         <!-- LOGIN -->
         <ul class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-            {% include "includes/components/items/login_signup_items.html" %}
+            {% include "includes/components/partials/login_signup_items.html" %}
         </ul>
 
     {% endif %}

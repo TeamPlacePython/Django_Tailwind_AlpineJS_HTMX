@@ -22,8 +22,8 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2">
                 <ul class="hoverlist [&>li>a]:justify-end">
-                    {% include "includes/components/items/sport_items.html" %}
-                    {% include "includes/components/items/history_items.html" %}
+                    {% include "includes/components/partials/sport_items.html" %}
+                    {% include "includes/components/partials/history_items.html" %}
                 </ul>
             </div>
         </li>
@@ -51,9 +51,14 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2">
                 <ul class="hoverlist [&>li>a]:justify-end">
+
                     <!-- POSTS START -->
-                    {% include "includes/components/items/posts_items.html" %}
+                    {% include "includes/components/partials/posts_items.html" %}
                     <!-- POSTS END -->
+
+                    <!-- IMAGES START -->
+                    {% include "includes/components/partials/images_items.html" %}
+                    <!-- IMAGES END -->
 
                 </ul>
             </div>
@@ -62,7 +67,7 @@
         <!-- BLOG END -->
         
         <!-- MESSAGE START -->
-        {% include "includes/components/items/messages_items.html" %}
+        {% include "includes/components/partials/messages_items.html" %}
         <!-- MESSAGE END -->
 
         <!-- MEMBERS START -->
@@ -86,7 +91,7 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform -translate-y-2">
                 <ul class="hoverlist [&>li>a]:justify-end">
-                    {% include "includes/components/items/members_items.html" %}
+                    {% include "includes/components/partials/members_items.html" %}
                 </ul>
             </div>
         </li>
@@ -116,7 +121,7 @@
                  x-transition:leave-start="opacity-100 transform translate-y-0"
                  x-transition:leave-end="opacity-0 transform -translate-y-2">
                  <ul class="hoverlist [&>li>a]:justify-end">
-                    {% include "includes/components/items/users_items.html" %}
+                    {% include "includes/components/partials/users_items.html" %}
                 </ul>
             </div>
         </li>
@@ -126,7 +131,7 @@
 
         <!-- LOGIN SIGNUP START -->
         <ul class="hoverlist [&>li>a]:justify-end flex flex-col items-center md:flex-row md:items-start">
-            {% include "includes/components/items/login_signup_items.html" %}
+            {% include "includes/components/partials/login_signup_items.html" %}
         </ul>
         <!-- LOGIN SIGNUP END -->
 
