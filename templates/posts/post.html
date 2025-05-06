@@ -21,8 +21,6 @@
                 {% endfor %}
             </div>
         </div>
-        <p class="">{{ post.body|truncatechars:100 }}</p> 
-
         <div class="justify-center mb-6">
             {% if post.author %}
                 <a class="flex items-center place-content-center gap-1" href="{% url 'users:user_profile' post.author.username %}">
@@ -39,11 +37,13 @@
                 </div>
             {% endif %}
         </div>
+        <p class="py-4">{{ post.body|truncatechars:100 }}</p> 
+
     </div>
 
     <div class="p-4 pb-2">
         <div class="flex items-center justify-between text-sm px-2">
-            {% comment %} <a class="font-bold hover:underline" href="{% url 'posts:post_page' post.id %}"> {% endcomment %}
+            <a class="font-bold hover:underline" href="{% url 'posts:post_page' post.id %}">
                 {% if post.comments.count %}
                     Commentaire{{ post.comments.count|pluralize:'s' }}
                     <span id="commentscount-{{ post.id }}" class="font-light text-gray-500 ml-1">
@@ -54,20 +54,20 @@
                         {% include "components/icones/comments.html" %}
                     {% endif %}
                 {% endif %}
-                {% comment %} </a> {% endcomment %}
+            </a>
                 
-                <div class="flex items-center gap-4 [&>a:hover]:underline">
-                    {% include 'posts/snippets/likes.html' %}
-                    {% if user.is_authenticated and user == post.author %}
-                    <a href="{% url 'posts:post_edit' post.id %}">
-                        {% include "components/icones/modify.html" %}
-                    </a>
-                    <a href="{% url 'posts:post_edit' post.id %}">
-                        {% include "components/icones/edit.html" %}
-                    </a>
-                    <a href="{% url 'posts:post_delete' post.id %}">
-                        {% include "components/icones/delete.html" %}
-                    </a>
+            <div class="flex items-center gap-4 [&>a:hover]:underline">
+                {% include 'posts/snippets/likes.html' %}
+                {% if user.is_authenticated and user == post.author %}
+                <a href="{% url 'posts:post_edit' post.id %}">
+                    {% include "components/icones/modify.html" %}
+                </a>
+                <a href="{% url 'posts:post_edit' post.id %}">
+                    {% include "components/icones/edit.html" %}
+                </a>
+                <a href="{% url 'posts:post_delete' post.id %}">
+                    {% include "components/icones/delete.html" %}
+                </a>
                 {% endif %}
             </div>
         </div>
