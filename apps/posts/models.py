@@ -2,8 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
+from apps.images.mixins import ImageResizeMixin
 
-class Post(models.Model):
+
+class Post(ImageResizeMixin, models.Model):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, primary_key=True, editable=False
     )
@@ -27,6 +29,11 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return f"/post/{self.id}/"
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            self.resize_image_field(self.image)
+        super().save(*args, **kwargs)
 
 
 class LikedPost(models.Model):

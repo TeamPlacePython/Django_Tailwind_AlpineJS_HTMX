@@ -1,8 +1,11 @@
 {% extends 'layouts/a.html' %}
 
+{% block title %}{{ home_post_title }}{% endblock title %}
+{% block meta_description %}{{ home_post_description }}{% endblock %}
+
 {% block content %}
 <div class="max-w-7xl mx-auto px-2 pt-8">
-    <h1 class="mb-8 font-title text-3xl md:text-4xl">Le blog des adhérents ...</h1>
+    <h1 class="mb-8 font-title text-3xl md:text-4xl">{{ home_post_title }}</h1>
 </div>
 
 <div id="post-container">

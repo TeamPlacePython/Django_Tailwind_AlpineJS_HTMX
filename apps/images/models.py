@@ -1,9 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
-from io import BytesIO
 from PIL import Image as PilImage
+from .mixins import ImageResizeMixin
 
 
 def validate_image_format(image):
@@ -15,7 +14,7 @@ def validate_image_format(image):
         )
 
 
-class CarouselImage(models.Model):
+class CarouselImage(ImageResizeMixin, models.Model):
     image = models.ImageField(
         upload_to="carousel_images/",
         validators=[validate_image_format],
@@ -27,6 +26,10 @@ class CarouselImage(models.Model):
         null=True,
         related_name="uploaded_images",
     )
+
+    IMAGE_RESIZE_MODE = "resize"
+    TARGET_SIZE = (1920, 1080)
+    FORCE_LANDSCAPE = True
 
     class Meta:
         ordering = ["-uploaded_at"]
@@ -45,20 +48,12 @@ class CarouselImage(models.Model):
             )
 
     def save(self, *args, **kwargs):
-        if not self.image:
-            return
-        img = PilImage.open(self.image)
-        if img.mode != "RGB":
-            img = img.convert("RGB")
-        img = img.resize((1920, 1080), PilImage.LANCZOS)
-        buffer = BytesIO()
-        img.save(buffer, format="JPEG", quality=90)
-        image_name = f"carousel_{self.image.name or 'new'}"
-        self.image.save(image_name, ContentFile(buffer.getvalue()), save=False)
+        if self.image:
+            self.resize_image_field(self.image)
         super().save(*args, **kwargs)
 
 
-class Image(models.Model):
+class Image(ImageResizeMixin, models.Model):
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to="images/")
     uploaded_by = models.ForeignKey(
@@ -71,3 +66,8 @@ class Image(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            self.resize_image_field(self.image)
+        super().save(*args, **kwargs)

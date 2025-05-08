@@ -18,7 +18,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.utils.decorators import method_decorator
-
+from django.utils.http import url_has_allowed_host_and_scheme
 import random
 
 from apps.sport.models import SportsCategory
@@ -220,7 +220,7 @@ class MemberCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
-        # 🔥 Assure-toi que les fichiers sont bien récupérés
+        # 🔥 Gestion de l'image
         if self.request.FILES.get("photo"):
             self.object.photo = self.request.FILES["photo"]
 
@@ -238,6 +238,23 @@ class MemberCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             }
         )
         return context
+
+    def get_success_url(self):
+        # Vérifie si 'next' est passé en paramètre GET
+        next_url = self.request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url, self.request.get_host()
+        ):
+            return next_url
+
+        # Sinon, essaie le référent HTTP
+        referer = self.request.META.get("HTTP_REFERER")
+        if referer and url_has_allowed_host_and_scheme(
+            referer, self.request.get_host()
+        ):
+            return referer
+
+        return str(self.success_url)
 
 
 class MemberUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

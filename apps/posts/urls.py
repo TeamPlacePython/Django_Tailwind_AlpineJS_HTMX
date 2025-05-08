@@ -19,10 +19,10 @@ urlpatterns = [
     path("", PostHomeView.as_view(), name="post_home"),
     path("category/<tag>/", PostHomeView.as_view(), name="category"),
     path("create/", AddPostView.as_view(), name="add_post"),
+    path("delete/<uuid:pk>/", PostDeleteView.as_view(), name="post_delete"),
+    path("post/<uuid:pk>/edit/", PostEditView.as_view(), name="post_edit"),
     path("post/<uuid:pk>/", PostDetailView.as_view(), name="post_page"),
     path("post/like/<int:pk>/", LikePostView.as_view(), name="like_post"),
-    path("post/<uuid:pk>/edit/", PostEditView.as_view(), name="post_edit"),
-    path("delete/<uuid:pk>/", PostDeleteView.as_view(), name="post_delete"),
     path(
         "last_post_fragment/",
         LastPostFragmentView.as_view(),

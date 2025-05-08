@@ -1,11 +1,11 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
 from django.http import Http404
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.paginator import InvalidPage
 from django.urls import reverse_lazy
 from django.db.models import Count
 from django.utils.decorators import method_decorator
-from django.core.paginator import InvalidPage
 from django.views.decorators.cache import cache_page
 from django.views.generic.edit import FormView
 from django.views.generic import (
@@ -37,6 +37,10 @@ class PostHomeView(ListView):
     template_name = "posts/home.html"
     context_object_name = "posts"
     paginate_by = 3
+    _context_defaults = {
+        "home_post_title": "Le blog des adhérents ...",
+        "home_post_description": "",
+    }
 
     def get_tag_slug(self):
         return self.kwargs.get("tag")
@@ -61,15 +65,15 @@ class PostHomeView(ListView):
                     get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
                 ),
                 "page": self.request.GET.get("page", 1),
+                **self._context_defaults,
             }
         )
         return context
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.htmx:
-            return render(
-                self.request, "posts/snippets/loop_home_posts.html", context
-            )
+            template_name = "posts/snippets/loop_home_posts.html"
+            return render(self.request, template_name, context)
         return super().render_to_response(context, **response_kwargs)
 
     def paginate_queryset(self, queryset, page_size):
@@ -142,10 +146,12 @@ class AddPostView(LoginRequiredMixin, CreateView):
         )
         return context
 
+    def form_invalid(self, form):
+        print("💥 Form invalid:", form.errors)
+        return super().form_invalid(form)
+
 
 # ✏️ Modification d'un post
-
-
 class PostEditView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostEditForm
@@ -281,7 +287,7 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
 # 📝 Création d'un commentaire
 class CommentCreateView(LoginRequiredMixin, FormView):
     form_class = CommentCreateForm
-    template_name = "posts/snippets/comment_create.html"
+    template_name = "posts/snippets/add_comment.html"
 
     def form_valid(self, form):
         post = get_object_or_404(Post, id=self.kwargs["id"])
@@ -296,7 +302,7 @@ class CommentCreateView(LoginRequiredMixin, FormView):
 # 🗨️ Création d'une réponse
 class ReplyCreateView(LoginRequiredMixin, FormView):
     form_class = ReplyCreateForm
-    template_name = "posts/snippets/reply_create.html"
+    template_name = "posts/snippets/add_reply.html"
 
     def form_valid(self, form):
         comment = get_object_or_404(Comment, id=self.kwargs["id"])
@@ -309,9 +315,20 @@ class ReplyCreateView(LoginRequiredMixin, FormView):
 
 
 # ❌ Suppression d'un commentaire
-class CommentDeleteView(LoginRequiredMixin, DeleteView):
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Comment
     template_name = "posts/comment_delete.html"
+
+    def test_func(self):
+        comment = self.get_object()
+        return comment.author == self.request.user
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request,
+            "Vous n'avez pas la permission de supprimer ce commentaire.",
+        )
+        return redirect("posts:post-page", id=self.get_object().parent_post.id)
 
     def get_success_url(self):
         return reverse_lazy(
@@ -324,9 +341,23 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 
 
 # ❌ Suppression d'une réponse
-class ReplyDeleteView(LoginRequiredMixin, DeleteView):
+class ReplyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Reply
     template_name = "posts/reply_delete.html"
+
+    def test_func(self):
+        reply = self.get_object()
+        return reply.author == self.request.user
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request,
+            "Vous n'avez pas la permission de supprimer cette réponse.",
+        )
+        return redirect(
+            "posts:post-page",
+            id=self.get_object().parent_comment.parent_post.id,
+        )
 
     def get_success_url(self):
         return reverse_lazy(
