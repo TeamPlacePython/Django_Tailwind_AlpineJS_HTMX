@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 <div 
+=======
+<!-- ✅ Lightbox modale -->
+  <div 
+>>>>>>> Laurent
     id="lightbox-modal"
     x-show="open"
     x-transition:enter="transition ease-out duration-300"
@@ -11,7 +16,11 @@
     @keydown.arrow-left="prevImage()"
     @keydown.escape.window="closeLightbox()"
     @click.outside="closeLightbox()"
+<<<<<<< HEAD
     class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 focus:outline-none"
+=======
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 focus:outline-none"
+>>>>>>> Laurent
     tabindex="0"
     aria-modal="true"
     role="dialog"
@@ -35,6 +44,7 @@
         class="rounded-lg max-h-[90vh] shadow-2xl transition-all duration-500 z-40"
       >
 
+<<<<<<< HEAD
       <!-- Fermer -->
       <button @click="closeLightbox()"
               class="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl z-50">
@@ -54,5 +64,28 @@
             class="slider-button absolute top-1/2 right-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
         {% include "components/icones/right_arrow_images.html" %}
       </button>
+=======
+        <!-- Bouton fermeture -->
+        <button @click="closeLightbox()" 
+                class="button absolute top-4 right-4 text-navbar text-lg z-50">
+            {% include "components/icones/close.html" %}
+        </button>
+
+        <!-- PREV / NEXT START -->
+        <!-- arrow pointing to the left - Prev -->
+        <button type="button"
+                @click.stop="prevImage()"
+                class="slider-button absolute top-1/2 left-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
+        {% include "components/icones/left_arrow_images.html" %}
+        </button>
+
+        <!-- arrow pointing to the right - Next -->
+        <button type="button"
+                @click.stop="nextImage()"
+                class="slider-button absolute top-1/2 right-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
+        {% include "components/icones/right_arrow_images.html" %}
+        </button>
+        <!-- PREV / NEXT END -->
+>>>>>>> Laurent
     </div>
   </div>

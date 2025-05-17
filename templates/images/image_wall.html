@@ -13,6 +13,7 @@
 
   <!-- Grid Masonry container -->
   <div 
+<<<<<<< HEAD
     class="grid js-masonry w-full"
     data-masonry='{"itemSelector": ".masonry-item", "columnWidth": ".grid-sizer", "percentPosition": true, "gutter": 16 }'
   >
@@ -20,6 +21,15 @@
 
     {% for img in images %}
       <div class="masonry-item">
+=======
+    class="grid w-full js-masonry w-full"
+    data-masonry='{"itemSelector": ".masonry-item", "columnWidth": ".grid-sizer", "percentPosition": true, "gutter": 16 }'
+  >
+    <div class="grid-sizer w-full md:w-[30%]"></div>
+
+    {% for img in images %}
+      <div class="masonry-item w-full p-[3px] md:w-[30%]">
+>>>>>>> Laurent
         <div 
           class="relative mb-4 overflow-hidden rounded-lg group cursor-pointer"
           @click="openLightboxByUrl('{{ img.image.url }}')"
@@ -36,10 +46,24 @@
   <nav class="pagination">
     {% if page_obj.has_next %}
       <a class="pagination__next" href="?page={{ page_obj.next_page_number }}"></a>
+<<<<<<< HEAD
     {% endif %}
   </nav>
 
   <!-- ✅ Lightbox modale -->
+=======
+
+    {% endif %}
+  </nav>
+
+    <!-- ✅ Le message à afficher quand on a tout vu -->
+    <div class="page-load-status text-center py-8 text-gray-500 italic">
+        <div class="infinite-scroll-request">🔄 Chargement...</div>
+        <div class="infinite-scroll-last">🎉 Vous avez tout vu, mais nous pouvons publier les vôtres !</div>
+        <div class="infinite-scroll-error">⚠️ Erreur lors du chargement.</div>
+    </div>
+
+>>>>>>> Laurent
   {% include "images/modal/image_lightbox_modal.html" %}
 
 </div>
@@ -76,6 +100,10 @@
           append: '.masonry-item',
           outlayer: msnry,
           history: false,
+<<<<<<< HEAD
+=======
+          status: '.page-load-status'
+>>>>>>> Laurent
         });
       },
 

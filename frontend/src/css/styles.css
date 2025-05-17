@@ -173,6 +173,7 @@ td, th {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+<<<<<<< HEAD
 
 /* Masonry style */
 .grid {
@@ -195,3 +196,5 @@ td, th {
 .masonry-item {
     padding: 3px;
 }
+=======
+>>>>>>> Laurent
