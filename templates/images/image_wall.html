@@ -1,72 +1,128 @@
 {% extends 'layouts/b.html' %}
 
 {% block content %}
-<div class="p-4">
 
+<!-- Masonry + AlpineJS -->
+<div 
+  id="image-wall"
+  x-data="imageWall()"
+  x-init="init()"
+  @htmx:afterSwap.window="syncImages();"
+  class="relative -mx-4 md:-mx-12"
+>
+
+  <!-- Grid Masonry container -->
   <div 
-    id="image-wall"
-    x-data="imageWall()" 
-    x-init="init()"
-    @htmx:afterSwap.window="init()"
-    class="columns-1 sm:columns-2 md:columns-3 gap-4 [column-fill:_balance]"
+    class="grid js-masonry w-full"
+    data-masonry='{"itemSelector": ".masonry-item", "columnWidth": ".grid-sizer", "percentPosition": true, "gutter": 16 }'
   >
-    {% include 'images/partials/_image_list.html' %}
+    <div class="grid-sizer"></div>
+
+    {% for img in images %}
+      <div class="masonry-item">
+        <div 
+          class="relative mb-4 overflow-hidden rounded-lg group cursor-pointer"
+          @click="openLightboxByUrl('{{ img.image.url }}')"
+          data-image-url="{{ img.image.url }}"
+        >
+          <img src="{{ img.image.url }}" alt="{{ img.title }}" loading="lazy"
+               class="w-full object-cover rounded-lg shadow-lg">
+        </div>
+      </div>
+    {% endfor %}
   </div>
+
+  <!-- Scroll infini -->
+  <nav class="pagination">
+    {% if page_obj.has_next %}
+      <a class="pagination__next" href="?page={{ page_obj.next_page_number }}"></a>
+    {% endif %}
+  </nav>
+
+  <!-- ✅ Lightbox modale -->
+  {% include "images/modal/image_lightbox_modal.html" %}
+
 </div>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+<script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
 
 <script>
   function imageWall() {
-      return {
-          open: false,
-          imageUrl: '',
-          images: [],
-          currentIndex: 0,
-          isLoading: false,
-  
-          init() {
-              this.images = Array.from(
-                  document.querySelectorAll('[data-image-url]')
-              ).map(el => el.dataset.imageUrl);
-          },
-  
-          openLightboxByUrl(url) {
-            this.images = Array.from(
-                document.querySelectorAll('[data-image-url]')
-            ).map(el => el.dataset.imageUrl);
-        
-            const index = this.images.indexOf(url);
-            if (index !== -1) {
-                this.currentIndex = index;
-                this.imageUrl = url;
-                this.isLoading = true;
-                this.open = true;
-            } else {
-                console.warn("Image not found in DOM list");
-            }
-        },
-  
-          nextImage() {
-              this.currentIndex = (this.currentIndex + 1) % this.images.length;
-              this.isLoading = true;
-              this.imageUrl = this.images[this.currentIndex];
-          },
-  
-          prevImage() {
-              this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
-              this.isLoading = true;
-              this.imageUrl = this.images[this.currentIndex];
-          },
-  
-          closeLightbox() {
-              this.open = false;
-              this.isLoading = false;
-          },
-  
-          imageLoaded() {
-              this.isLoading = false;
-          }
+    return {
+      open: false,
+      imageUrl: '',
+      images: [],
+      currentIndex: 0,
+      isLoading: false,
+
+      init() {
+        this.syncImages();
+
+        const grid = document.querySelector('.js-masonry');
+        const msnry = new Masonry(grid, {
+          itemSelector: '.masonry-item',
+          columnWidth: '.grid-sizer',
+          percentPosition: true,
+          gutter: 16,
+        });
+
+        imagesLoaded(grid, () => msnry.layout());
+
+        new InfiniteScroll(grid, {
+          path: '.pagination__next',
+          append: '.masonry-item',
+          outlayer: msnry,
+          history: false,
+        });
+      },
+
+      syncImages() {
+        this.images = Array.from(document.querySelectorAll('[data-image-url]'))
+          .map(el => el.dataset.imageUrl);
+      },
+
+      openLightboxByUrl(url) {
+        this.syncImages();
+        const index = this.images.indexOf(url);
+        if (index !== -1) {
+          this.currentIndex = index;
+          this.imageUrl = url;
+          this.isLoading = true;
+          this.open = true;
+
+          setTimeout(() => {
+            document.getElementById('lightbox-modal')?.focus();
+          }, 50);
+        }
+      },
+
+      nextImage() {
+        if (!this.images.length) return;
+        this.currentIndex = (this.currentIndex + 1) % this.images.length;
+        this.imageUrl = this.images[this.currentIndex];
+        this.isLoading = true;
+      },
+
+      prevImage() {
+        if (!this.images.length) return;
+        this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+        this.imageUrl = this.images[this.currentIndex];
+        this.isLoading = true;
+      },
+
+      closeLightbox() {
+        this.open = false;
+        this.isLoading = false;
+      },
+
+      imageLoaded() {
+        this.isLoading = false;
       }
+    };
   }
 </script>
 
-{% endblock content %}
+{% endblock %}

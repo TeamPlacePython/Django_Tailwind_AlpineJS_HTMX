@@ -173,3 +173,25 @@ td, th {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Masonry style */
+.grid {
+    width: 100%;
+}
+
+.grid-sizer,
+  .masonry-item {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .grid-sizer,
+    .masonry-item {
+      width: 30%;
+    }
+}
+
+/* Optional spacing fix */
+.masonry-item {
+    padding: 3px;
+}
