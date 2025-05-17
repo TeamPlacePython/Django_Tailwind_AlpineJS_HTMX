@@ -170,7 +170,7 @@ class MemberEditView(
     LoginRequiredMixin, HTMXMixin, MemberQuerysetMixin, DetailView
 ):
     model = Member
-    template_name = "members/modals/member_edit_modal.html"
+    template_name = "members/modal/member_edit_modal.html"
     context_object_name = "member"
 
     def get_queryset(self):

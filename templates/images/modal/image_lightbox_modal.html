@@ -1,62 +1,61 @@
-<!-- ✅ Modale placée hors de la cible HX -->
-<div x-show="open"
-  x-transition:enter="transition ease-out duration-300"
-  x-transition:enter-start="opacity-0"
-  x-transition:enter-end="opacity-100"
-  x-transition:leave="transition ease-in duration-200"
-  x-transition:leave-start="opacity-100"
-  x-transition:leave-end="opacity-0"
-  @keydown.arrow-right="nextImage()"
-  @keydown.arrow-left="prevImage()"
-  @keydown.escape.window="closeLightbox()"
-  @click.outside="closeLightbox()"
-  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-  tabindex="0"
-  aria-modal="true"
-  role="dialog">
-
-  <div class="relative max-w-5xl w-full mx-4 p-4 flex flex-col items-center focus:outline-none">
-
-  <!-- Spinner loader -->
-  <div x-show="isLoading" class="absolute inset-0 flex items-center justify-center z-50">
-  <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-  </svg>
-  </div>
-
-  <!-- Image affichée -->
-  <img 
+<!-- ✅ Lightbox modale -->
+  <div 
+    id="lightbox-modal"
+    x-show="open"
     x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0 scale-95"
-    x-transition:enter-end="opacity-100 scale-100"
-    x-transition:leave="transition ease-in duration-300"
-    x-transition:leave-start="opacity-100 scale-100"
-    x-transition:leave-end="opacity-0 scale-95"
-    :src="imageUrl"
-    @load="imageLoaded"
-    alt="Image"
-    class="rounded-lg max-h-[90vh] z-40">
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @keydown.arrow-right="nextImage()"
+    @keydown.arrow-left="prevImage()"
+    @keydown.escape.window="closeLightbox()"
+    @click.outside="closeLightbox()"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 focus:outline-none"
+    tabindex="0"
+    aria-modal="true"
+    role="dialog"
+  >
+    <div class="relative w-full max-w-6xl mx-4 p-4 flex flex-col items-center">
 
-  <!-- Bouton fermeture -->
-  <button @click="closeLightbox()" 
-        class="button absolute top-4 right-4 text-navbar text-lg z-50">
-    {% include "components/icones/close.html" %}
-  </button>
+      <!-- Spinner -->
+      <div x-show="isLoading" class="absolute inset-0 flex items-center justify-center z-50">
+        <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+        </svg>
+      </div>
 
-  <!-- Flèche gauche -->
-  <button type="button"
-        @click.stop="prevImage()"
-        class="slider-button absolute top-1/2 left-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
-  {% include "components/icones/left_arrow_images.html" %}
-  </button>
+      <!-- Image -->
+      <img
+        :src="imageUrl"
+        :key="imageUrl"
+        @load="imageLoaded"
+        alt="Image"
+        class="rounded-lg max-h-[90vh] shadow-2xl transition-all duration-500 z-40"
+      >
 
-  <!-- Flèche droite -->
-  <button type="button"
-        @click.stop="nextImage()"
-        class="slider-button absolute top-1/2 right-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
-  {% include "components/icones/right_arrow_images.html" %}
-  </button>
+        <!-- Bouton fermeture -->
+        <button @click="closeLightbox()" 
+                class="button absolute top-4 right-4 text-navbar text-lg z-50">
+            {% include "components/icones/close.html" %}
+        </button>
 
+        <!-- PREV / NEXT START -->
+        <!-- arrow pointing to the left - Prev -->
+        <button type="button"
+                @click.stop="prevImage()"
+                class="slider-button absolute top-1/2 left-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
+        {% include "components/icones/left_arrow_images.html" %}
+        </button>
+
+        <!-- arrow pointing to the right - Next -->
+        <button type="button"
+                @click.stop="nextImage()"
+                class="slider-button absolute top-1/2 right-4 -translate-y-1/2 z-50 text-white text-3xl px-2 py-1 hover:opacity-80 focus:outline-none">
+        {% include "components/icones/right_arrow_images.html" %}
+        </button>
+        <!-- PREV / NEXT END -->
+    </div>
   </div>
-</div>
